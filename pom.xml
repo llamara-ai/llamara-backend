@@ -31,6 +31,13 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:https://github.com/llamara-ai/llamara-backend.git</connection>
+        <developerConnection>scm:git:https://github.com/llamara-ai/llamara-backend.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/llamara-ai/llamara-backend</url>
+    </scm>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
