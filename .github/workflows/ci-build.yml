@@ -1,0 +1,63 @@
+name: CI Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ 'ubuntu-24.04' ]
+        java: [ '21' ]
+        maven: [ '3.9.9' ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Maven Build
+        uses: ./.github/actions/maven-build
+        with:
+          java: ${{ matrix.java }}
+          maven: ${{ matrix.maven }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Verify Changed Files
+        uses: tj-actions/verify-changed-files@v20
+        id: verify-changed-files
+
+      - name: Fail on Changed Files
+        if: steps.verify-changed-files.outputs.changed_files != ''
+        env:
+          CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
+        run: |
+          echo "::error::Files have changed: $CHANGED_FILES"
+          exit 1
+
+      # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
+      - name: Update dependency graph
+        if: github.event_name != 'pull_request'
+        uses: advanced-security/maven-dependency-submission-action@v4
+
+      - name: Upload packaged application
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarkus-app
+          path: |
+            target/quarkus-app
+
+      - name: Upload test coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: |
+            target/jacoco-report

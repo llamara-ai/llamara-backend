@@ -1,0 +1,57 @@
+name: "Maven Build"
+description: "Runs mvn package"
+inputs:
+  java:
+    description: "Java version"
+    required: true
+  maven:
+    description: "Maven version"
+    required: true
+  OPENAI_API_KEY:
+    description: "OpenAI API Key"
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ inputs.java }}
+
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v5
+      with:
+        maven-version: ${{ inputs.maven }}
+
+    - name: Run Spotless Check
+      shell: bash
+      run: mvn spotless:check --file pom.xml
+
+    - name: Build
+      shell: bash
+      run: mvn -B package --file pom.xml
+      env:
+        OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY || 'sk-prod-key' }}
+
+    - name: Verify Changed Files
+      uses: tj-actions/verify-changed-files@v20
+      id: verify-changed-files
+
+    - name: Fail on Changed Files
+      if: steps.verify-changed-files.outputs.changed_files != ''
+      shell: bash
+      env:
+        CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
+      run: |
+        echo "::error::Files have changed: $CHANGED_FILES"
+        exit 1

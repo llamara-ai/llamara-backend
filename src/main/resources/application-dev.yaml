@@ -1,0 +1,36 @@
+quarkus:
+  keycloak:
+    devservices:
+      enabled: true
+
+  oidc:
+    auth-server-url:
+    client-id: backend-service
+    credentials:
+      secret: secret
+
+  datasource:
+    devservices:
+      enabled: true
+      port: 5432
+    db-kind: postgresql
+    jdbc:
+      driver: org.postgresql.Driver
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+
+  minio:
+    devservices:
+      enabled: true
+      shared: false
+    url:
+
+  redis:
+    devservices:
+      enabled: true
+      port: 6379
+    chat-memory:
+      hosts: redis://localhost:6379/1
+    chat-history:
+      hosts: redis://localhost:6379/2

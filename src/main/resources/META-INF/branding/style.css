@@ -1,0 +1,6 @@
+.swagger-ui .topbar {
+    background: whitesmoke;
+    img {
+        max-width: none;
+    }
+}

@@ -1,0 +1,58 @@
+security:
+  anonymous-user-enabled: false
+  anonymous-user-session-timeout: 300 # Inactivity in seconds after which an anonymous session is removed from chat memory
+
+chat:
+  memory:
+    # Maximum number of messages to keep in memory, i.e. to present to the LLM when sending a prompt.
+    # Keep in mind: bigger memory = more input tokens = more cost
+    window: token # Supported values: message, token
+    max-messages: 5
+    max-tokens: 1000
+    tokenizer:
+      provider: openai # Supported providers: openai (as Azure is using OpenAI models, we can use OpenAI tokenizer)
+      model: gpt-4o-mini
+  history:
+    max-messages: 50 # Maximum number of messages to keep in history, i.e. to present them to the user.
+  models:
+    # Supported model providers: azure, openai, ollama
+    # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
+    #- uid: azure-gpt4o-mini
+    #  provider: azure
+    #  resource-name: my-azure-resource # Azure OpenAI resource name
+    #  model: gpt-4o-mini-2024-07-18 # Azure OpenAI deployment name
+    #  label: Azure GPT 4o Mini
+    #  description: Azure OpenAI GPT 4 Omni Mini
+    # OpenAI models need model config and OPENAI_API_KEY key env variable
+    - uid: gpt4o-mini
+      provider: openai
+      model: gpt-4o-mini
+      label: GPT 4o Mini
+      description: OpenAI GPT 4 Omni Mini
+    # Ollama models need base URL and model config
+    #- uid: llama3-1
+    #  provider: ollama
+    #  base-url: http://localhost:11435
+    #  model: llama3.1
+    #  label: LLAMA 3.1
+    #  description: Meta LLAMA 3.1 8b
+
+embedding:
+  store:
+    type: qdrant # Supported types: qdrant
+    host: localhost
+    port: 6334 # Qdrant gRPC port
+    tls: false
+    collection-name: text-embedding-3-large
+  model:
+    provider: openai # Supported providers: azure, openai, ollama
+    # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
+    # OpenAI models need model config and OPENAI_API_KEY key env variable
+    # Ollama models need base URL and model config
+    model: text-embedding-3-large
+
+ingestion:
+  document-splitter:
+    type: paragraph # Supported types: line, paragraph, recursive
+    max-segment-size: 1000
+    max-overlap-size: 200

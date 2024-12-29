@@ -1,0 +1,7 @@
+LLAMARA - Large Language Assistant for Model-Augmented Retrieval and Analysis
+
+LLAMARA is an LLM-based assistant for information retrieval from a provided knowledge base.
+It aims at supporting researchers working with scientific papers, whitepapers and documentation,
+as well as possibly serving research findings in an accessible way to the public.
+
+LLAMARA is build with Quarkus and LangChain4j.

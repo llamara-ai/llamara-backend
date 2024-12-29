@@ -1,0 +1,30 @@
+quarkus:
+  # Configure OIDC provider
+  oidc:
+    auth-server-url: http://localhost:8180/realms/llamara
+    client-id: llamara-backend
+
+  # Configure JDBC datasource (https://quarkus.io/guides/datasource#datasource-reference)
+  datasource:
+    db-kind: postgresql
+    username: llamara
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/llamara
+      driver: org.postgresql.Driver
+  hibernate-orm:
+    database:
+      generation: validate
+
+  # Configure Minio client for file storage
+  # You need to provide QUARKUS_MINIO_ACCESS_KEY and QUARKUS_MINIO_SECRET_KEY environment variables
+  minio:
+    url: http://localhost
+    port: 9000
+    secure: false
+
+  # Configure Redis client for chat memory & history
+  redis:
+    chat-memory:
+      hosts: redis://localhost:6379/1
+    chat-history:
+      hosts: redis://localhost:6379/2
