@@ -41,7 +41,13 @@ docker run -i --rm -p 8080:8080 -v ./config:/config --env-file .env docker.io/ll
 To publish a new version of the application, use the [Maven Release Plugin](https://maven.apache.org/maven-release/maven-release-plugin/).
 
 ```shell script
-./mvnw release:prepare -DpushChanges=false
+./mvnw release:prepare -DpushChanges=false -DtagNameFormat=v@{project.version}
 ```
 
 Push the changes to GitHub and the CI will automatically build and publish the Docker container.
+
+After the release, clean up:
+
+```shell script
+./mvnw release:clean
+```
