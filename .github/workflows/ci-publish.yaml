@@ -2,7 +2,10 @@ name: CI Publish
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'main'
+    paths-ignore:
+      - '**/*.md'
     # Publish semver tags as releases.
     tags: [ 'v*.*' ]
 
