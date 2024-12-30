@@ -1,5 +1,4 @@
 name: "Maven Build"
-description: "Runs mvn package"
 inputs:
   java:
     description: "Java version"
@@ -7,8 +6,12 @@ inputs:
   maven:
     description: "Maven version"
     required: true
+  command:
+    description: "Maven build command (optional)"
+    required: false
+    default: "mvn -B --show-version --file pom.xml package"
   OPENAI_API_KEY:
-    description: "OpenAI API Key"
+    description: "OpenAI API Key (optional)"
     required: false
 runs:
   using: "composite"
@@ -37,9 +40,9 @@ runs:
       shell: bash
       run: mvn spotless:check --file pom.xml
 
-    - name: Build
+    - name: Maven Build
       shell: bash
-      run: mvn -B package --file pom.xml
+      run: ${{ inputs.command }}
       env:
         OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY || 'sk-prod-key' }}
 
