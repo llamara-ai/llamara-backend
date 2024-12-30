@@ -8,9 +8,11 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - 'main'
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - 'main'
   schedule:
     - cron: '30 4 * * 3' # Runs on 04:30 on Wednesday
 
@@ -73,7 +75,7 @@ jobs:
       with:
         java: ${{ matrix.java }}
         maven: ${{ matrix.maven }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        command: "mvn -B --show-version --file pom.xml compile"
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
