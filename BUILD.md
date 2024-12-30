@@ -35,3 +35,13 @@ Given the required configuration in `config/application.yaml` and the environmen
 ```shell script
 docker run -i --rm -p 8080:8080 -v ./config:/config --env-file .env docker.io/llamara-ai/llamara-backend-jvm
 ```
+
+## Publishing a new version
+
+To publish a new version of the application, use the [Maven Release Plugin](https://maven.apache.org/maven-release/maven-release-plugin/).
+
+```shell script
+./mvnw release:prepare -DpushChanges=false
+```
+
+Push the changes to GitHub and the CI will automatically build and publish the Docker container.
