@@ -173,11 +173,11 @@ class KnowledgeResource {
     @RolesAllowed({Roles.ADMIN, Roles.USER})
     @Blocking
     @PUT
-    @Path("/add")
+    @Path("/add/file")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(
-            operationId = "addKnowledge",
+            operationId = "addFileSource",
             summary = "Add a set of files to the knowledge.",
             description = "If a file is empty, it is skipped.")
     @APIResponse(
@@ -219,12 +219,12 @@ class KnowledgeResource {
     @RolesAllowed({Roles.ADMIN, Roles.USER})
     @Blocking
     @PUT
-    @Path("/update/{id}")
+    @Path("/update/{id}/file")
     @ResponseStatus(200)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Operation(
-            operationId = "updateKnowledge",
-            summary = "Update a single knowledge identified by it ID.",
+            operationId = "updateFileSource",
+            summary = "Update the file source of a single knowledge identified by it ID.",
             description = "If the file is empty, it is skipped.")
     @APIResponse(responseCode = "200", description = "OK.")
     @APIResponse(responseCode = "400", description = "File upload is invalid.")
