@@ -35,7 +35,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.internal.config.UserSecurityConfig;
+import com.github.llamara.ai.internal.config.SecurityConfig;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
@@ -56,10 +56,10 @@ class AnonymousUserSessionManagerImplTest {
     private static final List<ChatMessage> CHAT_HISTORY =
             List.of(new UserMessage("Hello, world!"), new AiMessage("Hi!"));
 
-    @InjectMock UserSecurityConfig securityConfig;
+    @InjectMock SecurityConfig securityConfig;
     @InjectMock ChatMemoryStore chatMemoryStore;
 
-    private AnonymousUserSessionManagerImpl userSecurityManager;
+    private AnonymousUserSessionManagerImpl sessionManager;
 
     @BeforeEach
     void setup() {
@@ -67,64 +67,48 @@ class AnonymousUserSessionManagerImplTest {
         when(securityConfig.anonymousUserSessionTimeout())
                 .thenReturn(60); // ensure tests have enough time to run without scheduled deletion
         // kicking in
-        userSecurityManager = new AnonymousUserSessionManagerImpl(securityConfig, chatMemoryStore);
+        sessionManager = new AnonymousUserSessionManagerImpl(securityConfig, chatMemoryStore);
     }
 
     @AfterEach
     void destroy() {
-        userSecurityManager.shutdown();
-        userSecurityManager = null;
+        sessionManager.shutdown();
+        sessionManager = null;
     }
 
     @Test
     void shutdownDeletesAllSessions() {
         List<UUID> sessionIds = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            sessionIds.add(userSecurityManager.createSession().getId());
+            sessionIds.add(sessionManager.createSession().getId());
         }
 
-        userSecurityManager.shutdown();
+        sessionManager.shutdown();
         verify(chatMemoryStore, times(1)).deleteMessages(sessionIds.get(0));
         verify(chatMemoryStore, times(1)).deleteMessages(sessionIds.get(1));
         verify(chatMemoryStore, times(1)).deleteMessages(sessionIds.get(2));
     }
 
     @Test
-    void registerAlwaysClaimsToHaveCreatedUser() {
-        assertTrue(userSecurityManager.register());
-    }
-
-    @Test
-    void enforceRegisteredDoesNotThrowException() {
-        assertDoesNotThrow(() -> userSecurityManager.enforceRegistered());
-    }
-
-    @Test
-    void deleteDoesNothing() {
-        userSecurityManager.delete();
-        Mockito.verify(chatMemoryStore, never()).deleteMessages(Mockito.any());
-    }
-
-    @Test
     void checkSessionReturnsFalseForNonExistingSession() {
-        assertFalse(userSecurityManager.checkSession(UUID.randomUUID()));
+        assertFalse(sessionManager.checkSession(UUID.randomUUID()));
     }
 
     @Test
     void checkSessionReturnsTrueForExistingSession() {
-        UUID sessionId = userSecurityManager.createSession().getId();
-        assertTrue(userSecurityManager.checkSession(sessionId));
+        UUID sessionId = sessionManager.createSession().getId();
+        assertTrue(sessionManager.checkSession(sessionId));
     }
 
     @Test
     void checkSessionPostponesDeletionForExistingSession() throws InterruptedException {
         when(securityConfig.anonymousUserSessionTimeout()).thenReturn(1);
 
-        UUID sessionId = userSecurityManager.createSession().getId();
+        UUID sessionId = sessionManager.createSession().getId();
         verify(chatMemoryStore, never()).deleteMessages(sessionId);
 
         when(securityConfig.anonymousUserSessionTimeout()).thenReturn(2);
-        userSecurityManager.checkSession(sessionId);
+        sessionManager.checkSession(sessionId);
         verify(chatMemoryStore, never()).deleteMessages(sessionId);
         Thread.sleep(2500); // NOSONAR: sleep is necessary to wait for scheduled deletion
         verify(chatMemoryStore, times(1)).deleteMessages(sessionId);
@@ -132,17 +116,17 @@ class AnonymousUserSessionManagerImplTest {
 
     @Test
     void getSessionsAlwaysReturnsEmptyList() {
-        userSecurityManager.createSession();
-        userSecurityManager.createSession();
+        sessionManager.createSession();
+        sessionManager.createSession();
 
-        assertEquals(0, userSecurityManager.getSessions().size());
+        assertEquals(0, sessionManager.getSessions().size());
     }
 
     @Test
     void createSessionSchedulesDeletionForExistingSession() throws InterruptedException {
         when(securityConfig.anonymousUserSessionTimeout()).thenReturn(1);
 
-        UUID sessionId = userSecurityManager.createSession().getId();
+        UUID sessionId = sessionManager.createSession().getId();
         verify(chatMemoryStore, never()).deleteMessages(sessionId);
         Thread.sleep(1500); // NOSONAR: sleep is necessary to wait for scheduled deletion
         verify(chatMemoryStore, times(1)).deleteMessages(sessionId);
@@ -152,14 +136,14 @@ class AnonymousUserSessionManagerImplTest {
     void deleteSessionThrowsExceptionForNonExistingSession() {
         assertThrows(
                 SessionNotFoundException.class,
-                () -> userSecurityManager.deleteSession(UUID.randomUUID()));
+                () -> sessionManager.deleteSession(UUID.randomUUID()));
     }
 
     @Test
     void deleteSessionDeletesMessagesFromChatMemoryStore() {
-        UUID sessionId = userSecurityManager.createSession().getId();
+        UUID sessionId = sessionManager.createSession().getId();
 
-        assertDoesNotThrow(() -> userSecurityManager.deleteSession(sessionId));
+        assertDoesNotThrow(() -> sessionManager.deleteSession(sessionId));
         Mockito.verify(chatMemoryStore, times(1)).deleteMessages(sessionId);
     }
 
@@ -169,7 +153,7 @@ class AnonymousUserSessionManagerImplTest {
         when(chatMemoryStore.getMessages(sessionId)).thenReturn(CHAT_HISTORY);
 
         Uni<List<ChatMessageRecord>> uni =
-                assertDoesNotThrow(() -> userSecurityManager.getChatHistory(sessionId));
+                assertDoesNotThrow(() -> sessionManager.getChatHistory(sessionId));
         UniAssertSubscriber<Collection<ChatMessageRecord>> subscriber =
                 uni.subscribe().withSubscriber(UniAssertSubscriber.create());
         subscriber.assertCompleted().assertItem(Collections.emptyList());

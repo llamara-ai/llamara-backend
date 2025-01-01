@@ -19,21 +19,17 @@
  */
 package com.github.llamara.ai.internal.config;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
+import io.smallrye.config.ConfigMapping;
 
-import io.quarkus.test.Mock;
-import io.smallrye.config.SmallRyeConfig;
-import org.eclipse.microprofile.config.Config;
+/**
+ * Provides configuration for the security package.
+ *
+ * @author Florian Hotze - Initial contribution
+ */
+@ConfigMapping(prefix = "security")
+public interface SecurityConfig {
 
-public class UserSecurityConfigMockProducer {
-    @Inject Config config;
+    boolean anonymousUserEnabled();
 
-    @Produces
-    @ApplicationScoped
-    @Mock
-    UserSecurityConfig userSecurityConfig() {
-        return config.unwrap(SmallRyeConfig.class).getConfigMapping(UserSecurityConfig.class);
-    }
+    int anonymousUserSessionTimeout();
 }

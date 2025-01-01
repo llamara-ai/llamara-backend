@@ -36,19 +36,13 @@ import static org.mockito.Mockito.*;
 
 import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
-import com.github.llamara.ai.internal.internal.security.user.User;
-import com.github.llamara.ai.internal.internal.security.user.UserNotFoundException;
-import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
+import com.github.llamara.ai.internal.internal.security.BaseForAuthenticatedUserTests;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
-import io.quarkus.oidc.UserInfo;
-import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectSpy;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
 import org.junit.jupiter.api.AfterEach;
@@ -58,57 +52,41 @@ import org.junit.jupiter.api.Test;
 
 /** Tests for {@link AuthenticatedUserSessionManagerImpl}. */
 @QuarkusTest
-class AuthenticatedUserSessionManagerImplTest {
-    private static final String OWN_USERNAME = "test";
-    private static final String OWN_DISPLAYNAME = "Test";
+class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTests {
     private static final String FOREIGN_USERNAME = "foreign";
     private static final String FOREIGN_DISPLAYNAME = "Foreign";
     private static final List<ChatMessage> CHAT_HISTORY =
             List.of(new UserMessage("Hello, world!"), new AiMessage("Hi!"));
 
-    @InjectSpy TestUserRepository userRepository;
-    @InjectSpy UserAwareSessionRepository userAwareSessionRepository;
     @InjectMock ChatMemoryStore chatMemoryStore;
     @InjectMock ChatHistoryStore chatHistoryStore;
 
-    @InjectMock SecurityIdentity identity;
-    @InjectMock UserInfo userInfo;
-
-    private AuthenticatedUserSessionManagerImpl userSecurityManager;
+    private AuthenticatedUserSessionManagerImpl sessionManager;
 
     @Transactional
     @BeforeEach
-    void setup() {
-        userSecurityManager =
+    @Override
+    protected void setup() {
+        sessionManager =
                 new AuthenticatedUserSessionManagerImpl(
                         userRepository,
                         userAwareSessionRepository,
                         chatMemoryStore,
                         chatHistoryStore,
-                        identity,
-                        userInfo);
-
-        setupIdentity(OWN_USERNAME, OWN_DISPLAYNAME);
-
-        userRepository.init();
-
+                        identity);
         clearAllInvocations();
-
-        assertEquals(1, userRepository.count());
-        assertEquals(0, userAwareSessionRepository.count());
+        super.setup();
     }
 
     @Transactional
     @AfterEach
-    void destroy() {
+    @Override
+    protected void destroy() {
         for (Session session : userAwareSessionRepository.listAll()) {
             chatMemoryStore.deleteMessages(session.getId());
             chatHistoryStore.deleteMessages(session.getId()).await().indefinitely();
         }
-        userAwareSessionRepository.deleteAll();
-        userRepository.deleteAll();
-        clearInvocations(
-                userRepository, userAwareSessionRepository, chatMemoryStore, chatHistoryStore);
+        super.destroy();
     }
 
     void clearAllInvocations() {
@@ -116,90 +94,11 @@ class AuthenticatedUserSessionManagerImplTest {
                 userRepository, userAwareSessionRepository, chatMemoryStore, chatHistoryStore);
     }
 
-    /**
-     * Set up the mock for the {@link SecurityIdentity} and {@link UserInfo} to return the given
-     * username and display name.
-     *
-     * @param username the username
-     * @param displayName the display name
-     */
-    void setupIdentity(String username, String displayName) {
-        when(identity.getPrincipal()).thenReturn(() -> username);
-        when(userInfo.getName()).thenReturn(displayName);
-    }
-
-    /**
-     * Set up a user in the database for the current {@link SecurityIdentity} and {@link UserInfo}.
-     */
-    @Transactional
-    void setupUser() {
-        String username = identity.getPrincipal().getName();
-        String displayName = userInfo.getName();
-
-        User user = new User(username);
-        user.setDisplayName(displayName);
-        userRepository.persist(user);
-        assertEquals(username, user.getUsername());
-        assertEquals(displayName, user.getDisplayName());
-        assertEquals(0, user.getSessions().size());
-
-        clearAllInvocations();
-    }
-
-    /**
-     * Set up a session for the user of the current {@link SecurityIdentity} and {@link UserInfo}.
-     * Validates the session and enforces that the user has exactly one session.
-     *
-     * @return the ID of the created session
-     * @throws UserNotFoundException if the user does not exist
-     */
-    @Transactional
-    UUID setupSession() throws UserNotFoundException {
-        User user = userRepository.findByUsername(identity.getPrincipal().getName());
-        Session session = new Session(user);
-        user.addSession(session);
-        userRepository.persist(user);
-        assertEquals(identity.getPrincipal().getName(), session.getUser().getUsername());
-        assertEquals(
-                1,
-                userRepository
-                        .findByUsername(identity.getPrincipal().getName())
-                        .getSessions()
-                        .size());
-        assertEquals(1, userAwareSessionRepository.count());
-
-        clearAllInvocations();
-
-        return session.getId();
-    }
-
     void verifyNothingDeleted() {
         verify(chatMemoryStore, never()).deleteMessages(any());
         verify(chatHistoryStore, never()).deleteMessages(any());
         verify(userAwareSessionRepository, never()).delete(any());
         verify(userRepository, never()).delete(any());
-    }
-
-    @Test
-    void registerCreatesUserIfNotExists() {
-        assertTrue(userSecurityManager.register());
-        verify(userRepository, times(1)).persist((User) any());
-        User user = userRepository.findByUsername(OWN_USERNAME);
-        assertEquals(OWN_USERNAME, user.getUsername());
-        assertEquals(OWN_DISPLAYNAME, user.getDisplayName());
-        assertEquals(0, user.getSessions().size());
-    }
-
-    @Test
-    void enforceRegisteredThrowsIfNotRegistered() {
-        assertThrows(
-                UserNotRegisteredException.class, () -> userSecurityManager.enforceRegistered());
-    }
-
-    @Test
-    void deleteThrowsAndDoesNothingIfNotExists() {
-        assertThrows(UserNotRegisteredException.class, () -> userSecurityManager.delete());
-        verifyNothingDeleted();
     }
 
     @Nested
@@ -210,38 +109,18 @@ class AuthenticatedUserSessionManagerImplTest {
         }
 
         @Test
-        void loginUpdatesUser() {
-            String newDisplayName = "New Name";
-            when(userInfo.getName()).thenReturn(newDisplayName);
-
-            assertFalse(userSecurityManager.register());
-            verify(userRepository, times(1)).persist((User) any());
-            User user = userRepository.findByUsername(OWN_USERNAME);
-            assertEquals(OWN_USERNAME, user.getUsername());
-            assertEquals(newDisplayName, user.getDisplayName());
-            assertEquals(0, user.getSessions().size());
-        }
-
-        @Test
-        void deleteDeletesUser() {
-            userSecurityManager.delete();
-            verify(userRepository, times(1)).delete(any());
-            assertEquals(1, userRepository.count()); // Users#ANY still exists
-        }
-
-        @Test
         void checkSessionReturnsFalse() {
-            assertFalse(userSecurityManager.checkSession(UUID.randomUUID()));
+            assertFalse(sessionManager.checkSession(UUID.randomUUID()));
         }
 
         @Test
         void getSessionsReturnsEmptyList() {
-            assertEquals(0, userSecurityManager.getSessions().size());
+            assertEquals(0, sessionManager.getSessions().size());
         }
 
         @Test
         void createSessionCreatesNewSession() {
-            Session session = userSecurityManager.createSession();
+            Session session = sessionManager.createSession();
             assertEquals(OWN_USERNAME, session.getUser().getUsername());
             assertEquals(1, userRepository.findByUsername(OWN_USERNAME).getSessions().size());
             assertEquals(1, userAwareSessionRepository.count());
@@ -251,7 +130,7 @@ class AuthenticatedUserSessionManagerImplTest {
         void deleteSessionThrowsAndDoesNothing() {
             assertThrows(
                     SessionNotFoundException.class,
-                    () -> userSecurityManager.deleteSession(UUID.randomUUID()));
+                    () -> sessionManager.deleteSession(UUID.randomUUID()));
             verifyNothingDeleted();
         }
 
@@ -259,11 +138,7 @@ class AuthenticatedUserSessionManagerImplTest {
         void getChatHistoryThrowsAndDoesNothing() {
             assertThrows(
                     SessionNotFoundException.class,
-                    () ->
-                            userSecurityManager
-                                    .getChatHistory(UUID.randomUUID())
-                                    .await()
-                                    .indefinitely());
+                    () -> sessionManager.getChatHistory(UUID.randomUUID()).await().indefinitely());
             verify(chatHistoryStore, never()).getMessages(any());
         }
     }
@@ -273,7 +148,7 @@ class AuthenticatedUserSessionManagerImplTest {
         UUID foreignSessionId;
 
         @BeforeEach
-        void setup() throws UserNotFoundException {
+        void setup() {
             setupIdentity(FOREIGN_USERNAME, FOREIGN_DISPLAYNAME);
             setupUser();
             foreignSessionId = setupSession();
@@ -282,25 +157,20 @@ class AuthenticatedUserSessionManagerImplTest {
         }
 
         @Test
-        void enforceRegisteredDoesNotThrowIfLoggedIn() {
-            assertDoesNotThrow(() -> userSecurityManager.enforceRegistered());
-        }
-
-        @Test
         void checkSessionReturnsFalseForForeignSession() {
-            assertFalse(userSecurityManager.checkSession(foreignSessionId));
+            assertFalse(sessionManager.checkSession(foreignSessionId));
         }
 
         @Test
         void getSessionsDoesNotReturnForeignSession() {
-            assertEquals(0, userSecurityManager.getSessions().size());
+            assertEquals(0, sessionManager.getSessions().size());
         }
 
         @Test
         void deleteSessionThrowsAndDoesNothingForForeignSession() {
             assertThrows(
                     SessionNotFoundException.class,
-                    () -> userSecurityManager.deleteSession(foreignSessionId));
+                    () -> sessionManager.deleteSession(foreignSessionId));
             verifyNothingDeleted();
         }
 
@@ -308,11 +178,7 @@ class AuthenticatedUserSessionManagerImplTest {
         void getChatHistoryThrowsAndDoesNothingForForeignSession() {
             assertThrows(
                     SessionNotFoundException.class,
-                    () ->
-                            userSecurityManager
-                                    .getChatHistory(foreignSessionId)
-                                    .await()
-                                    .indefinitely());
+                    () -> sessionManager.getChatHistory(foreignSessionId).await().indefinitely());
             verify(chatHistoryStore, never()).getMessages(any());
         }
     }
@@ -322,40 +188,31 @@ class AuthenticatedUserSessionManagerImplTest {
         UUID ownSessionId;
 
         @BeforeEach
-        void setup() throws UserNotFoundException {
+        void setup() {
             setupUser();
             ownSessionId = setupSession();
         }
 
         @Test
-        void deleteDeletesSessions() {
-            userSecurityManager.delete();
-            verify(chatMemoryStore, times(1)).deleteMessages(ownSessionId);
-            verify(chatHistoryStore, times(1)).deleteMessages(ownSessionId);
-            verify(userRepository, times(1)).delete(any());
-            assertEquals(0, userAwareSessionRepository.count());
-        }
-
-        @Test
         void checkSessionReturnsTrueForOwnSession() {
-            assertTrue(userSecurityManager.checkSession(ownSessionId));
+            assertTrue(sessionManager.checkSession(ownSessionId));
         }
 
         @Test
         void getSessionsReturnsOwnSession() {
             assertEquals(
                     ownSessionId,
-                    userSecurityManager.getSessions().stream()
+                    sessionManager.getSessions().stream()
                             .filter(session -> session.getId().equals(ownSessionId))
                             .findFirst()
                             .orElseThrow()
                             .getId());
-            assertEquals(1, userSecurityManager.getSessions().size());
+            assertEquals(1, sessionManager.getSessions().size());
         }
 
         @Test
         void deleteSessionDeletesOwnSession() throws SessionNotFoundException {
-            userSecurityManager.deleteSession(ownSessionId);
+            sessionManager.deleteSession(ownSessionId);
             verify(chatMemoryStore, times(1)).deleteMessages(ownSessionId);
             verify(chatHistoryStore, times(1)).deleteMessages(ownSessionId);
             verify(userAwareSessionRepository, times(1)).delete(any());
@@ -366,7 +223,7 @@ class AuthenticatedUserSessionManagerImplTest {
         void getChatHistoryReturnsOwnChatHistory() {
             when(chatMemoryStore.getMessages(ownSessionId)).thenReturn(CHAT_HISTORY);
             Uni<List<ChatMessageRecord>> uni =
-                    assertDoesNotThrow(() -> userSecurityManager.getChatHistory(ownSessionId));
+                    assertDoesNotThrow(() -> sessionManager.getChatHistory(ownSessionId));
             UniAssertSubscriber<Collection<ChatMessageRecord>> subscriber =
                     uni.subscribe().withSubscriber(UniAssertSubscriber.create());
             subscriber.assertCompleted().assertItem(Collections.emptyList());

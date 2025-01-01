@@ -19,18 +19,21 @@
  */
 package com.github.llamara.ai.internal.config;
 
-import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
-import io.smallrye.config.ConfigMapping;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
-/**
- * Provides configuration for the {@link UserSessionManager}.
- *
- * @author Florian Hotze - Initial contribution
- */
-@ConfigMapping(prefix = "security")
-public interface UserSecurityConfig {
+import io.quarkus.test.Mock;
+import io.smallrye.config.SmallRyeConfig;
+import org.eclipse.microprofile.config.Config;
 
-    boolean anonymousUserEnabled();
+public class SecurityConfigMockProducer {
+    @Inject Config config;
 
-    int anonymousUserSessionTimeout();
+    @Produces
+    @ApplicationScoped
+    @Mock
+    SecurityConfig securityConfig() {
+        return config.unwrap(SmallRyeConfig.class).getConfigMapping(SecurityConfig.class);
+    }
 }

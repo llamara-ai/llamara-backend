@@ -28,35 +28,16 @@ import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredEx
 import io.smallrye.mutiny.Uni;
 
 /**
- * Defines the interface for handling chat sessions for a user identified by its {@link
- * io.quarkus.security.identity.SecurityIdentity} and {@link io.quarkus.oidc.UserInfo}.
- * Authentication itself is handled by the OIDC provider, e.g. Keycloak.
+ * Interface specifying the API for managing sessions. A session is identified by a UUID and is
+ * owned by a {@link com.github.llamara.ai.internal.internal.security.user.User}.
  *
- * <p>Users must log in before any other operation can be performed. If the user is not logged in
- * and tries to perform an operation, the operation can fail with {@link
+ * <p>Users must register before any user-specific operation can be performed. If the user has not
+ * registered and tries to perform an operation, the operation can fail with {@link
  * UserNotRegisteredException}.
  *
  * @author Florian Hotze - Initial contribution
  */
-public interface UserSessionManager {
-    /**
-     * Registers the user in, i.e. creates or updates the user in the database.
-     *
-     * @return {@code true} if the user was created, {@code false} if the user was updated
-     */
-    boolean register();
-
-    /**
-     * Enforces that the user is registered. If the user is not registered, a {@link
-     * UserNotRegisteredException} is thrown.
-     *
-     * @throws UserNotRegisteredException
-     */
-    void enforceRegistered() throws UserNotRegisteredException;
-
-    /** Deletes the current user and all his data. This includes removing all sessions. */
-    void delete();
-
+public interface SessionManager {
     /**
      * Check whether the given session is valid for the current user.
      *

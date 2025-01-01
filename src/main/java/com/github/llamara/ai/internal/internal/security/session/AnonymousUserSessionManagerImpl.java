@@ -34,16 +34,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.internal.config.UserSecurityConfig;
+import com.github.llamara.ai.internal.config.SecurityConfig;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Shutdown;
 import io.smallrye.mutiny.Uni;
 
 /**
- * Implementation of {@link UserSessionManager} for handling anonymous users.
+ * Implementation of {@link SessionManager} for handling anonymous users.
  *
  * <p>Anonymous users can only have one session, cannot list existing sessions and have no chat
  * history. The session is automatically deleted after a configurable timeout.
@@ -52,8 +51,8 @@ import io.smallrye.mutiny.Uni;
  */
 @Typed(AnonymousUserSessionManagerImpl.class)
 @ApplicationScoped
-public class AnonymousUserSessionManagerImpl implements UserSessionManager {
-    private final UserSecurityConfig config;
+public class AnonymousUserSessionManagerImpl implements SessionManager {
+    private final SecurityConfig config;
     private final ChatMemoryStore chatMemoryStore;
 
     private final Set<UUID> anonymousSessions = Collections.synchronizedSet(new HashSet<>());
@@ -62,8 +61,7 @@ public class AnonymousUserSessionManagerImpl implements UserSessionManager {
             Collections.synchronizedMap(new HashMap<>());
 
     @Inject
-    public AnonymousUserSessionManagerImpl(
-            UserSecurityConfig config, ChatMemoryStore chatMemoryStore) {
+    public AnonymousUserSessionManagerImpl(SecurityConfig config, ChatMemoryStore chatMemoryStore) {
         this.config = config;
         this.chatMemoryStore = chatMemoryStore;
     }
@@ -83,21 +81,6 @@ public class AnonymousUserSessionManagerImpl implements UserSessionManager {
                         e);
             }
         }
-    }
-
-    @Override
-    public boolean register() {
-        return true;
-    }
-
-    @Override
-    public void enforceRegistered() throws UserNotRegisteredException {
-        // do nothing
-    }
-
-    @Override
-    public void delete() {
-        // Do nothing here
     }
 
     @Override

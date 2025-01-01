@@ -43,8 +43,8 @@ import com.github.llamara.ai.internal.internal.chat.aiservice.ChatModelAiService
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
 import com.github.llamara.ai.internal.internal.security.Roles;
 import com.github.llamara.ai.internal.internal.security.session.Session;
+import com.github.llamara.ai.internal.internal.security.session.SessionManager;
 import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundException;
-import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.common.annotation.NonBlocking;
@@ -72,16 +72,16 @@ import org.jboss.resteasy.reactive.RestMulti;
                 "Bad Request, usually returned when an operation is requested before the user has"
                         + " logged in.")
 class ChatResource {
-    private final UserSessionManager userSessionManager;
+    private final SessionManager sessionManager;
     private final ChatModelProvider chatModelProvider;
     private final SecurityIdentity identity;
 
     @Inject
     ChatResource(
-            UserSessionManager userSessionManager,
+            SessionManager sessionManager,
             ChatModelProvider chatModelProvider,
             SecurityIdentity identity) {
-        this.userSessionManager = userSessionManager;
+        this.sessionManager = sessionManager;
         this.chatModelProvider = chatModelProvider;
         this.identity = identity;
     }
@@ -132,7 +132,7 @@ class ChatResource {
                     UUID sessionId,
             String prompt)
             throws ChatModelNotFoundException, SessionNotFoundException {
-        if (!userSessionManager.checkSession(sessionId)) {
+        if (!sessionManager.checkSession(sessionId)) {
             throw new SessionNotFoundException(sessionId);
         }
         ChatModelAiService chatModelAiService = chatModelProvider.getModel(uid).service();
@@ -174,7 +174,7 @@ class ChatResource {
                     UUID sessionId,
             String prompt)
             throws ChatModelNotFoundException {
-        if (!userSessionManager.checkSession(sessionId)) {
+        if (!sessionManager.checkSession(sessionId)) {
             throw new NotFoundException("Session not found.");
         }
         ChatModelAiService chatModelAiService = chatModelProvider.getModel(uid).service();
@@ -208,7 +208,7 @@ class ChatResource {
                                             type = SchemaType.ARRAY,
                                             implementation = Session.class)))
     public Collection<Session> getSessions() {
-        return userSessionManager.getSessions();
+        return sessionManager.getSessions();
     }
 
     @Blocking
@@ -222,7 +222,7 @@ class ChatResource {
             description = "Created",
             content = @Content(schema = @Schema(implementation = Session.class)))
     public Session createSession() {
-        return userSessionManager.createSession();
+        return sessionManager.createSession();
     }
 
     @Blocking
@@ -234,7 +234,7 @@ class ChatResource {
     @APIResponse(responseCode = "404", description = "No session with the given ID found.")
     public void deleteSession(@PathParam("sessionId") UUID sessionId)
             throws SessionNotFoundException {
-        userSessionManager.deleteSession(sessionId);
+        sessionManager.deleteSession(sessionId);
     }
 
     @Blocking
@@ -262,6 +262,6 @@ class ChatResource {
                             required = true)
                     UUID sessionId)
             throws SessionNotFoundException {
-        return userSessionManager.getChatHistory(sessionId);
+        return sessionManager.getChatHistory(sessionId);
     }
 }

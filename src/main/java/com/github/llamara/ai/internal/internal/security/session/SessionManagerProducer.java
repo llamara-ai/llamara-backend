@@ -28,35 +28,35 @@ import jakarta.inject.Inject;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**
- * Provides the correct {@link UserSessionManager} implementation depending on the {@link
+ * Provides the correct {@link SessionManager} implementation depending on the {@link
  * SecurityIdentity} in a Jakarta REST request.
  *
  * @author Florian Hotze - Initial contribution
  */
 @ApplicationScoped
-public class UserSessionManagerProducer {
+public class SessionManagerProducer {
     private final SecurityIdentity identity;
-    private final AuthenticatedUserSessionManagerImpl authorizedUserSecurityManager;
+    private final AuthenticatedUserSessionManagerImpl authenticatedUserSessionManager;
     private final AnonymousUserSessionManagerImpl anonymousUserSecurityManager;
 
     @Inject
-    UserSessionManagerProducer(
+    SessionManagerProducer(
             SecurityIdentity identity,
-            AuthenticatedUserSessionManagerImpl authorizedUserSecurityManager,
+            AuthenticatedUserSessionManagerImpl authenticatedUserSessionManager,
             AnonymousUserSessionManagerImpl anonymousUserSecurityManager) {
         this.identity = identity;
-        this.authorizedUserSecurityManager = authorizedUserSecurityManager;
+        this.authenticatedUserSessionManager = authenticatedUserSessionManager;
         this.anonymousUserSecurityManager = anonymousUserSecurityManager;
     }
 
     @Produces
     @Default
     @RequestScoped // selected bean must be request scoped, as identity is request scoped
-    UserSessionManager produceSecurityManager() {
+    SessionManager produceSecurityManager() {
         if (identity.isAnonymous()) {
             return anonymousUserSecurityManager;
         } else {
-            return authorizedUserSecurityManager;
+            return authenticatedUserSessionManager;
         }
     }
 }
