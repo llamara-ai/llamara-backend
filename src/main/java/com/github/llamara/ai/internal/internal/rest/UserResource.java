@@ -29,7 +29,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import com.github.llamara.ai.internal.internal.security.Roles;
-import com.github.llamara.ai.internal.internal.security.session.SessionManager;
+import com.github.llamara.ai.internal.internal.security.user.UserManager;
 import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;
@@ -47,13 +47,13 @@ import org.jboss.resteasy.reactive.ResponseStatus;
 @Path("/rest/user")
 public class UserResource {
 
-    private final SessionManager sessionManager;
+    private final UserManager userManager;
     private final SecurityIdentity identity;
     private final UserInfo userInfo;
 
     @Inject
-    UserResource(SessionManager sessionManager, SecurityIdentity identity, UserInfo userInfo) {
-        this.sessionManager = sessionManager;
+    UserResource(UserManager userManager, SecurityIdentity identity, UserInfo userInfo) {
+        this.userManager = userManager;
         this.identity = identity;
         this.userInfo = userInfo;
     }
@@ -70,7 +70,7 @@ public class UserResource {
             description = "OK",
             content = @Content(schema = @Schema(implementation = UserInfoDTO.class)))
     public UserInfoDTO login() {
-        sessionManager.register();
+        userManager.register();
         return new UserInfoDTO(identity, userInfo);
     }
 
@@ -86,7 +86,7 @@ public class UserResource {
                     "Bad Request. Returned when an operation is requested before the user is logged"
                             + " in.")
     public void delete() {
-        sessionManager.delete();
+        userManager.delete();
     }
 
     public static class UserInfoDTO {

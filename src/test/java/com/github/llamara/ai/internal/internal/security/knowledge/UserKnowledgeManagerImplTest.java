@@ -50,6 +50,7 @@ import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.session.SessionManager;
 import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.internal.security.user.User;
+import com.github.llamara.ai.internal.internal.security.user.UserManager;
 import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -93,6 +94,7 @@ class UserKnowledgeManagerImplTest {
     @InjectMock EmbeddingStorePermissionMetadataManager embeddingStorePermissionMetadataManager;
 
     @InjectSpy UserAwareKnowledgeRepository userAwareKnowledgeRepository;
+    @InjectMock UserManager userManager;
     @InjectMock SessionManager sessionManager;
 
     @InjectMock SecurityIdentity identity;
@@ -113,7 +115,7 @@ class UserKnowledgeManagerImplTest {
                                 embeddingStorePermissionMetadataManager));
         userKnowledgeManager =
                 new UserKnowledgeManagerImpl(
-                        knowledgeManager, userAwareKnowledgeRepository, sessionManager, identity);
+                        knowledgeManager, userAwareKnowledgeRepository, userManager, identity);
 
         userRepository.init();
         userRepository.persist(OWN_USER);
@@ -121,7 +123,7 @@ class UserKnowledgeManagerImplTest {
 
         clearAllInvocations();
 
-        doThrow(UserNotRegisteredException.class).when(sessionManager).enforceRegistered();
+        doThrow(UserNotRegisteredException.class).when(userManager).enforceRegistered();
 
         assertEquals(0, knowledgeRepository.count());
         assertEquals(3, userRepository.count());
@@ -161,7 +163,7 @@ class UserKnowledgeManagerImplTest {
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREGIN_USER);
             setupIdentity(OWN_USER);
 
-            doNothing().when(sessionManager).enforceRegistered();
+            doNothing().when(userManager).enforceRegistered();
             clearAllInvocations();
 
             assertEquals(2, knowledgeRepository.count());
@@ -311,7 +313,7 @@ class UserKnowledgeManagerImplTest {
             knowledgeManager.setPermission(roKnowledgeId, OWN_USER, Permission.READONLY);
             setupIdentity(OWN_USER);
 
-            doNothing().when(sessionManager).enforceRegistered();
+            doNothing().when(userManager).enforceRegistered();
             clearAllInvocations();
 
             assertEquals(1, knowledgeRepository.count());

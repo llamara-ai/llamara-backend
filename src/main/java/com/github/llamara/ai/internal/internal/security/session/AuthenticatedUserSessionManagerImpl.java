@@ -35,7 +35,6 @@ import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
-import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.mutiny.Uni;
 
@@ -56,7 +55,6 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
     private final ChatHistoryStore chatHistoryStore;
 
     private final SecurityIdentity identity;
-    private final UserInfo userInfo;
 
     @Inject
     AuthenticatedUserSessionManagerImpl(
@@ -64,54 +62,12 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
             UserAwareSessionRepository userAwareSessionRepository,
             ChatMemoryStore chatMemoryStore,
             ChatHistoryStore chatHistoryStore,
-            SecurityIdentity identity,
-            UserInfo userInfo) {
+            SecurityIdentity identity) {
         this.userRepository = userRepository;
         this.userAwareSessionRepository = userAwareSessionRepository;
         this.chatMemoryStore = chatMemoryStore;
         this.chatHistoryStore = chatHistoryStore;
         this.identity = identity;
-        this.userInfo = userInfo;
-    }
-
-    @Override
-    public boolean register() {
-        boolean created = false;
-        QuarkusTransaction.begin();
-        User user = userRepository.findByUsername(identity.getPrincipal().getName());
-        if (user == null) {
-            user = new User(identity.getPrincipal().getName());
-            Log.debug(
-                    String.format(
-                            "User '%s' not found in database, creating new user.",
-                            user.getUsername()));
-            created = true;
-        }
-        Log.debug(String.format("User '%s' found in database, updating user.", user.getUsername()));
-        user.setDisplayName(userInfo.getName());
-        userRepository.persist(user);
-        QuarkusTransaction.commit();
-        return created;
-    }
-
-    @Override
-    public void enforceRegistered() {
-        User user = userRepository.findByUsername(identity.getPrincipal().getName());
-        if (user == null) {
-            throw new UserNotRegisteredException(identity.getPrincipal().getName());
-        }
-    }
-
-    @Override
-    public void delete() {
-        User user = getUser();
-        for (Session session : user.getSessions()) {
-            deleteSessionData(session.getId());
-        }
-        QuarkusTransaction.begin();
-        userRepository.delete(user);
-        QuarkusTransaction.commit();
-        Log.debug(String.format("Deleted user '%s' from database.", user.getUsername()));
     }
 
     @Override
@@ -158,16 +114,12 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
         return session;
     }
 
-    private void deleteSessionData(UUID sessionId) {
-        chatMemoryStore.deleteMessages(sessionId);
-        chatHistoryStore.deleteMessages(sessionId).subscribe().with(item -> {}, failure -> {});
-    }
-
     @Transactional
     @Override
     public void deleteSession(UUID sessionId) throws SessionNotFoundException {
         userAwareSessionRepository.deleteById(sessionId);
-        deleteSessionData(sessionId);
+        chatMemoryStore.deleteMessages(sessionId);
+        chatHistoryStore.deleteMessages(sessionId).subscribe().with(item -> {}, failure -> {});
         Log.debug(
                 String.format(
                         "Deleted session '%s' for user '%s'.",

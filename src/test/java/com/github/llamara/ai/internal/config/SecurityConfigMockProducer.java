@@ -27,13 +27,13 @@ import io.quarkus.test.Mock;
 import io.smallrye.config.SmallRyeConfig;
 import org.eclipse.microprofile.config.Config;
 
-public class UserSecurityConfigMockProducer {
+public class SecurityConfigMockProducer {
     @Inject Config config;
 
     @Produces
     @ApplicationScoped
     @Mock
-    SecurityConfig userSecurityConfig() {
+    SecurityConfig securityConfig() {
         return config.unwrap(SmallRyeConfig.class).getConfigMapping(SecurityConfig.class);
     }
 }
