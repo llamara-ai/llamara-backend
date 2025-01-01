@@ -36,7 +36,7 @@ import com.github.llamara.ai.internal.internal.knowledge.KnowledgeNotFoundExcept
 import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.Roles;
-import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
+import com.github.llamara.ai.internal.internal.security.session.SessionManager;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -51,7 +51,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     private final KnowledgeManager delegate;
     private final UserAwareKnowledgeRepository userAwareRepository;
-    private final UserSessionManager userSessionManager;
+    private final SessionManager sessionManager;
 
     private final SecurityIdentity identity;
 
@@ -59,23 +59,23 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     UserKnowledgeManagerImpl(
             KnowledgeManager delegate,
             UserAwareKnowledgeRepository userAwareRepository,
-            UserSessionManager userSessionManager,
+            SessionManager sessionManager,
             SecurityIdentity identity) {
         this.delegate = delegate;
         this.userAwareRepository = userAwareRepository;
-        this.userSessionManager = userSessionManager;
+        this.sessionManager = sessionManager;
         this.identity = identity;
     }
 
     @Override
     public Collection<Knowledge> getAllKnowledge() {
-        userSessionManager.enforceRegistered();
+        sessionManager.enforceRegistered();
         return userAwareRepository.listAll();
     }
 
     @Override
     public Knowledge getKnowledge(UUID id) throws KnowledgeNotFoundException {
-        userSessionManager.enforceRegistered();
+        sessionManager.enforceRegistered();
         Knowledge knowledge = userAwareRepository.findById(id);
         if (knowledge == null) {
             throw new KnowledgeNotFoundException(id);
@@ -98,7 +98,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
      */
     private void enforceKnowledgeEditable(UUID id)
             throws KnowledgeNotFoundException, ForbiddenException {
-        userSessionManager.enforceRegistered();
+        sessionManager.enforceRegistered();
         if (identity.hasRole(Roles.ADMIN)) {
             return;
         }
@@ -121,7 +121,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException {
-        userSessionManager.enforceRegistered();
+        sessionManager.enforceRegistered();
 
         String checksum = Utils.generateChecksum(file);
         Optional<Knowledge> existingKnowledge = userAwareRepository.existsChecksum(checksum);
@@ -175,7 +175,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public NamedFileContainer getFile(UUID id)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
-        userSessionManager.enforceRegistered();
+        sessionManager.enforceRegistered();
         Knowledge knowledge = getKnowledge(id);
         return delegate.getFile(knowledge.getId());
     }

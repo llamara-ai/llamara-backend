@@ -33,7 +33,7 @@ public class UserSecurityConfigMockProducer {
     @Produces
     @ApplicationScoped
     @Mock
-    UserSecurityConfig userSecurityConfig() {
-        return config.unwrap(SmallRyeConfig.class).getConfigMapping(UserSecurityConfig.class);
+    SecurityConfig userSecurityConfig() {
+        return config.unwrap(SmallRyeConfig.class).getConfigMapping(SecurityConfig.class);
     }
 }

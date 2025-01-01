@@ -40,7 +40,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.mutiny.Uni;
 
 /**
- * {@link UserSessionManager} implementation for handling authenticated users.
+ * {@link SessionManager} implementation for handling authenticated users.
  *
  * <p>Authenticated users can have multiple sessions, list existing sessions and have chat history.
  * Their sessions are stored in the database and are not automatically deleted.
@@ -49,7 +49,7 @@ import io.smallrye.mutiny.Uni;
  */
 @Typed(AuthenticatedUserSessionManagerImpl.class)
 @ApplicationScoped
-public class AuthenticatedUserSessionManagerImpl implements UserSessionManager {
+public class AuthenticatedUserSessionManagerImpl implements SessionManager {
     private final UserRepository userRepository;
     private final UserAwareSessionRepository userAwareSessionRepository;
     private final ChatMemoryStore chatMemoryStore;

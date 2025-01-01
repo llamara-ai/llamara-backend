@@ -35,7 +35,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.internal.config.UserSecurityConfig;
+import com.github.llamara.ai.internal.config.SecurityConfig;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
@@ -56,7 +56,7 @@ class AnonymousUserSessionManagerImplTest {
     private static final List<ChatMessage> CHAT_HISTORY =
             List.of(new UserMessage("Hello, world!"), new AiMessage("Hi!"));
 
-    @InjectMock UserSecurityConfig securityConfig;
+    @InjectMock SecurityConfig securityConfig;
     @InjectMock ChatMemoryStore chatMemoryStore;
 
     private AnonymousUserSessionManagerImpl userSecurityManager;

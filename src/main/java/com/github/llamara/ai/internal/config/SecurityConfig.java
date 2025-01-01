@@ -19,16 +19,15 @@
  */
 package com.github.llamara.ai.internal.config;
 
-import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
 import io.smallrye.config.ConfigMapping;
 
 /**
- * Provides configuration for the {@link UserSessionManager}.
+ * Provides configuration for the security package.
  *
  * @author Florian Hotze - Initial contribution
  */
 @ConfigMapping(prefix = "security")
-public interface UserSecurityConfig {
+public interface SecurityConfig {
 
     boolean anonymousUserEnabled();
 

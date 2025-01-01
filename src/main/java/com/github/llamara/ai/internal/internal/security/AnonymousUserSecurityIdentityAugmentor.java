@@ -22,7 +22,7 @@ package com.github.llamara.ai.internal.internal.security;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.internal.config.UserSecurityConfig;
+import com.github.llamara.ai.internal.config.SecurityConfig;
 import com.github.llamara.ai.internal.internal.security.session.AnonymousUserSessionManagerImpl;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -32,17 +32,17 @@ import io.smallrye.mutiny.Uni;
 
 /**
  * Augments the {@link SecurityIdentity} with the role {@link Roles#ANONYMOUS_USER} if {@link
- * UserSecurityConfig#anonymousUserEnabled()} is {@code true}. This allows configurable anonymous
- * access to the application, which is then handled by the {@link AnonymousUserSessionManagerImpl}.
+ * SecurityConfig#anonymousUserEnabled()} is {@code true}. This allows configurable anonymous access
+ * to the application, which is then handled by the {@link AnonymousUserSessionManagerImpl}.
  *
  * @author Florian Hotze - Initial contribution
  */
 @ApplicationScoped
 public class AnonymousUserSecurityIdentityAugmentor implements SecurityIdentityAugmentor {
-    private final UserSecurityConfig config;
+    private final SecurityConfig config;
 
     @Inject
-    AnonymousUserSecurityIdentityAugmentor(UserSecurityConfig config) {
+    AnonymousUserSecurityIdentityAugmentor(SecurityConfig config) {
         this.config = config;
     }
 

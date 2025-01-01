@@ -38,7 +38,7 @@ import io.smallrye.mutiny.Uni;
  *
  * @author Florian Hotze - Initial contribution
  */
-public interface UserSessionManager {
+public interface SessionManager {
     /**
      * Registers the user in, i.e. creates or updates the user in the database.
      *

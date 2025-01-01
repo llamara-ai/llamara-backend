@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.internal.config.UserSecurityConfig;
+import com.github.llamara.ai.internal.config.SecurityConfig;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.quarkus.test.InjectMock;
@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 /** Tests for {@link AnonymousUserSecurityIdentityAugmentor}. */
 @QuarkusTest
 class AnonymousUserSecurityIdentityAugmentorTest {
-    @InjectMock UserSecurityConfig config;
+    @InjectMock SecurityConfig config;
 
     private AnonymousUserSecurityIdentityAugmentor augmentor;
 
