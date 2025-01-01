@@ -87,12 +87,14 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
      * Check whether the given knowledge is editable for the current user.
      *
      * <ul>
-     *     <li>Admins always have read/write permission.</li>
+     *   <li>Admins always have read/write permission.
      * </ul>
      *
      * @param id the ID of the knowledge to check
-     * @throws KnowledgeNotFoundException if the knowledge with the given ID does not exist or the user has no access to it
-     * @throws ForbiddenException if the user is not allowed to edit the knowledge, but has read access
+     * @throws KnowledgeNotFoundException if the knowledge with the given ID does not exist or the
+     *     user has no access to it
+     * @throws ForbiddenException if the user is not allowed to edit the knowledge, but has read
+     *     access
      */
     private void enforceKnowledgeEditable(UUID id)
             throws KnowledgeNotFoundException, ForbiddenException {

@@ -22,8 +22,6 @@ package com.github.llamara.ai.internal.internal.knowledge;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
-
-import com.github.llamara.ai.internal.internal.security.Users;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -46,6 +44,7 @@ import com.github.llamara.ai.internal.internal.knowledge.embedding.EmbeddingStor
 import com.github.llamara.ai.internal.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.internal.security.Permission;
+import com.github.llamara.ai.internal.internal.security.Users;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.data.segment.TextSegment;
@@ -121,7 +120,8 @@ class KnowledgeManagerImplTest {
         assertEquals(0, knowledgeRepository.count());
 
         if (userRepository.findByUsername(Users.ANY_USERNAME) == null) {
-            userRepository.persist(Users.ANY); // re-create Users#ANY after it has been deleted in destroy()
+            userRepository.persist(
+                    Users.ANY); // re-create Users#ANY after it has been deleted in destroy()
         }
         userRepository.persist(OWNER_USER);
         userRepository.persist(OTHER_USER);

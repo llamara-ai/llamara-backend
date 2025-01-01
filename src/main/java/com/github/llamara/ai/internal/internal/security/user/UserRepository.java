@@ -19,12 +19,12 @@
  */
 package com.github.llamara.ai.internal.internal.security.user;
 
-import com.github.llamara.ai.internal.internal.security.Users;
-import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
-
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.transaction.Transactional;
+
+import com.github.llamara.ai.internal.internal.security.Users;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.runtime.Startup;
 
 /**
  * Hibernate ORM {@link PanacheRepository} for {@link User}.

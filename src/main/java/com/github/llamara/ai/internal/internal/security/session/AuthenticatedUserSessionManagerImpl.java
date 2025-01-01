@@ -87,9 +87,7 @@ public class AuthenticatedUserSessionManagerImpl implements UserSessionManager {
                             user.getUsername()));
             created = true;
         }
-        Log.debug(
-                String.format(
-                        "User '%s' found in database, updating user.", user.getUsername()));
+        Log.debug(String.format("User '%s' found in database, updating user.", user.getUsername()));
         user.setDisplayName(userInfo.getName());
         userRepository.persist(user);
         QuarkusTransaction.commit();

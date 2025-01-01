@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import com.github.llamara.ai.internal.internal.security.Users;
 import jakarta.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -38,6 +36,7 @@ import static org.mockito.Mockito.*;
 
 import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
+import com.github.llamara.ai.internal.internal.security.Users;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserNotFoundException;
 import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
@@ -93,7 +92,8 @@ class AuthenticatedUserSessionManagerImplTest {
         setupIdentity(OWN_USERNAME, OWN_DISPLAYNAME);
 
         if (userRepository.findByUsername(Users.ANY_USERNAME) == null) {
-            userRepository.persist(Users.ANY); // re-create Users#ANY after it has been deleted in destroy()
+            userRepository.persist(
+                    Users.ANY); // re-create Users#ANY after it has been deleted in destroy()
         }
 
         clearAllInvocations();
@@ -116,7 +116,8 @@ class AuthenticatedUserSessionManagerImplTest {
     }
 
     void clearAllInvocations() {
-        clearInvocations(userRepository, userAwareSessionRepository, chatMemoryStore, chatHistoryStore);
+        clearInvocations(
+                userRepository, userAwareSessionRepository, chatMemoryStore, chatHistoryStore);
     }
 
     /**
@@ -195,7 +196,8 @@ class AuthenticatedUserSessionManagerImplTest {
 
     @Test
     void enforceRegisteredThrowsIfNotRegistered() {
-        assertThrows(UserNotRegisteredException.class, () -> userSecurityManager.enforceRegistered());
+        assertThrows(
+                UserNotRegisteredException.class, () -> userSecurityManager.enforceRegistered());
     }
 
     @Test

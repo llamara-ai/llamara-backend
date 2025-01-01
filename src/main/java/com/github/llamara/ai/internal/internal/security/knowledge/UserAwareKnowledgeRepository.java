@@ -22,8 +22,6 @@ package com.github.llamara.ai.internal.internal.security.knowledge;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.github.llamara.ai.internal.internal.security.Users;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
@@ -33,6 +31,7 @@ import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.internal.knowledge.KnowledgeRepository;
 import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.Roles;
+import com.github.llamara.ai.internal.internal.security.Users;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**
@@ -56,8 +55,8 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
      * Check if the current user has at least read permission for the given knowledge entry.
      *
      * <ul>
-     *     <li>Owners always have read/write permission.
-     *     <li>Anonymous users only have access if {@link Users#ANY} has read access.</li>
+     *   <li>Owners always have read/write permission.
+     *   <li>Anonymous users only have access if {@link Users#ANY} has read access.
      * </ul>
      *
      * @param knowledge
@@ -74,8 +73,8 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
     }
 
     /**
-     * List all knowledge entries that the user has at least read permission for.
-     * Admins have access to everything.
+     * List all knowledge entries that the user has at least read permission for. Admins have access
+     * to everything.
      *
      * @return
      */
@@ -87,8 +86,8 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
     }
 
     /**
-     * Find a knowledge entry by its ID and check if the user has at least read permission.
-     * Admins have access to everything.
+     * Find a knowledge entry by its ID and check if the user has at least read permission. Admins
+     * have access to everything.
      *
      * @param id
      * @return the entity found, or <code>null</code> if not found

@@ -33,7 +33,8 @@ import io.smallrye.mutiny.Uni;
  * Authentication itself is handled by the OIDC provider, e.g. Keycloak.
  *
  * <p>Users must log in before any other operation can be performed. If the user is not logged in
- * and tries to perform an operation, the operation can fail with {@link UserNotRegisteredException}.
+ * and tries to perform an operation, the operation can fail with {@link
+ * UserNotRegisteredException}.
  *
  * @author Florian Hotze - Initial contribution
  */
@@ -46,8 +47,9 @@ public interface UserSessionManager {
     boolean register();
 
     /**
-     * Enforces that the user is registered.
-     * If the user is not registered, a {@link UserNotRegisteredException} is thrown.
+     * Enforces that the user is registered. If the user is not registered, a {@link
+     * UserNotRegisteredException} is thrown.
+     *
      * @throws UserNotRegisteredException
      */
     void enforceRegistered() throws UserNotRegisteredException;
