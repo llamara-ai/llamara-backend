@@ -48,9 +48,9 @@ import com.github.llamara.ai.internal.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
+import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.internal.security.user.User;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
-import com.github.llamara.ai.internal.internal.security.user.UserRepository;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -68,7 +68,8 @@ class UserKnowledgeManagerImplTest {
     private static final Path FILE = Path.of("src/test/resources/llamara.txt");
     private static final String FILE_NAME = "llamara.txt";
     private static final String FILE_MIME_TYPE = "text/plain";
-    private static final String FILE_CHECKSUM;
+    private static final String
+            FILE_CHECKSUM; // NOSONAR: ignore this unused static field as this is a test class
 
     static {
         try {
@@ -81,7 +82,7 @@ class UserKnowledgeManagerImplTest {
     private static final User OWN_USER = new User("own");
     private static final User FOREGIN_USER = new User("foreign");
 
-    @Inject UserRepository userRepository;
+    @Inject TestUserRepository userRepository;
 
     // for TestKnowledgeManagerImpl
     @InjectSpy KnowledgeRepository knowledgeRepository;
@@ -116,12 +117,16 @@ class UserKnowledgeManagerImplTest {
                         userSessionManager,
                         identity);
 
+        userRepository.init();
         userRepository.persist(OWN_USER);
         userRepository.persist(FOREGIN_USER);
 
-        doThrow(UserNotLoggedInException.class).when(userSessionManager).enforceLoggedIn();
+        clearAllInvocations();
+
+        doThrow(UserNotRegisteredException.class).when(userSessionManager).enforceRegistered();
 
         assertEquals(0, knowledgeRepository.count());
+        assertEquals(3, userRepository.count());
     }
 
     @Transactional
@@ -158,7 +163,7 @@ class UserKnowledgeManagerImplTest {
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREGIN_USER);
             setupIdentity(OWN_USER);
 
-            doNothing().when(userSessionManager).enforceLoggedIn();
+            doNothing().when(userSessionManager).enforceRegistered();
             clearAllInvocations();
 
             assertEquals(2, knowledgeRepository.count());

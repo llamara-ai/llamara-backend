@@ -37,7 +37,6 @@ import static org.mockito.Mockito.when;
 
 import com.github.llamara.ai.internal.config.UserSecurityConfig;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -91,13 +90,13 @@ class AnonymousUserSessionManagerImplTest {
     }
 
     @Test
-    void loginAlwaysClaimsToHaveCreatedUser() {
-        assertFalse(userSecurityManager.login());
+    void registerAlwaysClaimsToHaveCreatedUser() {
+        assertTrue(userSecurityManager.register());
     }
 
     @Test
-    void enforceUserLoggedInAlwaysThrowsException() {
-        assertThrows(UserNotLoggedInException.class, () -> userSecurityManager.enforceLoggedIn());
+    void enforceRegisteredDoesNotThrowException() {
+        assertDoesNotThrow(() -> userSecurityManager.enforceRegistered());
     }
 
     @Test

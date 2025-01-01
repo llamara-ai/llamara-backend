@@ -36,10 +36,10 @@ import static org.mockito.Mockito.*;
 
 import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
+import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserNotFoundException;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
-import com.github.llamara.ai.internal.internal.security.user.UserRepository;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -66,7 +66,7 @@ class AuthenticatedUserSessionManagerImplTest {
     private static final List<ChatMessage> CHAT_HISTORY =
             List.of(new UserMessage("Hello, world!"), new AiMessage("Hi!"));
 
-    @InjectSpy UserRepository userRepository;
+    @InjectSpy TestUserRepository userRepository;
     @InjectSpy UserAwareSessionRepository userAwareSessionRepository;
     @InjectMock ChatMemoryStore chatMemoryStore;
     @InjectMock ChatHistoryStore chatHistoryStore;
@@ -76,6 +76,7 @@ class AuthenticatedUserSessionManagerImplTest {
 
     private AuthenticatedUserSessionManagerImpl userSecurityManager;
 
+    @Transactional
     @BeforeEach
     void setup() {
         userSecurityManager =
@@ -89,7 +90,11 @@ class AuthenticatedUserSessionManagerImplTest {
 
         setupIdentity(OWN_USERNAME, OWN_DISPLAYNAME);
 
-        assertEquals(0, userRepository.count());
+        userRepository.init();
+
+        clearAllInvocations();
+
+        assertEquals(1, userRepository.count());
         assertEquals(0, userAwareSessionRepository.count());
     }
 
@@ -102,6 +107,11 @@ class AuthenticatedUserSessionManagerImplTest {
         }
         userAwareSessionRepository.deleteAll();
         userRepository.deleteAll();
+        clearInvocations(
+                userRepository, userAwareSessionRepository, chatMemoryStore, chatHistoryStore);
+    }
+
+    void clearAllInvocations() {
         clearInvocations(
                 userRepository, userAwareSessionRepository, chatMemoryStore, chatHistoryStore);
     }
@@ -133,7 +143,7 @@ class AuthenticatedUserSessionManagerImplTest {
         assertEquals(displayName, user.getDisplayName());
         assertEquals(0, user.getSessions().size());
 
-        clearInvocations(userRepository);
+        clearAllInvocations();
     }
 
     /**
@@ -158,7 +168,7 @@ class AuthenticatedUserSessionManagerImplTest {
                         .size());
         assertEquals(1, userAwareSessionRepository.count());
 
-        clearInvocations(userRepository);
+        clearAllInvocations();
 
         return session.getId();
     }
@@ -171,23 +181,24 @@ class AuthenticatedUserSessionManagerImplTest {
     }
 
     @Test
-    void loginCreatesUserIfNotExists() {
-        assertFalse(userSecurityManager.login());
+    void registerCreatesUserIfNotExists() {
+        assertTrue(userSecurityManager.register());
         verify(userRepository, times(1)).persist((User) any());
-        User user = userRepository.listAll().getFirst();
+        User user = userRepository.findByUsername(OWN_USERNAME);
         assertEquals(OWN_USERNAME, user.getUsername());
         assertEquals(OWN_DISPLAYNAME, user.getDisplayName());
         assertEquals(0, user.getSessions().size());
     }
 
     @Test
-    void enforceLoggedInThrowsIfNotLoggedIn() {
-        assertThrows(UserNotLoggedInException.class, () -> userSecurityManager.enforceLoggedIn());
+    void enforceRegisteredThrowsIfNotRegistered() {
+        assertThrows(
+                UserNotRegisteredException.class, () -> userSecurityManager.enforceRegistered());
     }
 
     @Test
     void deleteThrowsAndDoesNothingIfNotExists() {
-        assertThrows(UserNotLoggedInException.class, () -> userSecurityManager.delete());
+        assertThrows(UserNotRegisteredException.class, () -> userSecurityManager.delete());
         verifyNothingDeleted();
     }
 
@@ -203,9 +214,9 @@ class AuthenticatedUserSessionManagerImplTest {
             String newDisplayName = "New Name";
             when(userInfo.getName()).thenReturn(newDisplayName);
 
-            assertTrue(userSecurityManager.login());
+            assertFalse(userSecurityManager.register());
             verify(userRepository, times(1)).persist((User) any());
-            User user = userRepository.listAll().getFirst();
+            User user = userRepository.findByUsername(OWN_USERNAME);
             assertEquals(OWN_USERNAME, user.getUsername());
             assertEquals(newDisplayName, user.getDisplayName());
             assertEquals(0, user.getSessions().size());
@@ -215,7 +226,7 @@ class AuthenticatedUserSessionManagerImplTest {
         void deleteDeletesUser() {
             userSecurityManager.delete();
             verify(userRepository, times(1)).delete(any());
-            assertEquals(0, userRepository.count());
+            assertEquals(1, userRepository.count()); // Users#ANY still exists
         }
 
         @Test
@@ -229,7 +240,7 @@ class AuthenticatedUserSessionManagerImplTest {
         }
 
         @Test
-        void createSessionCreatesNewSession() throws UserNotFoundException {
+        void createSessionCreatesNewSession() {
             Session session = userSecurityManager.createSession();
             assertEquals(OWN_USERNAME, session.getUser().getUsername());
             assertEquals(1, userRepository.findByUsername(OWN_USERNAME).getSessions().size());
@@ -271,8 +282,8 @@ class AuthenticatedUserSessionManagerImplTest {
         }
 
         @Test
-        void enforceLoggedInDoesNotThrowIfLoggedIn() {
-            assertDoesNotThrow(() -> userSecurityManager.enforceLoggedIn());
+        void enforceRegisteredDoesNotThrowIfLoggedIn() {
+            assertDoesNotThrow(() -> userSecurityManager.enforceRegistered());
         }
 
         @Test
@@ -322,7 +333,6 @@ class AuthenticatedUserSessionManagerImplTest {
             verify(chatMemoryStore, times(1)).deleteMessages(ownSessionId);
             verify(chatHistoryStore, times(1)).deleteMessages(ownSessionId);
             verify(userRepository, times(1)).delete(any());
-            assertEquals(0, userRepository.count());
             assertEquals(0, userAwareSessionRepository.count());
         }
 

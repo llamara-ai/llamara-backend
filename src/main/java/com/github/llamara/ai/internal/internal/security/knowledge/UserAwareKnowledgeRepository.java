@@ -31,6 +31,7 @@ import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.internal.knowledge.KnowledgeRepository;
 import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.Roles;
+import com.github.llamara.ai.internal.internal.security.Users;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**
@@ -51,26 +52,42 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
     }
 
     /**
-     * List all knowledge entries that the user has at least read permission for. Admins can see
-     * everything.
+     * Check if the current user has at least read permission for the given knowledge entry.
+     *
+     * <ul>
+     *   <li>Owners always have read/write permission.
+     *   <li>Anonymous users only have access if {@link Users#ANY} has read access.
+     * </ul>
+     *
+     * @param knowledge
+     * @return
+     */
+    private boolean hasReadPermission(Knowledge knowledge) {
+        if (identity.hasRole(Roles.ADMIN)) {
+            return true;
+        }
+        if (!identity.isAnonymous()) {
+            return knowledge.getPermission(identity.getPrincipal().getName()) != Permission.NONE;
+        }
+        return knowledge.getPermission(Users.ANY) != Permission.NONE;
+    }
+
+    /**
+     * List all knowledge entries that the user has at least read permission for. Admins have access
+     * to everything.
      *
      * @return
      */
     @Override
     public List<Knowledge> listAll() {
         return super.listAll().stream() // TODO: Filter in DB query
-                .filter(
-                        knowledge ->
-                                identity.hasRole(Roles.ADMIN)
-                                        || knowledge.getPermission(
-                                                        identity.getPrincipal().getName())
-                                                != Permission.NONE)
+                .filter(this::hasReadPermission)
                 .toList();
     }
 
     /**
      * Find a knowledge entry by its ID and check if the user has at least read permission. Admins
-     * can see everything.
+     * have access to everything.
      *
      * @param id
      * @return the entity found, or <code>null</code> if not found
@@ -81,14 +98,7 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
         if (knowledge == null) {
             return null;
         }
-        if (identity.hasRole(Roles.ADMIN)) {
-            return knowledge;
-        }
-        if (!identity.hasRole(Roles.ADMIN)
-                && knowledge.getPermission(identity.getPrincipal().getName()) == Permission.NONE) {
-            return null;
-        }
-        return knowledge;
+        return hasReadPermission(knowledge) ? knowledge : null;
     }
 
     /**

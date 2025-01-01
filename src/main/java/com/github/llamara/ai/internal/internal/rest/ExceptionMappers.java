@@ -27,7 +27,7 @@ import com.github.llamara.ai.internal.internal.chat.ChatModelNotFoundException;
 import com.github.llamara.ai.internal.internal.knowledge.EmptyFileException;
 import com.github.llamara.ai.internal.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundException;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import io.quarkus.logging.Log;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
@@ -62,7 +62,7 @@ class ExceptionMappers {
     }
 
     @ServerExceptionMapper
-    Response handleUserNotLoggedInException(UserNotLoggedInException e) {
+    Response handleUserNotLoggedInException(UserNotRegisteredException e) {
         return Response.status(Response.Status.UNAUTHORIZED.getStatusCode(), "User not logged in.")
                 .build();
     }

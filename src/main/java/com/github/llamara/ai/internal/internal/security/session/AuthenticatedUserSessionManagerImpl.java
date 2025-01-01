@@ -30,8 +30,7 @@ import jakarta.transaction.Transactional;
 import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
 import com.github.llamara.ai.internal.internal.security.user.User;
-import com.github.llamara.ai.internal.internal.security.user.UserNotFoundException;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.logging.Log;
@@ -76,35 +75,30 @@ public class AuthenticatedUserSessionManagerImpl implements UserSessionManager {
     }
 
     @Override
-    public boolean login() {
+    public boolean register() {
+        boolean created = false;
         QuarkusTransaction.begin();
-        boolean updated = true;
-        User user;
-        try {
-            user = userRepository.findByUsername(identity.getPrincipal().getName());
-            Log.debug(
-                    String.format(
-                            "User '%s' found in database, updating user.", user.getUsername()));
-        } catch (UserNotFoundException e) {
-            updated = false;
+        User user = userRepository.findByUsername(identity.getPrincipal().getName());
+        if (user == null) {
             user = new User(identity.getPrincipal().getName());
             Log.debug(
                     String.format(
                             "User '%s' not found in database, creating new user.",
                             user.getUsername()));
+            created = true;
         }
+        Log.debug(String.format("User '%s' found in database, updating user.", user.getUsername()));
         user.setDisplayName(userInfo.getName());
         userRepository.persist(user);
         QuarkusTransaction.commit();
-        return updated;
+        return created;
     }
 
     @Override
-    public void enforceLoggedIn() {
-        try {
-            userRepository.findByUsername(identity.getPrincipal().getName());
-        } catch (UserNotFoundException e) {
-            throw new UserNotLoggedInException(identity.getPrincipal().getName());
+    public void enforceRegistered() {
+        User user = userRepository.findByUsername(identity.getPrincipal().getName());
+        if (user == null) {
+            throw new UserNotRegisteredException(identity.getPrincipal().getName());
         }
     }
 
@@ -132,11 +126,11 @@ public class AuthenticatedUserSessionManagerImpl implements UserSessionManager {
 
     private User getUser() {
         String username = identity.getPrincipal().getName();
-        try {
-            return userRepository.findByUsername(username);
-        } catch (UserNotFoundException e) {
-            throw new UserNotLoggedInException(username);
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotRegisteredException(username);
         }
+        return user;
     }
 
     /**

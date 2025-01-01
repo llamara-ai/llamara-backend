@@ -25,6 +25,10 @@ import com.github.llamara.ai.internal.internal.knowledge.storage.FileStorage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 
+/**
+ * Extends {@link KnowledgeManagerImpl} for modifying visibility of constructor and methods to
+ * access them in tests.
+ */
 public class TestKnowledgeManagerImpl extends KnowledgeManagerImpl {
     public TestKnowledgeManagerImpl(
             KnowledgeRepository repository,

@@ -20,16 +20,12 @@
 package com.github.llamara.ai.internal.internal.security.user;
 
 /**
- * Exception signaling that the user is not logged in.
+ * Exception signaling that the user is not registered.
  *
  * @author Florian Hotze - Initial contribution
  */
-public class UserNotLoggedInException extends RuntimeException {
-    public UserNotLoggedInException() {
-        super("User is not logged in.");
-    }
-
-    public UserNotLoggedInException(String username) {
-        super(String.format("User '%s' is not logged in.", username));
+public class UserNotRegisteredException extends RuntimeException {
+    public UserNotRegisteredException(String username) {
+        super(String.format("User '%s' is not registered.", username));
     }
 }

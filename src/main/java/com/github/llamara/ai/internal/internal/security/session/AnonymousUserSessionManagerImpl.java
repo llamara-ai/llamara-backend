@@ -36,7 +36,7 @@ import jakarta.inject.Inject;
 
 import com.github.llamara.ai.internal.config.UserSecurityConfig;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Shutdown;
@@ -86,13 +86,13 @@ public class AnonymousUserSessionManagerImpl implements UserSessionManager {
     }
 
     @Override
-    public boolean login() {
-        return false;
+    public boolean register() {
+        return true;
     }
 
     @Override
-    public void enforceLoggedIn() throws UserNotLoggedInException {
-        throw new UserNotLoggedInException();
+    public void enforceRegistered() throws UserNotRegisteredException {
+        // do nothing
     }
 
     @Override
