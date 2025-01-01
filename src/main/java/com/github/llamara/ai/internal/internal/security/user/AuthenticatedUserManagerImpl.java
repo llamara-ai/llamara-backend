@@ -12,6 +12,11 @@ import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 
+/**
+ * {@link UserManager} implementation for handling authenticated users.
+ *
+ * <p>Authenticated users are stored in the database.
+ */
 @Typed(AuthenticatedUserManagerImpl.class)
 @ApplicationScoped
 public class AuthenticatedUserManagerImpl implements UserManager {
