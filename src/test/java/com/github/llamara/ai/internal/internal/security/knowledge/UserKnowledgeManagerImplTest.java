@@ -68,7 +68,8 @@ class UserKnowledgeManagerImplTest {
     private static final Path FILE = Path.of("src/test/resources/llamara.txt");
     private static final String FILE_NAME = "llamara.txt";
     private static final String FILE_MIME_TYPE = "text/plain";
-    private static final String FILE_CHECKSUM;
+    private static final String
+            FILE_CHECKSUM; // NOSONAR: ignore this unused static field as this is a test class
 
     static {
         try {
