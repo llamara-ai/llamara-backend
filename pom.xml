@@ -308,6 +308,7 @@
                         <copyrightOwners>Contributors to the LLAMARA project</copyrightOwners>
                         <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
                         <useJavaNoReformatCommentStartTag>false</useJavaNoReformatCommentStartTag>
+                        <trimHeaderLine>true</trimHeaderLine>
 
                         <roots>
                             <root>src/main/java</root>

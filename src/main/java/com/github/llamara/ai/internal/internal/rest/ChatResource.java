@@ -2,7 +2,7 @@
  * #%L
  * llamara-backend
  * %%
- * Copyright (C) 2024 Contributors to the LLAMARA project
+ * Copyright (C) 2024 - 2025 Contributors to the LLAMARA project
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
