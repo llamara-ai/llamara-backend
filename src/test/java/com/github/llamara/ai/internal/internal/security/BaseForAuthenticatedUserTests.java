@@ -24,7 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
  * need to set up {@link User} and {@link Session} in the database.
  */
 @QuarkusTest
-public abstract class AuthenticatedUserTest {
+public abstract class BaseForAuthenticatedUserTests {
     protected static final String OWN_USERNAME = "test";
     protected static final String OWN_DISPLAYNAME = "Test";
 

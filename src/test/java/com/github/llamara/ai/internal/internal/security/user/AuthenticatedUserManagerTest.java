@@ -15,7 +15,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.internal.internal.security.AuthenticatedUserTest;
+import com.github.llamara.ai.internal.internal.security.BaseForAuthenticatedUserTests;
 import com.github.llamara.ai.internal.internal.security.session.AuthenticatedUserSessionManagerImpl;
 import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundException;
 import io.quarkus.test.InjectMock;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 /** Tests for {@link AuthenticatedUserManagerImpl}. */
 @QuarkusTest
-class AuthenticatedUserManagerTest extends AuthenticatedUserTest {
+class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     @InjectMock AuthenticatedUserSessionManagerImpl sessionManager;
 
     private AuthenticatedUserManagerImpl userManager;

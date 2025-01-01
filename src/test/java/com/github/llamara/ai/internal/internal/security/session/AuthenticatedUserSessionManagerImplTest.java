@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.AuthenticatedUserTest;
+import com.github.llamara.ai.internal.internal.security.BaseForAuthenticatedUserTests;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 
 /** Tests for {@link AuthenticatedUserSessionManagerImpl}. */
 @QuarkusTest
-class AuthenticatedUserSessionManagerImplTest extends AuthenticatedUserTest {
+class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTests {
     private static final String FOREIGN_USERNAME = "foreign";
     private static final String FOREIGN_DISPLAYNAME = "Foreign";
     private static final List<ChatMessage> CHAT_HISTORY =
