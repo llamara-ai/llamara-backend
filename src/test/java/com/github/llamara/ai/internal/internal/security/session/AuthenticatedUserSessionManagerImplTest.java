@@ -36,11 +36,10 @@ import static org.mockito.Mockito.*;
 
 import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.Users;
+import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserNotFoundException;
 import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
-import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -67,7 +66,7 @@ class AuthenticatedUserSessionManagerImplTest {
     private static final List<ChatMessage> CHAT_HISTORY =
             List.of(new UserMessage("Hello, world!"), new AiMessage("Hi!"));
 
-    @InjectSpy UserRepository userRepository;
+    @InjectSpy TestUserRepository userRepository;
     @InjectSpy UserAwareSessionRepository userAwareSessionRepository;
     @InjectMock ChatMemoryStore chatMemoryStore;
     @InjectMock ChatHistoryStore chatHistoryStore;
@@ -91,10 +90,7 @@ class AuthenticatedUserSessionManagerImplTest {
 
         setupIdentity(OWN_USERNAME, OWN_DISPLAYNAME);
 
-        if (userRepository.findByUsername(Users.ANY_USERNAME) == null) {
-            userRepository.persist(
-                    Users.ANY); // re-create Users#ANY after it has been deleted in destroy()
-        }
+        userRepository.init();
 
         clearAllInvocations();
 

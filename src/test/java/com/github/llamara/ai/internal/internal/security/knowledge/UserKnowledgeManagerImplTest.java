@@ -48,9 +48,9 @@ import com.github.llamara.ai.internal.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
+import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
-import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -81,7 +81,7 @@ class UserKnowledgeManagerImplTest {
     private static final User OWN_USER = new User("own");
     private static final User FOREGIN_USER = new User("foreign");
 
-    @Inject UserRepository userRepository;
+    @Inject TestUserRepository userRepository;
 
     // for TestKnowledgeManagerImpl
     @InjectSpy KnowledgeRepository knowledgeRepository;
@@ -116,12 +116,16 @@ class UserKnowledgeManagerImplTest {
                         userSessionManager,
                         identity);
 
+        userRepository.init();
         userRepository.persist(OWN_USER);
         userRepository.persist(FOREGIN_USER);
+
+        clearAllInvocations();
 
         doThrow(UserNotRegisteredException.class).when(userSessionManager).enforceRegistered();
 
         assertEquals(0, knowledgeRepository.count());
+        assertEquals(3, userRepository.count());
     }
 
     @Transactional

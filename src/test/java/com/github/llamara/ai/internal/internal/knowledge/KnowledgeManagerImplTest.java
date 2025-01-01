@@ -44,9 +44,8 @@ import com.github.llamara.ai.internal.internal.knowledge.embedding.EmbeddingStor
 import com.github.llamara.ai.internal.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.internal.security.Permission;
-import com.github.llamara.ai.internal.internal.security.Users;
+import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.internal.security.user.User;
-import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.Filter;
@@ -96,7 +95,7 @@ class KnowledgeManagerImplTest {
     private static final User OWNER_USER = new User("owner");
     private static final User OTHER_USER = new User("other");
 
-    @Inject UserRepository userRepository;
+    @Inject TestUserRepository userRepository;
 
     @InjectSpy KnowledgeRepository knowledgeRepository;
     @InjectMock DocumentIngestor documentIngestor;
@@ -119,12 +118,11 @@ class KnowledgeManagerImplTest {
 
         assertEquals(0, knowledgeRepository.count());
 
-        if (userRepository.findByUsername(Users.ANY_USERNAME) == null) {
-            userRepository.persist(
-                    Users.ANY); // re-create Users#ANY after it has been deleted in destroy()
-        }
+        userRepository.init();
         userRepository.persist(OWNER_USER);
         userRepository.persist(OTHER_USER);
+
+        clearAllInvocations();
 
         assertEquals(3, userRepository.count());
     }
