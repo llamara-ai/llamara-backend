@@ -229,7 +229,7 @@ class AuthenticatedUserSessionManagerImplTest {
         }
 
         @Test
-        void createSessionCreatesNewSession() throws UserNotFoundException {
+        void createSessionCreatesNewSession() {
             Session session = userSecurityManager.createSession();
             assertEquals(OWN_USERNAME, session.getUser().getUsername());
             assertEquals(1, userRepository.findByUsername(OWN_USERNAME).getSessions().size());
