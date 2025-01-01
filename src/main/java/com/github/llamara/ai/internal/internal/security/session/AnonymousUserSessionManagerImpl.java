@@ -84,12 +84,11 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
     }
 
     @Override
-    public boolean checkSession(UUID sessionId) {
-        boolean valid = anonymousSessions.contains(sessionId);
-        if (valid) {
-            scheduleDeletion(sessionId);
+    public void enforceSessionValid(UUID sessionId) throws SessionNotFoundException {
+        if (!anonymousSessions.contains(sessionId)) {
+            throw new SessionNotFoundException(sessionId);
         }
-        return valid;
+        scheduleDeletion(sessionId);
     }
 
     private void scheduleDeletion(UUID sessionId) {

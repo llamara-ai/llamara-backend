@@ -21,7 +21,7 @@ public interface UserManager {
      * Enforces that the user is registered. If the user is not registered, a {@link
      * UserNotRegisteredException} is thrown.
      *
-     * @throws UserNotRegisteredException
+     * @throws UserNotRegisteredException if the user is not registered
      */
     void enforceRegistered() throws UserNotRegisteredException;
 

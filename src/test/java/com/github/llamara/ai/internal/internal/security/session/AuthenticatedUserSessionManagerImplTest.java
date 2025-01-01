@@ -27,9 +27,7 @@ import jakarta.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.*;
@@ -109,8 +107,10 @@ class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTe
         }
 
         @Test
-        void checkSessionReturnsFalse() {
-            assertFalse(sessionManager.checkSession(UUID.randomUUID()));
+        void enforceSessionValidThrowsSessionNotFoundException() {
+            assertThrows(
+                    SessionNotFoundException.class,
+                    () -> sessionManager.enforceSessionValid(UUID.randomUUID()));
         }
 
         @Test
@@ -157,8 +157,10 @@ class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTe
         }
 
         @Test
-        void checkSessionReturnsFalseForForeignSession() {
-            assertFalse(sessionManager.checkSession(foreignSessionId));
+        void enforceSessionValidThrowsSessionNotFoundExceptionForForeignSession() {
+            assertThrows(
+                    SessionNotFoundException.class,
+                    () -> sessionManager.enforceSessionValid(foreignSessionId));
         }
 
         @Test
@@ -194,8 +196,8 @@ class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTe
         }
 
         @Test
-        void checkSessionReturnsTrueForOwnSession() {
-            assertTrue(sessionManager.checkSession(ownSessionId));
+        void enforceSessionValidDoesNotThrowSessionNotFoundExceptionForOwnSession() {
+            assertDoesNotThrow(() -> sessionManager.enforceSessionValid(ownSessionId));
         }
 
         @Test
