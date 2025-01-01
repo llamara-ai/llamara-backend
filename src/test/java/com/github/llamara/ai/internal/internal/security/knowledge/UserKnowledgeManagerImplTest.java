@@ -53,6 +53,7 @@ import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
+import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -201,8 +202,6 @@ class UserKnowledgeManagerImplTest {
                     () -> userKnowledgeManager.deleteKnowledge(foreignKnowledgeId));
         }
 
-        // TODO: deleteKnowledgeThrowsForbiddenExceptionIfReadOnlyKnowledge
-
         @Test
         void deleteKnowledgeDeletesOwnKnowledge()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
@@ -227,8 +226,6 @@ class UserKnowledgeManagerImplTest {
                                     foreignKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
         }
 
-        // TODO: updateSourceFileThrowsForbiddenExceptionIfReadOnlyKnowledge
-
         @Test
         void updateSourceFileUpdatesOwnKnowledge()
                 throws IOException,
@@ -251,8 +248,6 @@ class UserKnowledgeManagerImplTest {
                             userKnowledgeManager.setPermission(
                                     foreignKnowledgeId, FOREGIN_USER, Permission.READONLY));
         }
-
-        // TODO: setPermissionThrowsForbiddenExceptionIfReadOnlyKnowledge
 
         @Test
         void setPermissionSetsPermissionForOwnKnowledge()
@@ -277,8 +272,6 @@ class UserKnowledgeManagerImplTest {
                     () -> userKnowledgeManager.removePermission(foreignKnowledgeId, FOREGIN_USER));
         }
 
-        // TODO: removePermissionThrowsForbiddenExceptionIfReadOnlyKnowledge
-
         @Test
         void removePermissionRemovesPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
@@ -302,6 +295,69 @@ class UserKnowledgeManagerImplTest {
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
             userKnowledgeManager.getFile(ownKnowledgeId);
             verify(knowledgeManager, times(1)).getFile(ownKnowledgeId);
+        }
+    }
+
+    @Nested
+    class WithSharedReadOnlyKnowledge {
+        UUID roKnowledgeId;
+
+        @BeforeEach
+        void setup()
+                throws UnexpectedFileStorageFailureException,
+                        IOException,
+                        IllegalPermissionModificationException,
+                        KnowledgeNotFoundException {
+            roKnowledgeId =
+                    knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREGIN_USER);
+            knowledgeManager.setKnowledgeIngestionStatus(roKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setPermission(roKnowledgeId, OWN_USER, Permission.READONLY);
+            setupIdentity(OWN_USER);
+
+            doNothing().when(userSessionManager).enforceRegistered();
+            clearAllInvocations();
+
+            assertEquals(1, knowledgeRepository.count());
+        }
+
+        @Test
+        void deleteKnowledgeThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.deleteKnowledge(roKnowledgeId));
+        }
+
+        @Test
+        void updateSourceFileThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () ->
+                            userKnowledgeManager.updateSource(
+                                    roKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
+        }
+
+        @Test
+        void setPermissionThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    roKnowledgeId, OWN_USER, Permission.READWRITE));
+            assertThrows(
+                    ForbiddenException.class,
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    roKnowledgeId, FOREGIN_USER, Permission.READWRITE));
+        }
+
+        @Test
+        void removePermissionThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removePermission(roKnowledgeId, OWN_USER));
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removePermission(roKnowledgeId, FOREGIN_USER));
         }
     }
 }
