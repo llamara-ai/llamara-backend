@@ -27,7 +27,6 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -132,9 +131,7 @@ class ChatResource {
                     UUID sessionId,
             String prompt)
             throws ChatModelNotFoundException, SessionNotFoundException {
-        if (!sessionManager.checkSession(sessionId)) {
-            throw new SessionNotFoundException(sessionId);
-        }
+        sessionManager.enforceSessionValid(sessionId);
         ChatModelAiService chatModelAiService = chatModelProvider.getModel(uid).service();
         return chatModelAiService.chat(sessionId, !identity.isAnonymous(), prompt);
     }
@@ -173,10 +170,8 @@ class ChatResource {
                             required = true)
                     UUID sessionId,
             String prompt)
-            throws ChatModelNotFoundException {
-        if (!sessionManager.checkSession(sessionId)) {
-            throw new NotFoundException("Session not found.");
-        }
+            throws ChatModelNotFoundException, SessionNotFoundException {
+        sessionManager.enforceSessionValid(sessionId);
         ChatModelAiService chatModelAiService = chatModelProvider.getModel(uid).service();
         Multi<String> sourceMulti =
                 Multi.createFrom()

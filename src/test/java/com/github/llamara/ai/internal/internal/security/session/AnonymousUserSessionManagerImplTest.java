@@ -27,9 +27,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -90,25 +88,27 @@ class AnonymousUserSessionManagerImplTest {
     }
 
     @Test
-    void checkSessionReturnsFalseForNonExistingSession() {
-        assertFalse(sessionManager.checkSession(UUID.randomUUID()));
+    void enforceSessionValidThrowsSessionNotFoundExceptionForNonExistingSession() {
+        assertThrows(
+                SessionNotFoundException.class,
+                () -> sessionManager.enforceSessionValid(UUID.randomUUID()));
     }
 
     @Test
-    void checkSessionReturnsTrueForExistingSession() {
+    void enforceSessionValidDoesNotThrowSessionNotFoundExceptionForExistingSession() {
         UUID sessionId = sessionManager.createSession().getId();
-        assertTrue(sessionManager.checkSession(sessionId));
+        assertDoesNotThrow(() -> sessionManager.enforceSessionValid(sessionId));
     }
 
     @Test
-    void checkSessionPostponesDeletionForExistingSession() throws InterruptedException {
+    void enforceSessionValidPostponesDeletionForExistingSession() throws InterruptedException {
         when(securityConfig.anonymousUserSessionTimeout()).thenReturn(1);
 
         UUID sessionId = sessionManager.createSession().getId();
         verify(chatMemoryStore, never()).deleteMessages(sessionId);
 
         when(securityConfig.anonymousUserSessionTimeout()).thenReturn(2);
-        sessionManager.checkSession(sessionId);
+        assertDoesNotThrow(() -> sessionManager.enforceSessionValid(sessionId));
         verify(chatMemoryStore, never()).deleteMessages(sessionId);
         Thread.sleep(2500); // NOSONAR: sleep is necessary to wait for scheduled deletion
         verify(chatMemoryStore, times(1)).deleteMessages(sessionId);

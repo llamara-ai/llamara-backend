@@ -71,13 +71,8 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
     }
 
     @Override
-    public boolean checkSession(UUID sessionId) {
-        try {
-            userAwareSessionRepository.findById(sessionId);
-        } catch (SessionNotFoundException e) {
-            return false;
-        }
-        return true;
+    public void enforceSessionValid(UUID sessionId) throws SessionNotFoundException {
+        userAwareSessionRepository.findById(sessionId);
     }
 
     private User getUser() {
@@ -129,9 +124,7 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
     @Override
     public Uni<List<ChatMessageRecord>> getChatHistory(UUID sessionId)
             throws SessionNotFoundException {
-        if (!checkSession(sessionId)) {
-            throw new SessionNotFoundException(sessionId);
-        }
+        enforceSessionValid(sessionId);
         return chatHistoryStore.getMessages(sessionId);
     }
 }

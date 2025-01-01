@@ -39,12 +39,13 @@ import io.smallrye.mutiny.Uni;
  */
 public interface SessionManager {
     /**
-     * Check whether the given session is valid for the current user.
+     * Enforces that the session with the given ID is valid for the current user. If the session is
+     * not valid, a {@link SessionNotFoundException} is thrown.
      *
      * @param sessionId the ID of the session to check
-     * @return {@code true} if the session is valid, {@code false} otherwise
+     * @throws SessionNotFoundException if no session with the given ID was found for the current
      */
-    boolean checkSession(UUID sessionId);
+    void enforceSessionValid(UUID sessionId) throws SessionNotFoundException;
 
     /**
      * Get all sessions for the current user.
