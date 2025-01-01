@@ -33,6 +33,14 @@ import jakarta.transaction.Transactional;
  */
 @ApplicationScoped
 public class UserRepository implements PanacheRepository<User> {
+    @Startup
+    @Transactional
+    void init() {
+        if (findByUsername(Users.ANY_USERNAME) == null) {
+            persist(Users.ANY);
+        }
+    }
+
     /**
      * Find a user by its username.
      *
