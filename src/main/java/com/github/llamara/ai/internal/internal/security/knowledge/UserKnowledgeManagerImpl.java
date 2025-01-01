@@ -69,13 +69,13 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
 
     @Override
     public Collection<Knowledge> getAllKnowledge() {
-        userSessionManager.enforceLoggedIn();
+        userSessionManager.enforceRegistered();
         return userAwareRepository.listAll();
     }
 
     @Override
     public Knowledge getKnowledge(UUID id) throws KnowledgeNotFoundException {
-        userSessionManager.enforceLoggedIn();
+        userSessionManager.enforceRegistered();
         Knowledge knowledge = userAwareRepository.findById(id);
         if (knowledge == null) {
             throw new KnowledgeNotFoundException(id);
@@ -92,7 +92,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
      */
     private void enforceKnowledgeEditable(UUID id)
             throws KnowledgeNotFoundException, ForbiddenException {
-        userSessionManager.enforceLoggedIn();
+        userSessionManager.enforceRegistered();
         if (identity.hasRole(Roles.ADMIN)) {
             return;
         }
@@ -115,7 +115,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException {
-        userSessionManager.enforceLoggedIn();
+        userSessionManager.enforceRegistered();
 
         String checksum = Utils.generateChecksum(file);
         Optional<Knowledge> existingKnowledge = userAwareRepository.existsChecksum(checksum);
@@ -169,7 +169,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public NamedFileContainer getFile(UUID id)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
-        userSessionManager.enforceLoggedIn();
+        userSessionManager.enforceRegistered();
         Knowledge knowledge = getKnowledge(id);
         return delegate.getFile(knowledge.getId());
     }

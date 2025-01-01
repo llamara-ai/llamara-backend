@@ -38,7 +38,7 @@ import com.github.llamara.ai.internal.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserNotFoundException;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
@@ -171,8 +171,8 @@ class AuthenticatedUserSessionManagerImplTest {
     }
 
     @Test
-    void loginCreatesUserIfNotExists() {
-        assertFalse(userSecurityManager.login());
+    void registerCreatesUserIfNotExists() {
+        assertTrue(userSecurityManager.register());
         verify(userRepository, times(1)).persist((User) any());
         User user = userRepository.listAll().getFirst();
         assertEquals(OWN_USERNAME, user.getUsername());
@@ -181,13 +181,13 @@ class AuthenticatedUserSessionManagerImplTest {
     }
 
     @Test
-    void enforceLoggedInThrowsIfNotLoggedIn() {
-        assertThrows(UserNotLoggedInException.class, () -> userSecurityManager.enforceLoggedIn());
+    void enforceRegisteredThrowsIfNotRegistered() {
+        assertThrows(UserNotRegisteredException.class, () -> userSecurityManager.enforceRegistered());
     }
 
     @Test
     void deleteThrowsAndDoesNothingIfNotExists() {
-        assertThrows(UserNotLoggedInException.class, () -> userSecurityManager.delete());
+        assertThrows(UserNotRegisteredException.class, () -> userSecurityManager.delete());
         verifyNothingDeleted();
     }
 
@@ -203,7 +203,7 @@ class AuthenticatedUserSessionManagerImplTest {
             String newDisplayName = "New Name";
             when(userInfo.getName()).thenReturn(newDisplayName);
 
-            assertTrue(userSecurityManager.login());
+            assertFalse(userSecurityManager.register());
             verify(userRepository, times(1)).persist((User) any());
             User user = userRepository.listAll().getFirst();
             assertEquals(OWN_USERNAME, user.getUsername());
@@ -271,8 +271,8 @@ class AuthenticatedUserSessionManagerImplTest {
         }
 
         @Test
-        void enforceLoggedInDoesNotThrowIfLoggedIn() {
-            assertDoesNotThrow(() -> userSecurityManager.enforceLoggedIn());
+        void enforceRegisteredDoesNotThrowIfLoggedIn() {
+            assertDoesNotThrow(() -> userSecurityManager.enforceRegistered());
         }
 
         @Test

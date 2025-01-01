@@ -49,7 +49,7 @@ import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileS
 import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.session.UserSessionManager;
 import com.github.llamara.ai.internal.internal.security.user.User;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import com.github.llamara.ai.internal.internal.security.user.UserRepository;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -119,7 +119,7 @@ class UserKnowledgeManagerImplTest {
         userRepository.persist(OWN_USER);
         userRepository.persist(FOREGIN_USER);
 
-        doThrow(UserNotLoggedInException.class).when(userSessionManager).enforceLoggedIn();
+        doThrow(UserNotRegisteredException.class).when(userSessionManager).enforceRegistered();
 
         assertEquals(0, knowledgeRepository.count());
     }
@@ -158,7 +158,7 @@ class UserKnowledgeManagerImplTest {
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREGIN_USER);
             setupIdentity(OWN_USER);
 
-            doNothing().when(userSessionManager).enforceLoggedIn();
+            doNothing().when(userSessionManager).enforceRegistered();
             clearAllInvocations();
 
             assertEquals(2, knowledgeRepository.count());

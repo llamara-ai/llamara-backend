@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.github.llamara.ai.internal.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.internal.security.user.UserNotLoggedInException;
+import com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -33,19 +33,24 @@ import io.smallrye.mutiny.Uni;
  * Authentication itself is handled by the OIDC provider, e.g. Keycloak.
  *
  * <p>Users must log in before any other operation can be performed. If the user is not logged in
- * and tries to perform an operation, the operation can fail with {@link UserNotLoggedInException}.
+ * and tries to perform an operation, the operation can fail with {@link UserNotRegisteredException}.
  *
  * @author Florian Hotze - Initial contribution
  */
 public interface UserSessionManager {
     /**
-     * Logs the user in, i.e. creates or updates the user in the database.
+     * Registers the user in, i.e. creates or updates the user in the database.
      *
-     * @return {@code true} if the user was updated, {@code false} if the user was created
+     * @return {@code true} if the user was created, {@code false} if the user was updated
      */
-    boolean login();
+    boolean register();
 
-    void enforceLoggedIn() throws UserNotLoggedInException;
+    /**
+     * Enforces that the user is registered.
+     * If the user is not registered, a {@link UserNotRegisteredException} is thrown.
+     * @throws UserNotRegisteredException
+     */
+    void enforceRegistered() throws UserNotRegisteredException;
 
     /** Deletes the current user and all his data. This includes removing all sessions. */
     void delete();

@@ -19,9 +19,12 @@
  */
 package com.github.llamara.ai.internal.internal.security.user;
 
+import com.github.llamara.ai.internal.internal.security.Users;
+import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import jakarta.transaction.Transactional;
 
 /**
  * Hibernate ORM {@link PanacheRepository} for {@link User}.
@@ -34,14 +37,9 @@ public class UserRepository implements PanacheRepository<User> {
      * Find a user by its username.
      *
      * @param username the username of the user
-     * @return the user
-     * @throws UserNotFoundException if no user with the given username was found
+     * @return the entity found, or <code>null</code> if not found
      */
-    public User findByUsername(String username) throws UserNotFoundException {
-        User user = find("username", username).firstResult();
-        if (user == null) {
-            throw new UserNotFoundException(username);
-        }
-        return user;
+    public User findByUsername(String username) {
+        return find("username", username).firstResult();
     }
 }
