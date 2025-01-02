@@ -25,8 +25,24 @@ package com.github.llamara.ai.internal.internal.security;
  * @author Florian Hotze - Initial contribution
  */
 public enum Permission {
+    /**
+     * Owner permission. Highest level of permission, can be granted to exactly one user for each
+     * resource.
+     */
     OWNER,
+    /**
+     * Read-write permission. Higher level of permission, can be granted to many users for each
+     * resource.
+     */
     READWRITE,
+    /**
+     * Read-only permission. Lowest level of permission, can be granted to many users for each
+     * resource.
+     */
     READONLY,
+    /**
+     * No permission. Must not be set explicitly, but can be used by the system to indicate that no
+     * permission is set.
+     */
     NONE
 }
