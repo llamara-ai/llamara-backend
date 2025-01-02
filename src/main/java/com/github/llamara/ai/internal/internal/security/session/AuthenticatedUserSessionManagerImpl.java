@@ -102,10 +102,9 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
         user.addSession(session);
         userRepository.persist(user);
         QuarkusTransaction.commit(); // commit transaction to get the ID for the logging
-        Log.debug(
-                String.format(
-                        "Created new session '%s' for user '%s'.",
-                        session.getId(), session.getUser().getUsername()));
+        Log.debugf(
+                "Created new session '%s' for user '%s'.",
+                session.getId(), session.getUser().getUsername());
         return session;
     }
 
@@ -115,10 +114,9 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
         userAwareSessionRepository.deleteById(sessionId);
         chatMemoryStore.deleteMessages(sessionId);
         chatHistoryStore.deleteMessages(sessionId).subscribe().with(item -> {}, failure -> {});
-        Log.debug(
-                String.format(
-                        "Deleted session '%s' for user '%s'.",
-                        sessionId, identity.getPrincipal().getName()));
+        Log.debugf(
+                "Deleted session '%s' for user '%s'.",
+                sessionId, identity.getPrincipal().getName());
     }
 
     @Override

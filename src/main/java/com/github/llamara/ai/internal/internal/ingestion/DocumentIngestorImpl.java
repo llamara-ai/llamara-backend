@@ -77,7 +77,7 @@ class DocumentIngestorImpl implements DocumentIngestor {
                 // Specify blocking operation
                 .item(
                         () -> {
-                            Log.info(String.format("Ingesting document '%s' ...", knowledgeId));
+                            Log.infof("Ingesting document '%s' ...", knowledgeId);
                             return ingestor.ingest(document);
                         })
                 // Specify to run blocking operation on worker pool
@@ -87,17 +87,11 @@ class DocumentIngestorImpl implements DocumentIngestor {
                 .invoke(
                         result -> {
                             if (result.tokenUsage() != null) {
-                                Log.info(
-                                        String.format(
-                                                "Successfully ingested document '%s' using %d"
-                                                        + " tokens.",
-                                                knowledgeId,
-                                                result.tokenUsage().inputTokenCount()));
+                                Log.infof(
+                                        "Successfully ingested document '%s' using %d" + " tokens.",
+                                        knowledgeId, result.tokenUsage().inputTokenCount());
                             } else {
-                                Log.info(
-                                        String.format(
-                                                "Successfully ingested document '%s'.",
-                                                knowledgeId));
+                                Log.infof("Successfully ingested document '%s'.", knowledgeId);
                             }
                             knowledgeManager.setKnowledgeIngestionStatus(
                                     document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
@@ -107,9 +101,7 @@ class DocumentIngestorImpl implements DocumentIngestor {
                 .onFailure()
                 .invoke(
                         throwable -> {
-                            Log.error(
-                                    String.format("Failed to ingest document '%s'.", knowledgeId),
-                                    throwable);
+                            Log.errorf("Failed to ingest document '%s'.", knowledgeId, throwable);
                             knowledgeManager.setKnowledgeIngestionStatus(
                                     document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
                                     IngestionStatus.FAILED);

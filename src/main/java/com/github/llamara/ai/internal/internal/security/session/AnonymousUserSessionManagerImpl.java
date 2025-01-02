@@ -73,12 +73,10 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
             try {
                 deleteSession(sessionId);
             } catch (SessionNotFoundException e) {
-                Log.fatal(
-                        String.format(
-                                "Unexpectedly failed to delete anonymous session '%s' during"
-                                        + " shutdown.",
-                                sessionId),
-                        e);
+                Log.fatalf(
+                        "Unexpectedly failed to delete anonymous session '%s' during"
+                                + " shutdown.",
+                        sessionId, e);
             }
         }
     }
@@ -94,18 +92,15 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
     private void scheduleDeletion(UUID sessionId) {
         ScheduledFuture<?> future = scheduledDeletions.get(sessionId);
         if (future != null && !future.isDone()) {
-            Log.debug(String.format("Rescheduling cleanup for anonymous session '%s'.", sessionId));
+            Log.debugf("Rescheduling cleanup for anonymous session '%s'.", sessionId);
             future.cancel(false);
         } else {
-            Log.debug(String.format("Scheduling cleanup for anonymous session '%s'.", sessionId));
+            Log.debugf("Scheduling cleanup for anonymous session '%s'.", sessionId);
         }
         future =
                 deletionScheduler.schedule(
                         () -> {
-                            Log.debug(
-                                    String.format(
-                                            "Cleaning up expired anonymous session '%s'.",
-                                            sessionId));
+                            Log.debugf("Cleaning up expired anonymous session '%s'.", sessionId);
                             chatMemoryStore.deleteMessages(sessionId);
                             anonymousSessions.remove(sessionId);
                             scheduledDeletions.remove(sessionId);
@@ -125,7 +120,7 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
         Session session = new AnonymousSession();
         anonymousSessions.add(session.getId());
         scheduleDeletion(session.getId());
-        Log.debug(String.format("Created new anonymous session '%s'.", session.getId()));
+        Log.debugf("Created new anonymous session '%s'.", session.getId());
         return session;
     }
 
@@ -138,7 +133,7 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
         scheduledDeletions.remove(sessionId);
         chatMemoryStore.deleteMessages(sessionId);
         anonymousSessions.remove(sessionId);
-        Log.debug(String.format("Deleted anonymous session '%s'.", sessionId));
+        Log.debugf("Deleted anonymous session '%s'.", sessionId);
     }
 
     @Override

@@ -63,12 +63,9 @@ class CleaningByRegexDocumentTransformer implements DocumentTransformer {
         text = WEBLINK_WITH_OPT_DATE_PATTERN.matcher(text).replaceAll("");
         text = COPYRIGHT_PATTERN.matcher(text).replaceAll("");
         // finally, reduce the number of empty lines
-        Log.debug(
-                String.format(
-                        "Reduced text size of '%s' from %d to %d characters.",
-                        document.metadata().getString(MetadataKeys.KNOWLEDGE_ID),
-                        size,
-                        text.length()));
+        Log.debugf(
+                "Reduced text size of '%s' from %d to %d characters.",
+                document.metadata().getString(MetadataKeys.KNOWLEDGE_ID), size, text.length());
         return Document.from(text, document.metadata());
     }
 }

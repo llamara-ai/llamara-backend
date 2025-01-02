@@ -81,12 +81,10 @@ public class AuthenticatedUserManagerImpl implements UserManager {
             try {
                 authenticatedUserSessionManager.deleteSession(session.getId());
             } catch (SessionNotFoundException e) {
-                Log.fatal(
-                        String.format(
-                                "Unexpectedly failed to delete session '%s' during deletion of user"
-                                        + " '%s'.",
-                                session.getId(), user.getUsername()),
-                        e);
+                Log.fatalf(
+                        "Unexpectedly failed to delete session '%s' during deletion of user"
+                                + " '%s'.",
+                        session.getId(), user.getUsername(), e);
             }
         }
         for (Knowledge knowledge : user.getKnowledge()) {
