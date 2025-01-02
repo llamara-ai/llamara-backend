@@ -8,6 +8,8 @@ package com.github.llamara.ai.internal.internal.security.user;
  * <p>Users must register before any user-specific operation can be performed. If the user has not
  * registered and tries to perform an operation, the operation can fail with {@link
  * UserNotRegisteredException}.
+ *
+ * @author Florian Hotze - Initial contribution
  */
 public interface UserManager {
     /**

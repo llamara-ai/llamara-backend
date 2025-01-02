@@ -7,6 +7,8 @@ import jakarta.enterprise.inject.Typed;
  * {@link UserManager} implementation for handling anonymous users.
  *
  * <p>Anonymous users are not stored in the database.
+ *
+ * @author Florian Hotze - Initial contribution
  */
 @Typed(AnonymousUserManagerImpl.class)
 @ApplicationScoped

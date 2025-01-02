@@ -16,6 +16,8 @@ import io.quarkus.security.identity.SecurityIdentity;
  * {@link UserManager} implementation for handling authenticated users.
  *
  * <p>Authenticated users are stored in the database.
+ *
+ * @author Florian Hotze - Initial contribution
  */
 @Typed(AuthenticatedUserManagerImpl.class)
 @ApplicationScoped
