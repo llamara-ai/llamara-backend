@@ -145,6 +145,14 @@ public interface KnowledgeManager {
      * <p>Implementation should also update the embeddings' {@link MetadataKeys#PERMISSION}
      * metadata.
      *
+     * <p>Implementations must not allow the following permission changes:
+     *
+     * <ul>
+     *   <li>Explicitly setting {@link Permission#NONE}.
+     *   <li>Adding {@link Permission#OWNER}. The owner must be added through {@link
+     *       KnowledgeManager#addSource(Path, String, String, User)}.
+     * </ul>
+     *
      * @param id persistent unique id of knowledge
      * @param user the user to set the permission for
      * @param permission the permission to set
