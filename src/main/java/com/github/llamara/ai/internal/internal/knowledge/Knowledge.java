@@ -112,7 +112,7 @@ public class Knowledge {
                     @JoinColumn(name = "knowledge_id")) // specify foreign key column that will link
     // elements to Knowledge entity
     @Column(name = "tag")
-    private Set<String> tags = new HashSet<>();
+    private final Set<String> tags = new HashSet<>();
 
     /** Constructor for JPA. */
     protected Knowledge() {}
