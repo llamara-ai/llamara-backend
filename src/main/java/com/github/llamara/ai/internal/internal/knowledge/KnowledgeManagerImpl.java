@@ -233,12 +233,22 @@ class KnowledgeManagerImpl implements KnowledgeManager {
                     "Cannot modify permission for knowledge that has not been ingested");
         }
 
+        if (permission == Permission.NONE) {
+            throw new IllegalPermissionModificationException(
+                    "Setting explicit permission NONE is not allowed");
+        }
+        if (permission == Permission.OWNER) {
+            throw new IllegalPermissionModificationException(
+                    "Adding owner permission is not allowed");
+        }
+
         Permission existingPermission = knowledge.getPermission(user);
         if (existingPermission == permission) {
             return;
         }
         if (existingPermission == Permission.OWNER) {
-            throw new IllegalPermissionModificationException("Cannot change owner permission");
+            throw new IllegalPermissionModificationException(
+                    "Modifying owner's permission is not allowed");
         }
         knowledge.setPermission(user, permission);
         repository.persist(knowledge);

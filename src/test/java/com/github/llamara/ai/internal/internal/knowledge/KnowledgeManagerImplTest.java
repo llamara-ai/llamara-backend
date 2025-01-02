@@ -410,6 +410,39 @@ class KnowledgeManagerImplTest {
         }
 
         @Test
+        void setPermissionThrowsIllegalPermissionModificationExceptionForPermissionNONE() {
+            // setup
+            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
+            assertThrows(
+                    IllegalPermissionModificationException.class,
+                    () -> knowledgeManager.setPermission(knowledgeId, OWNER_USER, Permission.NONE));
+            // test
+            assertThrows(
+                    IllegalPermissionModificationException.class,
+                    () -> knowledgeManager.setPermission(knowledgeId, OTHER_USER, Permission.NONE));
+        }
+
+        @Test
+        void setPermissionThrowsIllegalPermissionModificationExceptionForPermissionOWNER() {
+            // setup
+            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
+            assertThrows(
+                    IllegalPermissionModificationException.class,
+                    () ->
+                            knowledgeManager.setPermission(
+                                    knowledgeId, OWNER_USER, Permission.OWNER));
+            assertThrows(
+                    IllegalPermissionModificationException.class,
+                    () ->
+                            knowledgeManager.setPermission(
+                                    knowledgeId, OTHER_USER, Permission.OWNER));
+        }
+
+        @Test
         void
                 setPermissionThrowsIllegalPermissionModificationExceptionForChangingOwnersPermission() {
             // setup
