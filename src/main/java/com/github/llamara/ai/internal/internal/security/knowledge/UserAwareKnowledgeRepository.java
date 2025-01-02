@@ -19,7 +19,6 @@
  */
 package com.github.llamara.ai.internal.internal.security.knowledge;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -70,19 +69,6 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
             return knowledge.getPermission(identity.getPrincipal().getName()) != Permission.NONE;
         }
         return knowledge.getPermission(Users.ANY) != Permission.NONE;
-    }
-
-    /**
-     * List all knowledge entries that the user has at least read permission for. Admins have access
-     * to everything.
-     *
-     * @return
-     */
-    @Override
-    public List<Knowledge> listAll() {
-        return super.listAll().stream() // TODO: Filter in DB query
-                .filter(this::hasReadPermission)
-                .toList();
     }
 
     /**
