@@ -70,11 +70,7 @@ public class AuthenticatedUserManagerImpl implements UserManager {
 
     @Override
     public void delete() {
-        String username = identity.getPrincipal().getName();
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UserNotRegisteredException(username);
-        }
+        User user = getUser();
         for (Session session : user.getSessions()) {
             try {
                 authenticatedUserSessionManager.deleteSession(session.getId());
@@ -91,5 +87,14 @@ public class AuthenticatedUserManagerImpl implements UserManager {
         userRepository.delete(user);
         QuarkusTransaction.commit();
         Log.debug(String.format("Deleted user '%s' from database.", user.getUsername()));
+    }
+
+    @Override
+    public User getUser() throws UserNotRegisteredException {
+        User user = userRepository.findByUsername(identity.getPrincipal().getName());
+        if (user == null) {
+            throw new UserNotRegisteredException(identity.getPrincipal().getName());
+        }
+        return user;
     }
 }

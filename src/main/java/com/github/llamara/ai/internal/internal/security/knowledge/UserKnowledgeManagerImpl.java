@@ -22,7 +22,9 @@ package com.github.llamara.ai.internal.internal.security.knowledge;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
@@ -38,6 +40,7 @@ import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.Roles;
 import com.github.llamara.ai.internal.internal.security.user.User;
 import com.github.llamara.ai.internal.internal.security.user.UserManager;
+import io.quarkus.logging.Log;
 import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.identity.SecurityIdentity;
 
@@ -69,8 +72,26 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
 
     @Override
     public Collection<Knowledge> getAllKnowledge() {
+        String username = identity.getPrincipal().getName();
+
         userManager.enforceRegistered();
-        return userAwareRepository.listAll();
+        Set<Knowledge> publicKnowledge =
+                new HashSet<>(userAwareRepository.listAllPublicKnowledge());
+        if (identity.isAnonymous()) {
+            Log.debug("Anonymous user requested knowledge, returning only public knowledge.");
+            return publicKnowledge;
+        }
+        if (identity.hasRole(Roles.ADMIN)) {
+            Log.debugf("Admin user '%s' requested knowledge, returning all knowledge.", username);
+            return delegate.getAllKnowledge();
+        }
+        Log.debugf(
+                "Authenticated, non-admin user '%s' requested knowledge, returning user knowledge"
+                        + " and public knowledge.",
+                username);
+        Set<Knowledge> userKnowledge = new HashSet<>(userManager.getUser().getKnowledge());
+        userKnowledge.addAll(publicKnowledge);
+        return userKnowledge;
     }
 
     @Override
@@ -81,6 +102,12 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
             throw new KnowledgeNotFoundException(id);
         }
         return knowledge;
+    }
+
+    private void enforceAuthenticated() {
+        if (identity.isAnonymous()) {
+            throw new ForbiddenException();
+        }
     }
 
     /**
@@ -98,6 +125,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
      */
     private void enforceKnowledgeEditable(UUID id)
             throws KnowledgeNotFoundException, ForbiddenException {
+        enforceAuthenticated();
         userManager.enforceRegistered();
         if (identity.hasRole(Roles.ADMIN)) {
             return;
@@ -121,6 +149,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException {
+        enforceAuthenticated();
         userManager.enforceRegistered();
 
         String checksum = Utils.generateChecksum(file);

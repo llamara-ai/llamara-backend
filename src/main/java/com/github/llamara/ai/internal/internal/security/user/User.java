@@ -29,11 +29,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.internal.security.session.Session;
+import org.hibernate.annotations.SQLJoinTableRestriction;
 
 /**
  * JPA {@link Entity} storing user information.
@@ -55,6 +60,14 @@ public class User {
     @JoinColumn(name = "username")
     private final Set<Session> sessions = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "knowledge_permissions",
+            joinColumns = @JoinColumn(name = "username", referencedColumnName = "username"),
+            inverseJoinColumns = @JoinColumn(name = "knowledge_id", referencedColumnName = "id"))
+    @SQLJoinTableRestriction("permission IN ('OWNER', 'READWRITE', 'READONLY')")
+    private final Set<Knowledge> knowledge = new HashSet<>();
+
     /** Constructor for JPA. */
     protected User() {}
 
@@ -74,6 +87,18 @@ public class User {
 
     public Collection<Session> getSessions() {
         return Collections.unmodifiableCollection(sessions);
+    }
+
+    /**
+     * Get all knowledge the user has explicit read permission for. Read permission is granted
+     * through {@link com.github.llamara.ai.internal.internal.security.Permission#READONLY} or
+     * higher.
+     *
+     * @return the knowledge
+     */
+    @Transactional // transaction is needed to get Knowledge
+    public Collection<Knowledge> getKnowledge() {
+        return Collections.unmodifiableSet(knowledge);
     }
 
     public void setDisplayName(String displayName) {

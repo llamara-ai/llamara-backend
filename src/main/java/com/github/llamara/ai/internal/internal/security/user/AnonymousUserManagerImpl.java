@@ -3,6 +3,8 @@ package com.github.llamara.ai.internal.internal.security.user;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 
+import com.github.llamara.ai.internal.internal.security.Users;
+
 /**
  * {@link UserManager} implementation for handling anonymous users.
  *
@@ -26,5 +28,10 @@ public class AnonymousUserManagerImpl implements UserManager {
     @Override
     public void delete() {
         // Do nothing here
+    }
+
+    @Override
+    public User getUser() {
+        return Users.ANY;
     }
 }

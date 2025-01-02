@@ -13,20 +13,32 @@ package com.github.llamara.ai.internal.internal.security.user;
  */
 public interface UserManager {
     /**
-     * Registers the user in, i.e. creates or updates the user in the database.
+     * Register current the user in, i.e. create or update the user in the database.
      *
      * @return {@code true} if the user was created, {@code false} if the user was updated
      */
     boolean register();
 
     /**
-     * Enforces that the user is registered. If the user is not registered, a {@link
+     * Enforce that the user is registered. If the user is not registered, a {@link
      * UserNotRegisteredException} is thrown.
      *
      * @throws UserNotRegisteredException if the user is not registered
      */
     void enforceRegistered() throws UserNotRegisteredException;
 
-    /** Deletes the current user and all his data. This includes removing all sessions. */
-    void delete();
+    /**
+     * Delets the current user and all his data. This includes removing all sessions.
+     *
+     * @throws UserNotRegisteredException if the user is not registered
+     */
+    void delete() throws UserNotRegisteredException;
+
+    /**
+     * Get the current user.
+     *
+     * @return the user
+     * @throws UserNotRegisteredException if the user is not registered
+     */
+    User getUser() throws UserNotRegisteredException;
 }

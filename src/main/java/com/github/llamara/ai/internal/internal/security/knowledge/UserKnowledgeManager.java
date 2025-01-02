@@ -34,10 +34,13 @@ import io.quarkus.security.ForbiddenException;
  * io.quarkus.security.identity.SecurityIdentity}. Authentication itself is handled by the OIDC
  * provider, e.g. Keycloak.
  *
- * <p>Knowledge can only be managed by authenticated users.
+ * <p>Knowledge can only be managed by authenticated users, but anonymous users are allowed to get
+ * public knowledge. If a anonymous users tries to perform an operation that requires
+ * authentication, the operation must fail with {@link ForbiddenException}.
  *
- * <p>Users must log in before any other operation can be performed. If the user is not logged in
- * and tries to perform an operation, the operation can fail with {@link ForbiddenException}.
+ * <p>Users must register before any operation can be performed. If the user is not registered and
+ * tries to perform an operation, the operation can fail with {@link
+ * com.github.llamara.ai.internal.internal.security.user.UserNotRegisteredException}.
  *
  * @author Florian Hotze - Initial contribution
  */
