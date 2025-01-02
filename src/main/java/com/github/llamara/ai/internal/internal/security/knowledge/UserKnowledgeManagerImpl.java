@@ -83,6 +83,12 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
         return knowledge;
     }
 
+    private void enforceAuthenticated() {
+        if (identity.isAnonymous()) {
+            throw new ForbiddenException();
+        }
+    }
+
     /**
      * Check whether the given knowledge is editable for the current user.
      *
@@ -98,6 +104,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
      */
     private void enforceKnowledgeEditable(UUID id)
             throws KnowledgeNotFoundException, ForbiddenException {
+        enforceAuthenticated();
         userManager.enforceRegistered();
         if (identity.hasRole(Roles.ADMIN)) {
             return;
@@ -121,6 +128,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException {
+        enforceAuthenticated();
         userManager.enforceRegistered();
 
         String checksum = Utils.generateChecksum(file);
