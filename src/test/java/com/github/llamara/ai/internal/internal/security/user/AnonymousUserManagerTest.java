@@ -1,9 +1,11 @@
 package com.github.llamara.ai.internal.internal.security.user;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 
+import com.github.llamara.ai.internal.internal.security.Users;
 import com.github.llamara.ai.internal.internal.security.session.AnonymousUserSessionManagerImpl;
 import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundException;
 import io.quarkus.test.InjectMock;
@@ -38,5 +40,10 @@ class AnonymousUserManagerTest {
     void deleteDoesNothing() throws SessionNotFoundException {
         userManager.delete();
         Mockito.verify(sessionManager, never()).deleteSession(Mockito.any());
+    }
+
+    @Test
+    void getUserReturnsUsersANY() {
+        assertEquals(Users.ANY, userManager.getUser());
     }
 }

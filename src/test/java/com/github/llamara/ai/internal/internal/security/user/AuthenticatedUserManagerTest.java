@@ -69,6 +69,11 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
         verify(sessionManager, never()).deleteSession(any());
     }
 
+    @Test
+    void getUserThrowsIfNotRegistered() {
+        assertThrows(UserNotRegisteredException.class, () -> userManager.getUser());
+    }
+
     @Nested
     class WithUser {
         @BeforeEach
