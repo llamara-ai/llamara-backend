@@ -15,7 +15,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.github.llamara.ai.internal.internal.knowledge.IllegalPermissionModificationException;
+import com.github.llamara.ai.internal.internal.knowledge.KnowledgeManager;
+import com.github.llamara.ai.internal.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.internal.security.BaseForAuthenticatedUserTests;
+import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.session.AuthenticatedUserSessionManagerImpl;
 import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundException;
 import io.quarkus.test.InjectMock;
@@ -28,6 +33,7 @@ import org.junit.jupiter.api.Test;
 @QuarkusTest
 class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     @InjectMock AuthenticatedUserSessionManagerImpl sessionManager;
+    @InjectMock KnowledgeManager knowledgeManager;
 
     private AuthenticatedUserManagerImpl userManager;
 
@@ -37,14 +43,15 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     protected void setup() {
         userManager =
                 new AuthenticatedUserManagerImpl(
-                        userRepository, sessionManager, identity, userInfo);
+                        userRepository, sessionManager, knowledgeManager, identity, userInfo);
 
         clearAllInvocations();
         super.setup();
     }
 
     void clearAllInvocations() {
-        clearInvocations(userRepository, userAwareSessionRepository);
+        clearInvocations(
+                userRepository, userAwareSessionRepository, sessionManager, knowledgeManager);
     }
 
     @Test
@@ -63,10 +70,16 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     }
 
     @Test
-    void deleteThrowsAndDoesNothingIfNotExists() throws SessionNotFoundException {
+    void deleteThrowsAndDoesNothingIfNotExists()
+            throws SessionNotFoundException,
+                    UnexpectedFileStorageFailureException,
+                    KnowledgeNotFoundException,
+                    IllegalPermissionModificationException {
         assertThrows(UserNotRegisteredException.class, () -> userManager.delete());
         verify(userRepository, never()).delete(any());
         verify(sessionManager, never()).deleteSession(any());
+        verify(knowledgeManager, never()).deleteKnowledge(any());
+        verify(knowledgeManager, never()).removePermission(any(), any());
     }
 
     @Test
@@ -123,6 +136,38 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
             verify(sessionManager, times(1)).deleteSession(ownSessionId);
             verify(userRepository, times(1)).delete(any());
             assertEquals(0, userAwareSessionRepository.count());
+        }
+    }
+
+    @Nested
+    class WithUserAndOwnKnowledge {
+        @BeforeEach
+        void setup() {
+            setupUser();
+            setupKnowledgeWithPermission(Permission.OWNER);
+        }
+
+        @Test
+        void deleteDeletesOwnKnowledge()
+                throws UnexpectedFileStorageFailureException, KnowledgeNotFoundException {
+            userManager.delete();
+            verify(knowledgeManager, times(1)).deleteKnowledge(any());
+        }
+    }
+
+    @Nested
+    class WithUserAndSharedKnowledge {
+        @BeforeEach
+        void setup() {
+            setupUser();
+            setupKnowledgeWithPermission(Permission.READONLY);
+        }
+
+        @Test
+        void deleteRemovesPermissionFromSharedKnowledge()
+                throws KnowledgeNotFoundException, IllegalPermissionModificationException {
+            userManager.delete();
+            verify(knowledgeManager, times(1)).removePermission(any(), any());
         }
     }
 }

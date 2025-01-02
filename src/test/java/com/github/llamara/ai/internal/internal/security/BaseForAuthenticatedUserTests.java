@@ -1,12 +1,21 @@
 package com.github.llamara.ai.internal.internal.security;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
 import java.util.UUID;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.when;
 
+import com.github.llamara.ai.internal.internal.Utils;
+import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.internal.knowledge.KnowledgeRepository;
+import com.github.llamara.ai.internal.internal.knowledge.KnowledgeType;
+import com.github.llamara.ai.internal.internal.knowledge.TestKnowledge;
 import com.github.llamara.ai.internal.internal.security.session.Session;
 import com.github.llamara.ai.internal.internal.security.session.UserAwareSessionRepository;
 import com.github.llamara.ai.internal.internal.security.user.TestUserRepository;
@@ -27,6 +36,21 @@ import org.junit.jupiter.api.BeforeEach;
 public abstract class BaseForAuthenticatedUserTests {
     protected static final String OWN_USERNAME = "test";
     protected static final String OWN_DISPLAYNAME = "Test";
+
+    protected static final Path FILE = Path.of("src/test/resources/llamara.txt");
+    protected static final String FILE_NAME = "llamara.txt";
+    protected static final String FILE_MIME_TYPE = "text/plain";
+    protected static final String FILE_CHECKSUM;
+
+    static {
+        try {
+            FILE_CHECKSUM = Utils.generateChecksum(FILE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Inject KnowledgeRepository knowledgeRepository;
 
     @InjectSpy protected TestUserRepository userRepository;
     @InjectSpy protected UserAwareSessionRepository userAwareSessionRepository;
@@ -112,5 +136,22 @@ public abstract class BaseForAuthenticatedUserTests {
         clearAllInvocations();
 
         return session.getId();
+    }
+
+    /**
+     * Set up knowledge with the given permission for the current {@link SecurityIdentity}.
+     *
+     * @param permission
+     * @return
+     */
+    @Transactional
+    protected UUID setupKnowledgeWithPermission(Permission permission) {
+        Knowledge knowledge =
+                new TestKnowledge(
+                        KnowledgeType.FILE, FILE_CHECKSUM, FILE_NAME, URI.create(FILE_NAME));
+        knowledge.setPermission(
+                userRepository.findByUsername(identity.getPrincipal().getName()), permission);
+        knowledgeRepository.persist(knowledge);
+        return knowledge.getId();
     }
 }

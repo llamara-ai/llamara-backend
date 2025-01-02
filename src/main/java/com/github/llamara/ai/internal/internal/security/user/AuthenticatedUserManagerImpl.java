@@ -4,6 +4,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 
+import com.github.llamara.ai.internal.internal.knowledge.IllegalPermissionModificationException;
+import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.internal.knowledge.KnowledgeManager;
+import com.github.llamara.ai.internal.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.internal.security.Permission;
 import com.github.llamara.ai.internal.internal.security.session.AuthenticatedUserSessionManagerImpl;
 import com.github.llamara.ai.internal.internal.security.session.Session;
 import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundException;
@@ -24,6 +30,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 public class AuthenticatedUserManagerImpl implements UserManager {
     private final UserRepository userRepository;
     private final AuthenticatedUserSessionManagerImpl authenticatedUserSessionManager;
+    private final KnowledgeManager knowledgeManager;
 
     private final SecurityIdentity identity;
     private final UserInfo userInfo;
@@ -32,10 +39,12 @@ public class AuthenticatedUserManagerImpl implements UserManager {
     AuthenticatedUserManagerImpl(
             UserRepository userRepository,
             AuthenticatedUserSessionManagerImpl authenticatedUserSessionManager,
+            KnowledgeManager knowledgeManager,
             SecurityIdentity identity,
             UserInfo userInfo) {
         this.userRepository = userRepository;
         this.authenticatedUserSessionManager = authenticatedUserSessionManager;
+        this.knowledgeManager = knowledgeManager;
         this.identity = identity;
         this.userInfo = userInfo;
     }
@@ -47,13 +56,10 @@ public class AuthenticatedUserManagerImpl implements UserManager {
         User user = userRepository.findByUsername(identity.getPrincipal().getName());
         if (user == null) {
             user = new User(identity.getPrincipal().getName());
-            Log.debug(
-                    String.format(
-                            "User '%s' not found in database, creating new user.",
-                            user.getUsername()));
+            Log.infof("User '%s' not found in database, creating new entry.", user.getUsername());
             created = true;
         }
-        Log.debug(String.format("User '%s' found in database, updating user.", user.getUsername()));
+        Log.debugf("User '%s' found in database, updating user.", user.getUsername());
         user.setDisplayName(userInfo.getName());
         userRepository.persist(user);
         QuarkusTransaction.commit();
@@ -83,10 +89,33 @@ public class AuthenticatedUserManagerImpl implements UserManager {
                         e);
             }
         }
+        for (Knowledge knowledge : user.getKnowledge()) {
+            Permission permission = knowledge.getPermission(user);
+            try {
+                if (permission == Permission.OWNER) {
+                    Log.infof(
+                            "Deleting knowledge '%s' of user '%s' from database.",
+                            knowledge.getId(), user.getUsername());
+                    knowledgeManager.deleteKnowledge(knowledge.getId());
+                } else {
+                    Log.infof(
+                            "Removing permission of user '%s' from knowledge '%s'.",
+                            user.getUsername(), knowledge.getId());
+                    knowledgeManager.removePermission(knowledge.getId(), user);
+                }
+            } catch (KnowledgeNotFoundException
+                    | UnexpectedFileStorageFailureException
+                    | IllegalPermissionModificationException e) {
+                Log.fatalf(
+                        "Unexpectedly failed to delete knowledge '%s' during deletion of user"
+                                + " '%s'.",
+                        knowledge.getId(), user.getUsername(), e);
+            }
+        }
         QuarkusTransaction.begin();
         userRepository.delete(user);
         QuarkusTransaction.commit();
-        Log.debug(String.format("Deleted user '%s' from database.", user.getUsername()));
+        Log.infof("Deleted user '%s' from database.", user.getUsername());
     }
 
     @Override
