@@ -78,11 +78,9 @@ class RedisChatHistoryStore implements ChatHistoryStore {
                 .onFailure()
                 .invoke(
                         failure ->
-                                Log.error(
-                                        String.format(
-                                                "Failed to add message to history for '%s'.",
-                                                memoryId),
-                                        failure));
+                                Log.errorf(
+                                        "Failed to add message to history for '%s'.",
+                                        memoryId, failure));
     }
 
     public Uni<Void> deleteMessages(Object memoryId) {

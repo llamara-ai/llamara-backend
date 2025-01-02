@@ -89,11 +89,11 @@ class ChatModelProviderImpl implements ChatModelProvider {
                 // statement
                 config : chatModelConfig.models()) {
             if (chatModels.containsKey(config.uid())) {
-                Log.warn(String.format("Duplicate uid %s, skipping chat model.", config.uid()));
+                Log.warnf("Duplicate uid %s, skipping chat model.", config.uid());
                 continue;
             }
             if (!UID_REGEX.matcher(config.uid()).matches()) {
-                Log.warn(String.format("Invalid uid %s, skipping chat model..", config.uid()));
+                Log.warnf("Invalid uid %s, skipping chat model..", config.uid());
                 continue;
             }
             ChatLanguageModel clm = produceChatLanguageModel(config);

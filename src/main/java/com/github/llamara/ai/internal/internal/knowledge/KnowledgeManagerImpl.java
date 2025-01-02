@@ -189,7 +189,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         String checksum = generateChecksum(file);
 
         if (knowledge.getChecksum().equals(checksum)) {
-            Log.info(String.format("Skipping update of unchanged file source '%s'.", fileName));
+            Log.infof("Skipping update of unchanged file source '%s'.", fileName);
             return;
         }
 
