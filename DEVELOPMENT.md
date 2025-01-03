@@ -59,8 +59,7 @@ Use the `dev-external` profile:
 
 ```yaml
 "%dev-external":
-  quarkus:
-    ...
+  ...
 ```
 
 ## Documentation
