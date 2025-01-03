@@ -1,3 +1,10 @@
+embedding:
+  store:
+    type: qdrant # Supported types: qdrant
+    host: localhost
+    port: 6334 # Qdrant gRPC port
+    tls: false
+
 quarkus:
   keycloak:
     devservices:
@@ -34,3 +41,9 @@ quarkus:
       hosts: redis://localhost:6379/1
     chat-history:
       hosts: redis://localhost:6379/2
+
+  langchain4j:
+    qdrant:
+      devservices:
+        port: 6334
+        shared: false
