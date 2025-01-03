@@ -6,6 +6,15 @@
 #     and with default model config: OPENAI_API_KEY
 
 # Default configuration for Docker:
+embedding:
+  store:
+    type: qdrant # Supported types: qdrant
+    host: qdrant
+    port: 6334 # Qdrant gRPC port
+    tls: false
+    collection-name: text-embedding-3-large
+    vector-size: 3072
+
 quarkus:
   # Configure JDBC datasource (https://quarkus.io/guides/datasource#datasource-reference)
   datasource:
