@@ -20,6 +20,7 @@
 package com.github.llamara.ai.internal.internal.knowledge.embedding;
 
 import com.github.llamara.ai.internal.internal.MetadataKeys;
+import com.github.llamara.ai.internal.internal.StartupException;
 import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.internal.security.PermissionMetadataMapper;
 
@@ -29,6 +30,18 @@ import com.github.llamara.ai.internal.internal.security.PermissionMetadataMapper
  * @author Florian Hotze - Initial contribution
  */
 public interface EmbeddingStorePermissionMetadataManager {
+    /**
+     * Check the connection to the configured {@link dev.langchain4j.store.embedding.EmbeddingStore}
+     * and initialize it if required. Throw a {@link StartupException} to abort application startup
+     * if no connection can be established or initialization fails.
+     *
+     * <p>MUST be called during application startup for the configured {@link
+     * dev.langchain4j.store.embedding.EmbeddingStore}.
+     *
+     * @throws StartupException if failed to connect or failed to initialize
+     */
+    void checkConnectionAndInit() throws StartupException;
+
     /**
      * Update the {@link MetadataKeys#PERMISSION} metadata of the embeddings of the given knowledge.
      *

@@ -32,6 +32,8 @@ public interface EmbeddingStoreConfig {
 
     String collectionName();
 
+    int vectorSize();
+
     String host();
 
     int port();

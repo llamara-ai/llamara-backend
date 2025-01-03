@@ -44,6 +44,7 @@ embedding:
     port: 6334 # Qdrant gRPC port
     tls: false
     collection-name: text-embedding-3-large
+    vector-size: 3072
   model:
     provider: openai # Supported providers: azure, openai, ollama
     # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
