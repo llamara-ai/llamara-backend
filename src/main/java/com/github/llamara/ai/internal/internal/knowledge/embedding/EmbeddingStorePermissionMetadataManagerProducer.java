@@ -25,6 +25,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
 
 import com.github.llamara.ai.internal.config.embedding.EmbeddingStoreConfig;
+import io.quarkus.runtime.Startup;
 
 /**
  * CDI Bean Producer for {@link EmbeddingStorePermissionMetadataManager}. It produces the bean based
@@ -32,6 +33,7 @@ import com.github.llamara.ai.internal.config.embedding.EmbeddingStoreConfig;
  *
  * @author Florian Hotze - Initial contribution
  */
+@Startup // initialize at startup to check connection
 @ApplicationScoped
 class EmbeddingStorePermissionMetadataManagerProducer {
     private final EmbeddingStoreConfig config;
@@ -46,6 +48,8 @@ class EmbeddingStorePermissionMetadataManagerProducer {
         this.config = config;
         this.qdrantEmbeddingStorePermissionMetadataManager =
                 qdrantEmbeddingStorePermissionMetadataManager;
+
+        produceEmbeddingStorePermissionMetadataManager().checkConnectionAndInit();
     }
 
     @Produces

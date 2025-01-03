@@ -20,6 +20,7 @@
 package com.github.llamara.ai.internal.internal.knowledge.embedding;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
@@ -30,11 +31,14 @@ import static io.qdrant.client.ValueFactory.value;
 import com.github.llamara.ai.internal.config.EnvironmentVariables;
 import com.github.llamara.ai.internal.config.embedding.EmbeddingStoreConfig;
 import com.github.llamara.ai.internal.internal.MetadataKeys;
+import com.github.llamara.ai.internal.internal.StartupException;
 import com.github.llamara.ai.internal.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.internal.security.PermissionMetadataMapper;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
+import io.qdrant.client.grpc.Collections;
 import io.qdrant.client.grpc.Points;
+import io.quarkus.logging.Log;
 
 /**
  * Implementation of {@link EmbeddingStorePermissionMetadataManager} for Qdrant.
@@ -45,12 +49,15 @@ import io.qdrant.client.grpc.Points;
 @ApplicationScoped
 class QdrantEmbeddingStorePermissionMetadataManagerImpl
         implements EmbeddingStorePermissionMetadataManager {
+    private final EmbeddingStoreConfig config;
     private final QdrantClient client;
     private final String collectionName;
 
     @Inject
     QdrantEmbeddingStorePermissionMetadataManagerImpl(
             EmbeddingStoreConfig config, EnvironmentVariables env) {
+        this.config = config;
+
         QdrantGrpcClient.Builder grpcClientBuilder =
                 QdrantGrpcClient.newBuilder(config.host(), config.port(), config.tls());
 
@@ -61,6 +68,37 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
 
         this.client = new QdrantClient(grpcClientBuilder.build());
         this.collectionName = config.collectionName();
+    }
+
+    @Override
+    public void checkConnectionAndInit() {
+        boolean collectionExists;
+        try {
+            collectionExists = client.collectionExistsAsync(collectionName).get().booleanValue();
+        } catch (InterruptedException // NOSONAR
+                | ExecutionException // NOSONAR
+                        e) { // we don't want to re-interrupt or rethrow as we abort startup
+            throw new StartupException("Cannot connect to Qdrant embedding store.", e);
+        }
+        if (!collectionExists) {
+            try {
+                Log.infof("Creating missing Qdrant collection '%s' ...", collectionName);
+                client.createCollectionAsync(
+                                collectionName,
+                                Collections.VectorParams.newBuilder()
+                                        .setSize(config.vectorSize())
+                                        .setDistance(Collections.Distance.Cosine)
+                                        .build())
+                        .get();
+            } catch (InterruptedException // NOSONAR
+                    | ExecutionException // NOSONAR
+                            e) { // we don't want to re-interrupt or rethrow as we abort startup
+                throw new StartupException(
+                        String.format(
+                                "Failed to create missing Qdrant collection '%s'.",
+                                collectionName));
+            }
+        }
     }
 
     @Override
