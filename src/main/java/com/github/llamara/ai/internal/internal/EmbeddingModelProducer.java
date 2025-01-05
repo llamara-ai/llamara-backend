@@ -32,6 +32,7 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.ollama.OllamaEmbeddingModel;
+import io.quarkus.runtime.Startup;
 
 /**
  * CDI Bean Producer for {@link dev.langchain4j.model.embedding.EmbeddingModel}. It produces the
@@ -39,6 +40,7 @@ import io.quarkiverse.langchain4j.ollama.OllamaEmbeddingModel;
  *
  * @author Florian Hotze - Initial contribution
  */
+@Startup // initialize at startup to validate config
 @ApplicationScoped
 public class EmbeddingModelProducer {
     private final EmbeddingModelConfig config;
@@ -48,6 +50,8 @@ public class EmbeddingModelProducer {
     EmbeddingModelProducer(EmbeddingModelConfig config, EnvironmentVariables env) {
         this.config = config;
         this.env = env;
+
+        produceEmbeddingModel();
     }
 
     @Produces
