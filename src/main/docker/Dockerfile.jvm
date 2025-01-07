@@ -96,3 +96,6 @@ ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 VOLUME /config
 
 ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl --fail --silent --show-error http://localhost:8080/q/health/ready | grep 'UP' || exit 1
