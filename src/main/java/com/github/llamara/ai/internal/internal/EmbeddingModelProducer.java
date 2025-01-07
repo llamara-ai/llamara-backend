@@ -32,6 +32,7 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.ollama.OllamaEmbeddingModel;
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.Startup;
 
 /**
@@ -57,6 +58,10 @@ public class EmbeddingModelProducer {
     @Produces
     @ApplicationScoped
     public EmbeddingModel produceEmbeddingModel() {
+        Log.infof(
+                "Creating embedding model '%s' of provider '%s' ...",
+                config.model(), config.provider());
+
         return switch (config.provider()) {
             case OPENAI -> OpenAiEmbeddingModel.builder()
                     .baseUrl(config.baseUrl().orElse(null))
