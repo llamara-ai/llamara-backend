@@ -28,6 +28,7 @@ import com.github.llamara.ai.internal.config.embedding.EmbeddingStoreConfig;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
+import io.quarkus.logging.Log;
 
 /**
  * CDI Bean Producer for {@link EmbeddingStore}. It produces the bean based on the {@link
@@ -49,6 +50,8 @@ public class EmbeddingStoreProducer {
     @Produces
     @ApplicationScoped
     public EmbeddingStore<TextSegment> produceEmbeddingStore() {
+        Log.infof("Creating embedding store of type '%s' ...", config.type());
+
         return switch (config.type()) {
             case QDRANT -> produceQdrantEmbeddingStore();
         };

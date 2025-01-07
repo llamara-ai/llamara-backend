@@ -96,6 +96,11 @@ class ChatModelProviderImpl implements ChatModelProvider {
                 Log.warnf("Invalid uid %s, skipping chat model..", config.uid());
                 continue;
             }
+
+            Log.infof(
+                    "Creating chat model '%s' of provider '%s' ...",
+                    config.uid(), config.provider());
+
             ChatLanguageModel clm = produceChatLanguageModel(config);
             StreamingChatLanguageModel sclm = produceStreamingChatLanguageModel(config);
 
