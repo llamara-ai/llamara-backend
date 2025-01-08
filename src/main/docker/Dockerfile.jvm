@@ -79,8 +79,24 @@
 ###
 FROM registry.access.redhat.com/ubi8/openjdk-21:1.20
 
+ARG BUILD_DATE
+ARG VCS_REF
+ARG LLAMARA_VERSION
+
 ENV LANGUAGE='en_US:en'
 
+# Basic build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+LABEL org.opencontainers.image.created=$BUILD_DATE \
+    org.opencontainers.image.licenses="Apache-2.0" \
+    org.opencontainers.image.title="LLAMARA Backend" \
+    org.opencontainers.image.vendor="LLAMARA AI project" \
+    org.opencontainers.image.version=$LLAMARA_VERSION \
+    org.opencontainers.image.description="Backend of LLAMARA - The Large Language Assistant for Model-Augmented Retrieval and Analysis" \
+    org.opencontainers.image.url="https://github.com/llamara-ai" \
+    org.opencontainers.image.documentation="https://github.com/llamara-ai/llamara-docker" \
+    org.opencontainers.image.revision=$VCS_REF \
+    org.opencontainers.image.source="https://github.com/llamara-ai/llamara-backend.git" \
+    org.opencontainers.image.authors="Contributors to the LLAMARA project"
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
 COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/

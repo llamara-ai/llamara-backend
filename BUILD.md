@@ -27,7 +27,7 @@ You can optionally build a Docker container to run the application:
 
 ```shell script
 ./mvnw package
-docker build -f src/main/docker/Dockerfile.jvm -t llamara-ai/llamara-backend-jvm .
+docker build -f src/main/docker/Dockerfile.jvm -t llamara-ai/llamara-backend-jvm --build-arg BUILD_DATE=$(date +"%Y-%m-%dT%H:%M:%SZ") --build-arg VCS_REF=$(git rev-parse HEAD) --build-arg LLAMARA_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout) .
 ```
 
 Given the required configuration in `config/application.yaml` and the environment variables in `.env`, you can run the Docker container:
