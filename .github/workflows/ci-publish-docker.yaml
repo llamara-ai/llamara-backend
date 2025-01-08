@@ -39,6 +39,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Get Build Date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
+      - name: Get Project Version
+        id: version
+        run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
       # Install the cosign tool
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -89,6 +97,10 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ steps.date.outputs.date }}
+            VCS_REF=${{ github.sha }}
+            LLAMARA_VERSION=${{ steps.version.outputs.version }}
 
       # Sign the resulting Docker image digest.
       # This will only write to the public Rekor transparency log when the Docker
