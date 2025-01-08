@@ -125,13 +125,13 @@ Common embedding models and their vector size and recommended distance calculati
 
 ### REST API
 
-LLAMARA backend provides a REST API to interface with it.
-You can explore it through Swagger UI on <http://localhost:8080/q/swagger-ui>,
-or use the OpenAPI YAML or JSON produces as build artifact in [CI](https://github.com/llamara-ai/llamara-backend/actions/workflows/ci-build.yaml).
+LLAMARA backend provides a REST API on the `/rest` path to be consumed by a user interface.
+You can explore it through Swagger UI on the `/q/swagger-ui` endpoint,
+or use the OpenAPI YAML or JSON API scheme definitions available from [CI](https://github.com/llamara-ai/llamara-backend/actions/workflows/ci-build.yaml) artifacts.
 
 ### Info Endpoint
 
-The <http://localhost:8080/q/info> endpoint provides information about LLAMARA backend, including Git, Java, OS and build details.
+The `/q/info` endpoint provides information about LLAMARA backend, including Git, Java, OS and build details.
 
 ### Health Endpoint
 
