@@ -90,6 +90,19 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
                                         .setDistance(Collections.Distance.Cosine)
                                         .build())
                         .get();
+                Log.infof(
+                        "Enabling %s payload index for Qdrant collection '%s' ...",
+                        MetadataKeys.KNOWLEDGE_ID, collectionName);
+                client.createPayloadIndexAsync(
+                                collectionName,
+                                MetadataKeys.KNOWLEDGE_ID,
+                                Collections.PayloadSchemaType
+                                        .Keyword, // TODO: Use Uuid once supported
+                                null,
+                                null,
+                                null,
+                                null)
+                        .get();
             } catch (InterruptedException // NOSONAR
                     | ExecutionException // NOSONAR
                             e) { // we don't want to re-interrupt or rethrow as we abort startup
