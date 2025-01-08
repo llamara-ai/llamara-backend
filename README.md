@@ -86,6 +86,5 @@ Before using Qdrant, you need to create the required collection:
 
 ## Known Issues
 
-- Response streaming currently does not work.
 - Filtering embeddings by permissions in the retrieval step only works if knowledge has only a single permission set.
 - Administrators can manage all knowledge, but unfortunately they cannot use all knowledge in the retrieval step.
