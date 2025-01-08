@@ -47,7 +47,6 @@ import com.github.llamara.ai.internal.internal.security.session.SessionNotFoundE
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.common.annotation.NonBlocking;
-import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -56,7 +55,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.jboss.resteasy.reactive.ResponseStatus;
-import org.jboss.resteasy.reactive.RestMulti;
 
 /**
  * REST resource for the chat endpoint.
@@ -136,6 +134,7 @@ class ChatResource {
         return chatModelAiService.chat(sessionId, !identity.isAnonymous(), prompt);
     }
 
+    /*
     // Note: This method is currently broken when using blocking chat memory and/or blocking
     // retrieval augmentor.
     @Blocking
@@ -187,6 +186,7 @@ class ChatResource {
 
         return RestMulti.fromMultiData(sourceMulti).withDemand(1).status(200).build();
     }
+    */
 
     @Blocking
     @GET
