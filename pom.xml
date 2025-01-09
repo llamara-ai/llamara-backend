@@ -20,7 +20,7 @@
         <quarkus.platform.version>3.17.5</quarkus.platform.version> <!-- remember to sync Jackson version when upgrading -->
         <jackson.version>2.18.2</jackson.version>
         <quarkus-minio.version>3.7.7</quarkus-minio.version>
-        <quarkus-langchain4j.version>0.23.0.CR2</quarkus-langchain4j.version> <!-- remember to sync LangChain4j version when upgrading -->
+        <quarkus-langchain4j.version>0.23.3</quarkus-langchain4j.version> <!-- remember to sync LangChain4j version when upgrading -->
         <langchain4j.version>1.0.0-alpha1</langchain4j.version>
         <skipITs>true</skipITs>
     </properties>
