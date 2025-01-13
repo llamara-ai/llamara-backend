@@ -142,6 +142,14 @@ LLAMARA backend exposes four REST endpoints according to the [Eclipse Microprofi
 - `/q/health/started`: The application is started.
 - `/q/health`: Accumulating all health check procedures in the application.
 
+## Serving a Frontend
+
+LLAMARA backend is able to serve a JavaScript Single-Page-Application, such as a React, Vue or Angular application, as its frontend.
+
+To do so, you need to place the build output of your bundler, e.g. Webpack or Vite, into the [`META-INF/resources`](src/main/resources/META-INF/resources) folder during build-time of LLAMARA backend.
+The bundled JavaScript SPA will then be part of the build JAR and automatically served by Quarkus on the applications root path.
+LLAMARA backend redirects all 404 requests outside of its own [endpoints](#endpoints) to the index page to allow the SPA's router to take over.
+
 ## Known Issues
 
 - Filtering embeddings by permissions in the retrieval step only works if knowledge has only a single permission set.
