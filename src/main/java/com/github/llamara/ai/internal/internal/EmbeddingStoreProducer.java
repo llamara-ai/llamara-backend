@@ -37,7 +37,7 @@ import io.quarkus.logging.Log;
  * @author Florian Hotze - Initial contribution
  */
 @ApplicationScoped
-public class EmbeddingStoreProducer {
+class EmbeddingStoreProducer {
     private final EmbeddingStoreConfig config;
     private final EnvironmentVariables env;
 
@@ -49,7 +49,7 @@ public class EmbeddingStoreProducer {
 
     @Produces
     @ApplicationScoped
-    public EmbeddingStore<TextSegment> produceEmbeddingStore() {
+    EmbeddingStore<TextSegment> produceEmbeddingStore() {
         Log.infof("Creating embedding store of type '%s' ...", config.type());
 
         return switch (config.type()) {

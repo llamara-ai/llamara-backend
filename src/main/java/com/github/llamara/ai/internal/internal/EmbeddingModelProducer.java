@@ -43,7 +43,7 @@ import io.quarkus.runtime.Startup;
  */
 @Startup // initialize at startup to validate config
 @ApplicationScoped
-public class EmbeddingModelProducer {
+class EmbeddingModelProducer {
     private final EmbeddingModelConfig config;
     private final EnvironmentVariables env;
 
@@ -57,7 +57,7 @@ public class EmbeddingModelProducer {
 
     @Produces
     @ApplicationScoped
-    public EmbeddingModel produceEmbeddingModel() {
+    EmbeddingModel produceEmbeddingModel() {
         Log.infof(
                 "Creating embedding model '%s' of provider '%s' ...",
                 config.model(), config.provider());
