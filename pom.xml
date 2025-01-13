@@ -10,7 +10,7 @@
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
         <release-plugin.version>3.1.1</release-plugin.version>
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
-        <spotless.version>2.43.0</spotless.version>
+        <spotless.version>2.44.1</spotless.version>
         <java.version>21</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
