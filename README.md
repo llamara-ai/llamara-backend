@@ -145,3 +145,5 @@ LLAMARA backend exposes four REST endpoints according to the [Eclipse Microprofi
 ## Known Issues
 
 - Filtering embeddings by permissions in the retrieval step only works if knowledge has only a single permission set.
+  The contains filter from <https://github.com/langchain4j/langchain4j/pull/2344> is needed to properly implement permissions in the retrieval step.
+- Native image does not work with Qdrant embedding store, see <https://github.com/quarkiverse/quarkus-langchain4j/issues/1216>.
