@@ -17,8 +17,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.17.5</quarkus.platform.version> <!-- remember to sync Jackson version when upgrading -->
-        <jackson.version>2.18.2</jackson.version>
+        <quarkus.platform.version>3.17.6</quarkus.platform.version>
         <quarkus-minio.version>3.7.7</quarkus-minio.version>
         <quarkus-langchain4j.version>0.23.3</quarkus-langchain4j.version> <!-- remember to sync LangChain4j version when upgrading -->
         <langchain4j.version>1.0.0-alpha1</langchain4j.version>
@@ -126,7 +125,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
