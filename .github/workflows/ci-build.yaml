@@ -58,3 +58,11 @@ jobs:
           name: jacoco-report
           path: |
             target/jacoco-report
+
+      - name: Trigger distro build
+        if: github.event_name == 'push'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISTRO_DISPATCH_BUILD_TOKEN }}
+          repository: llamara-ai/llamara-distro
+          event-type: build
