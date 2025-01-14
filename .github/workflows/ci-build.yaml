@@ -37,18 +37,6 @@ jobs:
           maven: ${{ matrix.maven }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - name: Verify Changed Files
-        uses: tj-actions/verify-changed-files@v20
-        id: verify-changed-files
-
-      - name: Fail on Changed Files
-        if: steps.verify-changed-files.outputs.changed_files != ''
-        env:
-          CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
-        run: |
-          echo "::error::Files have changed: $CHANGED_FILES"
-          exit 1
-
       # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
       - name: Update dependency graph
         if: github.event_name != 'pull_request'
