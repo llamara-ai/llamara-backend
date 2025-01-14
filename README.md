@@ -23,6 +23,7 @@ as well as possibly serving research findings in an accessible way to the public
   - Users can add individual knowledge and share it with other users of LLAMARA through fine-grained permissions.
   - Anonymous access can be enabled to allow anyone to make us of the publicly shared knowledge.
 - **Multiple sessions** per user with server-side chat history
+- Serve a **JavaScript Single-Page-Application** (SPA) as frontend
 - Integration with the following LLM (chat model) providers:
   - [OpenAI](https://platform.openai.com/docs/models#models-overview)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
@@ -46,7 +47,7 @@ Refer to [config/README.md](config/README.md) for more information.
 
 The easiest way to run LLAMARA is to use the provided Docker container with Docker Compose.
 
-Please refer to [llamara-docker](https://github.com/llamara-ai/llamara-docker) for more information.
+Please refer to [llamara-deployment-docker](https://github.com/llamara-ai/llamara-deployment-docker) for more information.
 
 ## Dependencies
 
