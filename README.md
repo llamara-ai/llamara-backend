@@ -1,6 +1,6 @@
-# LLAMARA - Large Language Assistant for Model-Augmented Retrieval and Analysis
+# LLAMARA Backend
 
-LLAMARA is an LLM-based assistant for information retrieval from a provided knowledge base.
+LLAMARA - **L**arge **L**anguage **A**ssistant for **M**odel-**A**ugmented **R**etrieval and **A**nalysis - is an LLM-based assistant for information retrieval from a provided knowledge base.
 It aims at supporting researchers working with scientific papers, whitepapers and documentation,
 as well as possibly serving research findings in an accessible way to the public.
 
@@ -150,6 +150,8 @@ LLAMARA backend is able to serve a JavaScript Single-Page-Application, such as a
 To do so, you need to place the build output of your bundler, e.g. Webpack or Vite, into the [`META-INF/resources`](src/main/resources/META-INF/resources) folder during build-time of LLAMARA backend.
 The bundled JavaScript SPA will then be part of the build JAR and automatically served by Quarkus on the applications root path.
 LLAMARA backend redirects all 404 requests outside of its own [endpoints](#endpoints) to the index page to allow the SPA's router to take over.
+
+[LLAMARA Distribution](https://github.com/llamara-ai/llamara-distro) provides a build of LLAMARA backend that includes LLAMARA frontend, making it the easiest way to deploy LLAMARA.
 
 ## Known Issues
 
