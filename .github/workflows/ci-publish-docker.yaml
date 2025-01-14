@@ -2,10 +2,8 @@ name: CI Publish Docker
 
 on:
   push:
-    branches:
-      - 'main'
-    paths-ignore:
-      - '**/*.md'
+    branches: ['main']
+    paths-ignore: ['**/*.md']
     # Publish semver tags as releases.
     tags:
       - 'v*.*'

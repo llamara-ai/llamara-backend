@@ -2,17 +2,11 @@ name: CI Build Docker
 
 on:
   push:
-    branches:
-      - 'main'
-    paths:
-      - '.github/workflows/ci-build-docker.yaml'
-      - 'src/main/docker/**'
+    branches: ['main']
+    paths: ['.github/workflows/ci-build-docker.yaml', 'src/main/docker/**']
   pull_request:
-    branches:
-      - 'main'
-    paths:
-      - '.github/workflows/ci-build-docker.yaml'
-      - 'src/main/docker/**'
+    branches: ['main']
+    paths: ['.github/workflows/ci-build-docker.yaml', 'src/main/docker/**']
   workflow_dispatch:
 
 jobs:
