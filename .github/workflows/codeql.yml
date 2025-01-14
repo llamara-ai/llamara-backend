@@ -79,7 +79,9 @@ jobs:
       with:
         java: ${{ matrix.java }}
         maven: ${{ matrix.maven }}
-        command: "mvn -B --show-version --file pom.xml compile"
+        command: "compile"
+        skip_spotless: 'true'
+        skip_changed_files: 'true'
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

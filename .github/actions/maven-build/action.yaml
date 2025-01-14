@@ -6,10 +6,22 @@ inputs:
   maven:
     description: "Maven version"
     required: true
+  pom:
+    description: "Path to the Maven POM file (optional)"
+    required: false
+    default: "pom.xml"
   command:
     description: "Maven build command (optional)"
     required: false
-    default: "mvn -B --show-version --file pom.xml package"
+    default: "package"
+  skip_spotless:
+    description: "Skip Spotless check (optional)"
+    required: false
+    default: "false"
+  skip_changed_files:
+    description: "Skip changed files check (optional)"
+    required: false
+    default: "false"
   OPENAI_API_KEY:
     description: "OpenAI API Key (optional)"
     required: false
@@ -37,16 +49,18 @@ runs:
         maven-version: ${{ inputs.maven }}
 
     - name: Run Spotless Check
+      if: ${{ inputs.skip_spotless != 'true' }}
       shell: bash
-      run: mvn spotless:check --file pom.xml
+      run: "mvn -B --show-version --file ${{ inputs.pom }} spotless:check"
 
     - name: Maven Build
       shell: bash
-      run: ${{ inputs.command }}
+      run: "mvn -B --show-version --file ${{ inputs.pom }} ${{ inputs.command }}"
       env:
         OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY || 'sk-prod-key' }}
 
     - name: Verify Changed Files
+      if: ${{ inputs.skip_changed_files != 'true' }}
       uses: tj-actions/verify-changed-files@v20
       id: verify-changed-files
 
