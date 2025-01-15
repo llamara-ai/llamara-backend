@@ -27,7 +27,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import com.github.llamara.ai.config.SecurityConfig;
+import io.smallrye.common.annotation.NonBlocking;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 /**
  * REST resource for the root endpoint.
@@ -59,9 +64,17 @@ class RootResource {
         oidcInfo.tokenPath = oidcTokenPath;
     }
 
+    @NonBlocking
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public InfoDTO info() {
+    @Operation(
+            operationId = "configuration",
+            summary = "Get configuration required by the frontend.")
+    @APIResponse(
+            responseCode = "200",
+            description = "OK",
+            content = @Content(schema = @Schema(implementation = InfoDTO.class)))
+    public InfoDTO configuration() {
         InfoDTO infoDTO = new InfoDTO();
         infoDTO.security = securityInfo;
         infoDTO.oidc = oidcInfo;
