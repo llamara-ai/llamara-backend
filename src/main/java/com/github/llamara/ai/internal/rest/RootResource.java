@@ -42,9 +42,9 @@ class RootResource {
     RootResource(
             @ConfigProperty(name = "quarkus.oidc.auth-server-url") String oidcAuthServerUrl,
             @ConfigProperty(name = "quarkus.oidc.client-id") String oidcClientId,
-            @ConfigProperty(name = "quarkus.oidc.authorization-path") String oidcAuthorizationPath,
-            @ConfigProperty(name = "quarkus.oidc.logout-path") String oidcLogoutPath,
-            @ConfigProperty(name = "quarkus.oidc.token-path") String oidcTokenPath) {
+            @ConfigProperty(name = "frontend.oidc.authorization-path") String oidcAuthorizationPath,
+            @ConfigProperty(name = "frontend.oidc.logout-path") String oidcLogoutPath,
+            @ConfigProperty(name = "frontend.oidc.token-path") String oidcTokenPath) {
         oidcInfo = new OidcInfoDTO();
         oidcInfo.authServerUrl = oidcAuthServerUrl;
         oidcInfo.clientId = oidcClientId;
