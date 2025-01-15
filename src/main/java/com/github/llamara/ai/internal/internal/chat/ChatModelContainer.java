@@ -20,6 +20,7 @@
 package com.github.llamara.ai.internal.internal.chat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.llamara.ai.internal.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.internal.chat.aiservice.ChatModelAiService;
 
 /**
@@ -33,4 +34,8 @@ import com.github.llamara.ai.internal.internal.chat.aiservice.ChatModelAiService
  * @author Florian Hotze - Initial contribution
  */
 public record ChatModelContainer(
-        String uid, String label, String description, @JsonIgnore ChatModelAiService service) {}
+        String uid,
+        String label,
+        String description,
+        ChatModelConfig.ChatModelProvider provider,
+        @JsonIgnore ChatModelAiService service) {}
