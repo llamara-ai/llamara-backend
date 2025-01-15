@@ -26,6 +26,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import com.github.llamara.ai.config.SecurityConfig;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
@@ -36,15 +37,20 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @PermitAll
 @Path("/rest")
 class RootResource {
+    private final SecurityInfoDTO securityInfo;
     private final OidcInfoDTO oidcInfo;
 
     @Inject
     RootResource(
+            SecurityConfig securityConfig,
             @ConfigProperty(name = "quarkus.oidc.auth-server-url") String oidcAuthServerUrl,
             @ConfigProperty(name = "quarkus.oidc.client-id") String oidcClientId,
             @ConfigProperty(name = "frontend.oidc.authorization-path") String oidcAuthorizationPath,
             @ConfigProperty(name = "frontend.oidc.logout-path") String oidcLogoutPath,
             @ConfigProperty(name = "frontend.oidc.token-path") String oidcTokenPath) {
+        securityInfo = new SecurityInfoDTO();
+        securityInfo.anonymousUserEnabled = securityConfig.anonymousUserEnabled();
+        securityInfo.anonymousUserSessionTimeout = securityConfig.anonymousUserSessionTimeout();
         oidcInfo = new OidcInfoDTO();
         oidcInfo.authServerUrl = oidcAuthServerUrl;
         oidcInfo.clientId = oidcClientId;
@@ -57,12 +63,19 @@ class RootResource {
     @Produces(MediaType.APPLICATION_JSON)
     public InfoDTO info() {
         InfoDTO infoDTO = new InfoDTO();
+        infoDTO.security = securityInfo;
         infoDTO.oidc = oidcInfo;
         return infoDTO;
     }
 
     public static class InfoDTO {
+        public SecurityInfoDTO security; // NOSONAR: this is a DTO
         public OidcInfoDTO oidc; // NOSONAR: this is a DTO
+    }
+
+    public static class SecurityInfoDTO {
+        public boolean anonymousUserEnabled; // NOSONAR: this is a DTO
+        public int anonymousUserSessionTimeout; // NOSONAR: this is a DTO
     }
 
     public static class OidcInfoDTO {
