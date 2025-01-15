@@ -45,7 +45,7 @@ import org.jboss.resteasy.reactive.ResponseStatus;
  * @author Florian Hotze - Initial contribution
  */
 @Path("/rest/user")
-public class UserResource {
+class UserResource {
 
     private final UserManager userManager;
     private final SecurityIdentity identity;
