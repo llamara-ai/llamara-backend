@@ -27,6 +27,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import com.github.llamara.ai.config.SecurityConfig;
+import com.github.llamara.ai.config.frontend.OidcConfig;
 import io.smallrye.common.annotation.NonBlocking;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -48,20 +49,17 @@ class RootResource {
     @Inject
     RootResource(
             SecurityConfig securityConfig,
-            @ConfigProperty(name = "quarkus.oidc.auth-server-url") String oidcAuthServerUrl,
-            @ConfigProperty(name = "quarkus.oidc.client-id") String oidcClientId,
-            @ConfigProperty(name = "frontend.oidc.authorization-path") String oidcAuthorizationPath,
-            @ConfigProperty(name = "frontend.oidc.logout-path") String oidcLogoutPath,
-            @ConfigProperty(name = "frontend.oidc.token-path") String oidcTokenPath) {
+            OidcConfig oidcConfig,
+            @ConfigProperty(name = "quarkus.oidc.auth-server-url") String oidcAuthServerUrl) {
         securityInfo = new SecurityInfoDTO();
         securityInfo.anonymousUserEnabled = securityConfig.anonymousUserEnabled();
         securityInfo.anonymousUserSessionTimeout = securityConfig.anonymousUserSessionTimeout();
         oidcInfo = new OidcInfoDTO();
         oidcInfo.authServerUrl = oidcAuthServerUrl;
-        oidcInfo.clientId = oidcClientId;
-        oidcInfo.authorizationPath = oidcAuthorizationPath;
-        oidcInfo.logoutPath = oidcLogoutPath;
-        oidcInfo.tokenPath = oidcTokenPath;
+        oidcInfo.clientId = oidcConfig.clientId();
+        oidcInfo.authorizationPath = oidcConfig.authorizationPath();
+        oidcInfo.logoutPath = oidcConfig.logoutPath();
+        oidcInfo.tokenPath = oidcConfig.tokenPath();
     }
 
     @NonBlocking
