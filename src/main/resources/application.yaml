@@ -25,6 +25,10 @@ chat:
     max-messages: 50 # Maximum number of messages to keep in history, i.e. to present them to the user.
   models:
     # Supported model providers: azure, openai, ollama
+    # Supported model parameters: temperature, top-p, frequence-penalty, presence-penalty, max-tokens
+    # See https://platform.openai.com/docs/api-reference/chat/create for parameter description.
+    # (Azure) OpenAI supports all model parameters, Ollama doesn't support frequence-penalty & max-tokens.
+
     # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
     #- uid: azure-gpt4o-mini
     #  provider: azure
