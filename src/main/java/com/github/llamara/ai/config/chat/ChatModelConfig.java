@@ -19,10 +19,11 @@
  */
 package com.github.llamara.ai.config.chat;
 
+import com.github.llamara.ai.internal.chat.ChatModelContainer;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.github.llamara.ai.internal.chat.ChatModelContainer;
 import io.smallrye.config.ConfigMapping;
 
 /**

@@ -22,6 +22,7 @@ package com.github.llamara.ai.internal.knowledge;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
+
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 

@@ -19,6 +19,13 @@
  */
 package com.github.llamara.ai.internal.rest;
 
+import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
+import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.Roles;
+import com.github.llamara.ai.internal.security.knowledge.UserKnowledgeManager;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -40,12 +47,6 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import com.github.llamara.ai.internal.knowledge.Knowledge;
-import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
-import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
-import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
-import com.github.llamara.ai.internal.security.Roles;
-import com.github.llamara.ai.internal.security.knowledge.UserKnowledgeManager;
 import io.quarkus.logging.Log;
 import io.smallrye.common.annotation.Blocking;
 import org.eclipse.microprofile.openapi.annotations.Operation;

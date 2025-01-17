@@ -19,6 +19,15 @@
  */
 package com.github.llamara.ai.internal.security.user;
 
+import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
+import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
+import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.BaseForAuthenticatedUserTests;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.session.AuthenticatedUserSessionManagerImpl;
+import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
+
 import java.util.UUID;
 import jakarta.transaction.Transactional;
 
@@ -34,14 +43,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
-import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
-import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
-import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
-import com.github.llamara.ai.internal.security.BaseForAuthenticatedUserTests;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.session.AuthenticatedUserSessionManagerImpl;
-import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;

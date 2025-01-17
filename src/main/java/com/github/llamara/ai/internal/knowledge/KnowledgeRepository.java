@@ -19,14 +19,15 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
+import com.github.llamara.ai.internal.ingestion.IngestionStatus;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Users;
+
 import java.util.List;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
-import com.github.llamara.ai.internal.ingestion.IngestionStatus;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.Users;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 /**

@@ -19,6 +19,9 @@
  */
 package com.github.llamara.ai.internal;
 
+import com.github.llamara.ai.config.EnvironmentVariables;
+import com.github.llamara.ai.config.embedding.EmbeddingModelConfig;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
@@ -26,8 +29,6 @@ import jakarta.ws.rs.Produces;
 import static com.github.llamara.ai.internal.Utils.AZURE_OPENAI_API_VERSION;
 import static com.github.llamara.ai.internal.Utils.buildAzureOpenaiEndpoint;
 
-import com.github.llamara.ai.config.EnvironmentVariables;
-import com.github.llamara.ai.config.embedding.EmbeddingModelConfig;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiEmbeddingModel;

@@ -19,6 +19,10 @@
  */
 package com.github.llamara.ai.internal.security.user;
 
+import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.session.Session;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,9 +40,6 @@ import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.session.Session;
 import org.hibernate.annotations.SQLJoinTableRestriction;
 
 /**

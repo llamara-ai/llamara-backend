@@ -19,15 +19,15 @@
  */
 package com.github.llamara.ai.internal;
 
+import com.github.llamara.ai.config.chat.ChatModelConfig;
+import com.github.llamara.ai.config.embedding.EmbeddingModelConfig;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import com.github.llamara.ai.config.chat.ChatModelConfig;
-import com.github.llamara.ai.config.embedding.EmbeddingModelConfig;
 
 /**
  * Shared utilities and constants.

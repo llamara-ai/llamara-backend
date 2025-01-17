@@ -19,10 +19,11 @@
  */
 package com.github.llamara.ai.internal.ingestion.transformer.document;
 
+import com.github.llamara.ai.internal.MetadataKeys;
+
 import java.util.regex.Pattern;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import com.github.llamara.ai.internal.MetadataKeys;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentTransformer;
 import io.quarkus.logging.Log;

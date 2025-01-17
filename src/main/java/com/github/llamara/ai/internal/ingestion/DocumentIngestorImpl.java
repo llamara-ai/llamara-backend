@@ -19,14 +19,15 @@
  */
 package com.github.llamara.ai.internal.ingestion;
 
-import java.time.Instant;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-
 import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.ingestion.transformer.document.DocumentTransformerPipeline;
 import com.github.llamara.ai.internal.ingestion.transformer.textsegment.TextSegmentTransformerPipeline;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
+
+import java.time.Instant;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.segment.TextSegment;

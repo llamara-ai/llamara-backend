@@ -19,6 +19,9 @@
  */
 package com.github.llamara.ai.internal.rest;
 
+import com.github.llamara.ai.internal.security.Roles;
+import com.github.llamara.ai.internal.security.user.UserManager;
+
 import java.util.Set;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -28,8 +31,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-import com.github.llamara.ai.internal.security.Roles;
-import com.github.llamara.ai.internal.security.user.UserManager;
 import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;

@@ -19,15 +19,16 @@
  */
 package com.github.llamara.ai.internal.rest;
 
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response;
-
 import com.github.llamara.ai.internal.chat.ChatModelNotFoundException;
 import com.github.llamara.ai.internal.knowledge.EmptyFileException;
 import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
 import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
+
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+
 import io.quarkus.logging.Log;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 

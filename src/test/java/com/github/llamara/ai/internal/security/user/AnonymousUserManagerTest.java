@@ -19,14 +19,15 @@
  */
 package com.github.llamara.ai.internal.security.user;
 
+import com.github.llamara.ai.internal.security.Users;
+import com.github.llamara.ai.internal.security.session.AnonymousUserSessionManagerImpl;
+import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 
-import com.github.llamara.ai.internal.security.Users;
-import com.github.llamara.ai.internal.security.session.AnonymousUserSessionManagerImpl;
-import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeEach;

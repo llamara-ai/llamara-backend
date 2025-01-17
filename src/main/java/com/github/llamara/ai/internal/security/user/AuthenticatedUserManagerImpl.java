@@ -19,10 +19,6 @@
  */
 package com.github.llamara.ai.internal.security.user;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Typed;
-import jakarta.inject.Inject;
-
 import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
@@ -32,6 +28,11 @@ import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.session.AuthenticatedUserSessionManagerImpl;
 import com.github.llamara.ai.internal.security.session.Session;
 import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Typed;
+import jakarta.inject.Inject;
+
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.oidc.UserInfo;

@@ -19,6 +19,12 @@
  */
 package com.github.llamara.ai.internal.security.session;
 
+import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
+import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
+import com.github.llamara.ai.internal.security.user.User;
+import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
+import com.github.llamara.ai.internal.security.user.UserRepository;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -27,11 +33,6 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
-import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.security.user.User;
-import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
-import com.github.llamara.ai.internal.security.user.UserRepository;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;

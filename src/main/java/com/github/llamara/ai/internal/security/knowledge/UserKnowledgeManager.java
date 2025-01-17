@@ -19,15 +19,16 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.UUID;
-
 import com.github.llamara.ai.internal.knowledge.EmptyFileException;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.UUID;
+
 import io.quarkus.security.ForbiddenException;
 
 /**

@@ -19,11 +19,12 @@
  */
 package com.github.llamara.ai.internal.ingestion;
 
+import com.github.llamara.ai.config.ingestion.DocumentSplitterConfig;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
 
-import com.github.llamara.ai.config.ingestion.DocumentSplitterConfig;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentByLineSplitter;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;

@@ -19,10 +19,10 @@
  */
 package com.github.llamara.ai.internal.security.user;
 
+import com.github.llamara.ai.internal.security.Users;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
-
-import com.github.llamara.ai.internal.security.Users;
 
 /**
  * {@link UserManager} implementation for handling anonymous users.

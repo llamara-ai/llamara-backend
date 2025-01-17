@@ -19,14 +19,15 @@
  */
 package com.github.llamara.ai.internal.chat.history;
 
+import com.github.llamara.ai.config.chat.ChatHistoryConfig;
+import com.github.llamara.ai.internal.StartupException;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.config.chat.ChatHistoryConfig;
-import com.github.llamara.ai.internal.StartupException;
 import dev.langchain4j.data.message.ChatMessageType;
 import io.quarkus.logging.Log;
 import io.quarkus.redis.client.RedisClientName;

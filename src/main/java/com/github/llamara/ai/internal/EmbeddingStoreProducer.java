@@ -19,12 +19,13 @@
  */
 package com.github.llamara.ai.internal;
 
+import com.github.llamara.ai.config.EnvironmentVariables;
+import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
 
-import com.github.llamara.ai.config.EnvironmentVariables;
-import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;

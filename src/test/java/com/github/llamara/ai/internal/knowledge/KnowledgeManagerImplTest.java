@@ -19,6 +19,17 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
+import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.Utils;
+import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
+import com.github.llamara.ai.internal.ingestion.IngestionStatus;
+import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
+import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
+import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.user.TestUserRepository;
+import com.github.llamara.ai.internal.security.user.User;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -36,16 +47,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.github.llamara.ai.internal.MetadataKeys;
-import com.github.llamara.ai.internal.Utils;
-import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
-import com.github.llamara.ai.internal.ingestion.IngestionStatus;
-import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
-import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
-import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.user.TestUserRepository;
-import com.github.llamara.ai.internal.security.user.User;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.Filter;

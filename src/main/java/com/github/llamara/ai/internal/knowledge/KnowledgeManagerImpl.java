@@ -19,6 +19,17 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
+import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
+import com.github.llamara.ai.internal.ingestion.IngestionStatus;
+import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
+import com.github.llamara.ai.internal.knowledge.storage.FileContainer;
+import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
+import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
+import com.github.llamara.ai.internal.security.user.User;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -35,16 +46,6 @@ import static com.github.llamara.ai.internal.Utils.generateChecksum;
 import static dev.langchain4j.data.document.Document.ABSOLUTE_DIRECTORY_PATH;
 import static dev.langchain4j.data.document.Document.FILE_NAME;
 
-import com.github.llamara.ai.internal.MetadataKeys;
-import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
-import com.github.llamara.ai.internal.ingestion.IngestionStatus;
-import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
-import com.github.llamara.ai.internal.knowledge.storage.FileContainer;
-import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
-import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
-import com.github.llamara.ai.internal.security.user.User;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentLoader;
 import dev.langchain4j.data.document.DocumentParser;

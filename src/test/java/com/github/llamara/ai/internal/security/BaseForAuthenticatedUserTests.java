@@ -19,6 +19,16 @@
  */
 package com.github.llamara.ai.internal.security;
 
+import com.github.llamara.ai.internal.Utils;
+import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.KnowledgeRepository;
+import com.github.llamara.ai.internal.knowledge.KnowledgeType;
+import com.github.llamara.ai.internal.knowledge.TestKnowledge;
+import com.github.llamara.ai.internal.security.session.Session;
+import com.github.llamara.ai.internal.security.session.UserAwareSessionRepository;
+import com.github.llamara.ai.internal.security.user.TestUserRepository;
+import com.github.llamara.ai.internal.security.user.User;
+
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
@@ -30,15 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.internal.Utils;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
-import com.github.llamara.ai.internal.knowledge.KnowledgeRepository;
-import com.github.llamara.ai.internal.knowledge.KnowledgeType;
-import com.github.llamara.ai.internal.knowledge.TestKnowledge;
-import com.github.llamara.ai.internal.security.session.Session;
-import com.github.llamara.ai.internal.security.session.UserAwareSessionRepository;
-import com.github.llamara.ai.internal.security.user.TestUserRepository;
-import com.github.llamara.ai.internal.security.user.User;
 import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.InjectMock;

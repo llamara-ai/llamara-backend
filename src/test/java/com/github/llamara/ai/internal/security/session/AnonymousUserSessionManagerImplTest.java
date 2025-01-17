@@ -19,6 +19,9 @@
  */
 package com.github.llamara.ai.internal.security.session;
 
+import com.github.llamara.ai.config.SecurityConfig;
+import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,8 +36,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.config.SecurityConfig;
-import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;

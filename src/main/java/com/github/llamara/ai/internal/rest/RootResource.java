@@ -19,6 +19,9 @@
  */
 package com.github.llamara.ai.internal.rest;
 
+import com.github.llamara.ai.config.SecurityConfig;
+import com.github.llamara.ai.config.frontend.OidcConfig;
+
 import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -26,8 +29,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-import com.github.llamara.ai.config.SecurityConfig;
-import com.github.llamara.ai.config.frontend.OidcConfig;
 import io.smallrye.common.annotation.NonBlocking;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;

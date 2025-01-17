@@ -19,11 +19,12 @@
  */
 package com.github.llamara.ai.internal.security;
 
+import com.github.llamara.ai.config.SecurityConfig;
+import com.github.llamara.ai.internal.security.session.AnonymousUserSessionManagerImpl;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.config.SecurityConfig;
-import com.github.llamara.ai.internal.security.session.AnonymousUserSessionManagerImpl;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.SecurityIdentityAugmentor;

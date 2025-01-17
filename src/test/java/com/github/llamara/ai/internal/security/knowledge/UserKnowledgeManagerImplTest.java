@@ -19,23 +19,6 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Set;
-import java.util.UUID;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
@@ -54,6 +37,24 @@ import com.github.llamara.ai.internal.security.user.AnonymousUserManagerImpl;
 import com.github.llamara.ai.internal.security.user.AuthenticatedUserManagerImpl;
 import com.github.llamara.ai.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.security.user.User;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import io.quarkus.security.ForbiddenException;

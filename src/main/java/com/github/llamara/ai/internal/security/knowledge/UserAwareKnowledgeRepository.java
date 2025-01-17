@@ -19,6 +19,12 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
+import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.KnowledgeRepository;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Roles;
+import com.github.llamara.ai.internal.security.Users;
+
 import java.util.Optional;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,11 +32,6 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import com.github.llamara.ai.internal.knowledge.Knowledge;
-import com.github.llamara.ai.internal.knowledge.KnowledgeRepository;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.Roles;
-import com.github.llamara.ai.internal.security.Users;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**

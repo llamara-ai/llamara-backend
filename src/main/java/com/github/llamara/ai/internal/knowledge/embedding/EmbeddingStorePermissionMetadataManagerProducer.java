@@ -19,12 +19,13 @@
  */
 package com.github.llamara.ai.internal.knowledge.embedding;
 
+import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
 
-import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
 import io.quarkus.runtime.Startup;
 
 /**

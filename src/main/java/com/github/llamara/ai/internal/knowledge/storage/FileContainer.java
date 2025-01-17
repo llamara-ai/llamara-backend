@@ -19,10 +19,10 @@
  */
 package com.github.llamara.ai.internal.knowledge.storage;
 
+import com.github.llamara.ai.internal.MetadataKeys;
+
 import java.io.InputStream;
 import java.util.Map;
-
-import com.github.llamara.ai.internal.MetadataKeys;
 
 /**
  * Container for a file, containing the file content and metadata.

@@ -19,6 +19,16 @@
  */
 package com.github.llamara.ai.internal.rest;
 
+import com.github.llamara.ai.internal.chat.ChatModelContainer;
+import com.github.llamara.ai.internal.chat.ChatModelNotFoundException;
+import com.github.llamara.ai.internal.chat.ChatModelProvider;
+import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
+import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
+import com.github.llamara.ai.internal.security.Roles;
+import com.github.llamara.ai.internal.security.session.Session;
+import com.github.llamara.ai.internal.security.session.SessionManager;
+import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -35,15 +45,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
-import com.github.llamara.ai.internal.chat.ChatModelContainer;
-import com.github.llamara.ai.internal.chat.ChatModelNotFoundException;
-import com.github.llamara.ai.internal.chat.ChatModelProvider;
-import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
-import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.security.Roles;
-import com.github.llamara.ai.internal.security.session.Session;
-import com.github.llamara.ai.internal.security.session.SessionManager;
-import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.common.annotation.NonBlocking;

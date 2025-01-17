@@ -19,12 +19,13 @@
  */
 package com.github.llamara.ai.internal.security;
 
+import com.github.llamara.ai.config.SecurityConfig;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import com.github.llamara.ai.config.SecurityConfig;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.quarkus.test.InjectMock;

@@ -19,9 +19,10 @@
  */
 package com.github.llamara.ai.internal.chat.history;
 
+import com.github.llamara.ai.config.chat.ChatHistoryConfig;
+
 import java.util.List;
 
-import com.github.llamara.ai.config.chat.ChatHistoryConfig;
 import dev.langchain4j.data.message.ChatMessageType;
 import io.smallrye.mutiny.Uni;
 

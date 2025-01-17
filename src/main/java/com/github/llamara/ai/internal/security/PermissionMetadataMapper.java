@@ -19,12 +19,13 @@
  */
 package com.github.llamara.ai.internal.security;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.security.user.User;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**

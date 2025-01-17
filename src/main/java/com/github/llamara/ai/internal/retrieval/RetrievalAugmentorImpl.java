@@ -19,14 +19,15 @@
  */
 package com.github.llamara.ai.internal.retrieval;
 
+import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
+
 import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
 
-import com.github.llamara.ai.internal.MetadataKeys;
-import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;

@@ -19,10 +19,10 @@
  */
 package com.github.llamara.ai.internal.chat;
 
-import java.util.Collection;
-
 import com.github.llamara.ai.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
+
+import java.util.Collection;
 
 /**
  * The chat model provider provides access to the configured {@link ChatModelContainer}s.

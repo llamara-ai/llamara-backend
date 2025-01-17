@@ -19,6 +19,12 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
+import com.github.llamara.ai.internal.ingestion.IngestionStatus;
+import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Users;
+import com.github.llamara.ai.internal.security.user.User;
+
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
@@ -41,11 +47,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyJoinColumn;
 import jakarta.persistence.Table;
 
-import com.github.llamara.ai.internal.ingestion.IngestionStatus;
-import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.Users;
-import com.github.llamara.ai.internal.security.user.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 

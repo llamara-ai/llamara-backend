@@ -19,9 +19,10 @@
  */
 package com.github.llamara.ai.internal.chat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.llamara.ai.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Container for a chat model, containing information about the chat model and the {@link

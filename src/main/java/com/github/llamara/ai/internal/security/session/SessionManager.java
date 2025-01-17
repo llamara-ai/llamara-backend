@@ -19,13 +19,14 @@
  */
 package com.github.llamara.ai.internal.security.session;
 
+import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
+import com.github.llamara.ai.internal.security.user.User;
+import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
-import com.github.llamara.ai.internal.security.user.User;
-import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
 import io.smallrye.mutiny.Uni;
 
 /**

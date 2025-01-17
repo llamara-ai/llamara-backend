@@ -19,6 +19,8 @@
  */
 package com.github.llamara.ai.internal.security.session;
 
+import com.github.llamara.ai.internal.security.user.User;
+
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,7 +34,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.llamara.ai.internal.security.user.User;
 import org.hibernate.annotations.CreationTimestamp;
 
 /**

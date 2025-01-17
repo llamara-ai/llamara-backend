@@ -19,6 +19,9 @@
  */
 package com.github.llamara.ai.internal.security.session;
 
+import com.github.llamara.ai.config.SecurityConfig;
+import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,8 +37,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.config.SecurityConfig;
-import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Shutdown;

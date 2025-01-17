@@ -19,6 +19,8 @@
  */
 package com.github.llamara.ai.internal.knowledge.storage;
 
+import com.github.llamara.ai.internal.StartupException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +31,6 @@ import java.util.Map;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.internal.StartupException;
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;

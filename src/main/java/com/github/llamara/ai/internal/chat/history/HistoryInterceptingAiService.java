@@ -19,13 +19,14 @@
  */
 package com.github.llamara.ai.internal.chat.history;
 
+import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
+import com.github.llamara.ai.internal.chat.aiservice.DelegatingChatModelAiService;
+import com.github.llamara.ai.internal.chat.aiservice.DelegatingTokenStream;
+
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
-import com.github.llamara.ai.internal.chat.aiservice.DelegatingChatModelAiService;
-import com.github.llamara.ai.internal.chat.aiservice.DelegatingTokenStream;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessageType;
 import dev.langchain4j.model.chat.response.ChatResponse;

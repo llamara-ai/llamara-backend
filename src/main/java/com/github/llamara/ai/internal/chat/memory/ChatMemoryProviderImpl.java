@@ -19,15 +19,16 @@
  */
 package com.github.llamara.ai.internal.chat.memory;
 
+import com.github.llamara.ai.config.chat.ChatMemoryConfig;
+import com.github.llamara.ai.config.chat.ChatModelConfig;
+import com.github.llamara.ai.internal.StartupException;
+import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
+
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.config.chat.ChatMemoryConfig;
-import com.github.llamara.ai.config.chat.ChatModelConfig;
-import com.github.llamara.ai.internal.StartupException;
-import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;

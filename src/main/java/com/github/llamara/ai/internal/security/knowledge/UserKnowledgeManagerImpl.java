@@ -19,6 +19,17 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
+import com.github.llamara.ai.internal.Utils;
+import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
+import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
+import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Roles;
+import com.github.llamara.ai.internal.security.user.User;
+import com.github.llamara.ai.internal.security.user.UserManager;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -30,16 +41,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 
-import com.github.llamara.ai.internal.Utils;
-import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
-import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
-import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
-import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.Roles;
-import com.github.llamara.ai.internal.security.user.User;
-import com.github.llamara.ai.internal.security.user.UserManager;
 import io.quarkus.logging.Log;
 import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.identity.SecurityIdentity;

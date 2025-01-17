@@ -19,6 +19,13 @@
  */
 package com.github.llamara.ai.internal.knowledge.embedding;
 
+import com.github.llamara.ai.config.EnvironmentVariables;
+import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
+import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.StartupException;
+import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
+
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -28,12 +35,6 @@ import jakarta.inject.Inject;
 import static io.qdrant.client.ConditionFactory.matchKeyword;
 import static io.qdrant.client.ValueFactory.value;
 
-import com.github.llamara.ai.config.EnvironmentVariables;
-import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
-import com.github.llamara.ai.internal.MetadataKeys;
-import com.github.llamara.ai.internal.StartupException;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
-import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
 import io.qdrant.client.grpc.Collections;
