@@ -20,6 +20,7 @@
 package com.github.llamara.ai.internal.rest;
 
 import com.github.llamara.ai.config.SecurityConfig;
+import com.github.llamara.ai.config.frontend.LegalsConfig;
 import com.github.llamara.ai.config.frontend.OidcConfig;
 
 import jakarta.annotation.security.PermitAll;
@@ -46,11 +47,13 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 class RootResource {
     private final SecurityInfoDTO securityInfo;
     private final OidcInfoDTO oidcInfo;
+    private final LegalsConfig legalsConfig;
 
     @Inject
     RootResource(
             SecurityConfig securityConfig,
             OidcConfig oidcConfig,
+            LegalsConfig legalsConfig,
             @ConfigProperty(name = "quarkus.oidc.auth-server-url") String oidcAuthServerUrl) {
         securityInfo = new SecurityInfoDTO();
         securityInfo.anonymousUserEnabled = securityConfig.anonymousUserEnabled();
@@ -61,6 +64,7 @@ class RootResource {
         oidcInfo.authorizationPath = oidcConfig.authorizationPath();
         oidcInfo.logoutPath = oidcConfig.logoutPath();
         oidcInfo.tokenPath = oidcConfig.tokenPath();
+        this.legalsConfig = legalsConfig;
     }
 
     @NonBlocking
@@ -77,12 +81,16 @@ class RootResource {
         InfoDTO infoDTO = new InfoDTO();
         infoDTO.security = securityInfo;
         infoDTO.oidc = oidcInfo;
+        infoDTO.imprintLink = legalsConfig.imprint().orElse(null);
+        infoDTO.privacyPolicyLink = legalsConfig.privacyPolicy().orElse(null);
         return infoDTO;
     }
 
     public static class InfoDTO {
         public SecurityInfoDTO security; // NOSONAR: this is a DTO
         public OidcInfoDTO oidc; // NOSONAR: this is a DTO
+        public String imprintLink; // NOSONAR: this is a DTO
+        public String privacyPolicyLink; // NOSONAR: this is a DTO
     }
 
     public static class SecurityInfoDTO {
