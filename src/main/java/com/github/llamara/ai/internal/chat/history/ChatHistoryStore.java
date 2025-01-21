@@ -23,7 +23,6 @@ import com.github.llamara.ai.config.chat.ChatHistoryConfig;
 
 import java.util.List;
 
-import dev.langchain4j.data.message.ChatMessageType;
 import io.smallrye.mutiny.Uni;
 
 /**
@@ -55,10 +54,9 @@ public interface ChatHistoryStore {
      * the configured maximum in {@link ChatHistoryConfig}.
      *
      * @param historyId the history id to add the message to
-     * @param type the type of the message
-     * @param text the text of the message
+     * @param message the message
      */
-    Uni<Void> addMessage(Object historyId, ChatMessageType type, String text);
+    Uni<Void> addMessage(Object historyId, ChatMessageRecord message);
 
     /**
      * Delete all messages from the chat history for the given id. If no messages are present for

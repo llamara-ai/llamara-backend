@@ -19,10 +19,12 @@
  */
 package com.github.llamara.ai.internal.chat.history;
 
+import com.github.llamara.ai.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
 import com.github.llamara.ai.internal.chat.aiservice.DelegatingChatModelAiService;
 import com.github.llamara.ai.internal.chat.aiservice.DelegatingTokenStream;
 
+import java.time.Instant;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -42,17 +44,34 @@ public class HistoryInterceptingAiService extends DelegatingChatModelAiService {
     private final BiConsumer<UUID, String> promptConsumer;
     private final BiConsumer<UUID, AiMessage> responseConsumer;
 
-    public HistoryInterceptingAiService(ChatModelAiService delegate, ChatHistoryStore store) {
-        super(delegate);
+    public HistoryInterceptingAiService(
+            ChatModelAiService delegate,
+            ChatModelConfig.ModelConfig config,
+            ChatHistoryStore store) {
+        super(delegate, config);
 
         this.promptConsumer =
                 (sessionId, prompt) ->
-                        store.addMessage(sessionId, ChatMessageType.USER, prompt)
+                        store.addMessage(
+                                        sessionId,
+                                        new ChatMessageRecord(
+                                                ChatMessageType.USER,
+                                                prompt,
+                                                Instant.now(),
+                                                null,
+                                                null))
                                 .subscribe()
                                 .with(item -> {}, failure -> {});
         this.responseConsumer =
                 (sessionId, response) ->
-                        store.addMessage(sessionId, response.type(), response.text())
+                        store.addMessage(
+                                        sessionId,
+                                        new ChatMessageRecord(
+                                                ChatMessageType.AI,
+                                                response.text(),
+                                                Instant.now(),
+                                                config.provider(),
+                                                config.model()))
                                 .subscribe()
                                 .with(item -> {}, failure -> {});
     }

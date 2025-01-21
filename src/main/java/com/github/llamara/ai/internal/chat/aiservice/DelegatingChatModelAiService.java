@@ -19,21 +19,36 @@
  */
 package com.github.llamara.ai.internal.chat.aiservice;
 
+import com.github.llamara.ai.config.chat.ChatModelConfig;
+
 import java.util.UUID;
 
 import dev.langchain4j.service.TokenStream;
 
 /**
  * {@link ChatModelAiService} implementation that delegates to a supplied {@link ChatModelAiService}
- * instance. Allows overriding specific methods.
+ * instance and stores its {@link ChatModelConfig.ModelConfig}. Allows overriding specific methods
+ * and accessing the chat model configuration.
  *
  * @author Florian Hotze - Initial contribution
  */
 public abstract class DelegatingChatModelAiService implements ChatModelAiService {
     private final ChatModelAiService delegate;
+    private final ChatModelConfig.ModelConfig config;
 
-    protected DelegatingChatModelAiService(ChatModelAiService delegate) {
+    protected DelegatingChatModelAiService(
+            ChatModelAiService delegate, ChatModelConfig.ModelConfig config) {
         this.delegate = delegate;
+        this.config = config;
+    }
+
+    /**
+     * Get the model configuration of this {@link ChatModelAiService}.
+     *
+     * @return configuration of the chat model
+     */
+    public ChatModelConfig.ModelConfig config() {
+        return config;
     }
 
     @Override
