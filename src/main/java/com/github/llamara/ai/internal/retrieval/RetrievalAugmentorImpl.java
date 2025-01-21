@@ -19,6 +19,7 @@
  */
 package com.github.llamara.ai.internal.retrieval;
 
+import com.github.llamara.ai.config.RetrievalConfig;
 import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
@@ -52,11 +53,16 @@ import io.quarkus.security.identity.SecurityIdentity;
  */
 @ApplicationScoped
 class RetrievalAugmentorImpl implements RetrievalAugmentor {
+    private final RetrievalConfig config;
     private final RetrievalAugmentor delegate;
 
     @Inject
     RetrievalAugmentorImpl(
-            EmbeddingStore<TextSegment> store, EmbeddingModel model, SecurityIdentity identity) {
+            RetrievalConfig config,
+            EmbeddingStore<TextSegment> store,
+            EmbeddingModel model,
+            SecurityIdentity identity) {
+        this.config = config;
         // see https://docs.langchain4j.dev/tutorials/rag/#query-transformer
         // We may use a custom query transformer here to improve the quality of the response by
         // modifying or expanding the original query
@@ -83,25 +89,7 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
         ContentInjector contentInjector =
                 DefaultContentInjector.builder()
                         .metadataKeysToInclude(List.of(MetadataKeys.KNOWLEDGE_ID))
-                        .promptTemplate(
-                                PromptTemplate.from(
-                                        """
-                                {{userMessage}}
-
-                                Answer preferably using the following information.
-                                When answering using the following information, ALWAYS provide the source of the information for EACH paragraph.
-                                The source is specified by the knowledge_id and MUST be in the following JSON format: { "knowledge_id": knowledge_id }.
-                                Again: ALWAYS provide the source of the information for EACH paragraph.
-
-                                If, I repeat ONLY if explicitly asked for citation, cite the relevant parts word-by-word and provide the source of the information.
-                                If the citation is in a different language than the question, provide a translation.
-                                If you are not asked for citation, answer in your own words.
-
-                                If the following information is not sufficient to answer, answer the question with your own knowledge.
-                                In that case, you MUST state that you are answering based on your own knowledge.
-
-                                Information:
-                                {{contents}}"""))
+                        .promptTemplate(PromptTemplate.from(config.promptTemplate()))
                         .build();
         this.delegate =
                 DefaultRetrievalAugmentor.builder()

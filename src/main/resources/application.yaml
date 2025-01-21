@@ -70,3 +70,24 @@ ingestion:
     type: paragraph # Supported types: line, paragraph, recursive
     max-segment-size: 1000
     max-overlap-size: 200
+
+retrieval:
+  # The prompt template is used to inject the retrieved context into the user prompt and instruct the chat model to generate a response.
+  # It must contain {{userMessage}} and {{contents}} variables.
+  prompt-template: |-
+    {{userMessage}}
+    
+    Answer preferably using the following information.
+    When answering using the following information, ALWAYS provide the source of the information for EACH paragraph.
+    The source is specified by the knowledge_id and MUST be in the following JSON format: { "knowledge_id": knowledge_id }.
+    Again: ALWAYS provide the source of the information for EACH paragraph.
+  
+    If, I repeat ONLY if explicitly asked for citation, cite the relevant parts word-by-word and provide the source of the information.
+    If the citation is in a different language than the question, provide a translation.
+    If you are not asked for citation, answer in your own words.
+    
+    If the following information is not sufficient to answer, answer the question with your own knowledge.
+    In that case, you MUST state that you are answering based on your own knowledge.
+  
+    Information:
+    {{contents}}
