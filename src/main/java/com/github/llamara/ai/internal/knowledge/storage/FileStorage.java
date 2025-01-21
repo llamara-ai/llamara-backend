@@ -30,7 +30,6 @@ import java.util.Map;
  * @author Florian Hotze
  */
 public interface FileStorage {
-
     /**
      * Store a given file with the given metadata identified by its checksum in the storage. If a
      * file with the same checksum already exists, it will be overwritten.
@@ -65,4 +64,11 @@ public interface FileStorage {
      * @throws UnexpectedFileStorageFailureException if the storage operation failed unexpectedly
      */
     void deleteFile(String checksum) throws UnexpectedFileStorageFailureException;
+
+    /**
+     * Delete all files from the storage.
+     *
+     * @throws UnexpectedFileStorageFailureException if the storage operation failed unexpectedly
+     */
+    void deleteAllFiles() throws UnexpectedFileStorageFailureException;
 }
