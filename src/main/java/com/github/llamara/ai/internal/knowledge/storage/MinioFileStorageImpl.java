@@ -45,6 +45,7 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.quarkus.runtime.Startup;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Implementation of the {@link FileStorage} using <a href="https://min.io/">MinIO</a> as the
@@ -55,16 +56,19 @@ import io.quarkus.runtime.Startup;
 @Startup // initialize at startup to check connection
 @ApplicationScoped
 class MinioFileStorageImpl implements FileStorage {
-    private static final String BUCKET_NAME = "llamara";
     private static final String S3_EXCEPTION_MESSAGE = "Unexpected exception in S3 service";
     private static final String S3_ERROR_RESPONSE_MESSAGE =
             "Unexpected error response from S3 service";
 
+    private final String bucketName;
     private final MinioClient minioClient;
 
     @Inject
-    MinioFileStorageImpl(MinioClient minioClient) {
+    MinioFileStorageImpl(
+            MinioClient minioClient,
+            @ConfigProperty(name = "quarkus.minio.bucket-name") String bucketName) {
         this.minioClient = minioClient;
+        this.bucketName = bucketName;
 
         try {
             checkConnectionAndCreateBucketIfMissing();
@@ -77,12 +81,11 @@ class MinioFileStorageImpl implements FileStorage {
             throws UnexpectedFileStorageFailureException {
         try {
             boolean found =
-                    minioClient.bucketExists(
-                            BucketExistsArgs.builder().bucket(BUCKET_NAME).build());
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (found) {
                 return;
             }
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET_NAME).build());
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         } catch (InsufficientDataException
                 | InternalException
                 | InvalidKeyException
@@ -103,7 +106,7 @@ class MinioFileStorageImpl implements FileStorage {
         try {
             minioClient.uploadObject(
                     UploadObjectArgs.builder()
-                            .bucket(BUCKET_NAME)
+                            .bucket(bucketName)
                             .object(checksum)
                             .filename(file.toString())
                             .userMetadata(metadata)
@@ -130,13 +133,13 @@ class MinioFileStorageImpl implements FileStorage {
                     minioClient
                             .statObject(
                                     StatObjectArgs.builder()
-                                            .bucket(BUCKET_NAME)
+                                            .bucket(bucketName)
                                             .object(checksum)
                                             .build())
                             .userMetadata();
             InputStream inputStream =
                     minioClient.getObject(
-                            GetObjectArgs.builder().bucket(BUCKET_NAME).object(checksum).build());
+                            GetObjectArgs.builder().bucket(bucketName).object(checksum).build());
             return new FileContainer(inputStream, metadata);
         } catch (InsufficientDataException
                 | InternalException
@@ -160,7 +163,7 @@ class MinioFileStorageImpl implements FileStorage {
     public void deleteFile(String checksum) throws UnexpectedFileStorageFailureException {
         try {
             minioClient.removeObject(
-                    RemoveObjectArgs.builder().bucket(BUCKET_NAME).object(checksum).build());
+                    RemoveObjectArgs.builder().bucket(bucketName).object(checksum).build());
         } catch (InsufficientDataException
                 | InternalException
                 | InvalidKeyException
