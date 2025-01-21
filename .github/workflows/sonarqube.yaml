@@ -14,7 +14,6 @@ jobs:
       matrix:
         java: [ '21' ]
         maven: [ '3.9.9' ]
-        sonar: [ '5.0.0.4389' ]
 
     runs-on: 'ubuntu-24.04'
 
@@ -43,4 +42,4 @@ jobs:
       - name: SonarQube Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B --show-version --file pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:${{ matrix.sonar }}:sonar -Dsonar.projectKey=llamara-ai_llamara-backend
+        run: mvn -B --show-version --file pom.xml sonar:sonar -Dsonar.projectKey=llamara-ai_llamara-backend
