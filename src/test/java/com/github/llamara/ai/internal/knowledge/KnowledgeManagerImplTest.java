@@ -130,10 +130,10 @@ class KnowledgeManagerImplTest {
 
     @Transactional
     @AfterEach
-    void destroy() {
+    void destroy() throws UnexpectedFileStorageFailureException {
         knowledgeRepository.deleteAll();
         userRepository.deleteAll();
-        // TODO: Clean up file storage?
+        fileStorage.deleteAllFiles();
         clearAllInvocations();
     }
 

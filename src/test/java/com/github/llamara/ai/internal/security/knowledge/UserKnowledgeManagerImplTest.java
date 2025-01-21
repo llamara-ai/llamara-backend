@@ -127,10 +127,10 @@ class UserKnowledgeManagerImplTest {
 
     @Transactional
     @AfterEach
-    void destroy() {
+    void destroy() throws UnexpectedFileStorageFailureException {
         knowledgeRepository.deleteAll();
         userRepository.deleteAll();
-        // TODO: Clean up file storage?
+        fileStorage.deleteAllFiles();
         clearAllInvocations();
     }
 
@@ -156,7 +156,7 @@ class UserKnowledgeManagerImplTest {
 
     @Test
     void setIngestionStatusThrowsUnsupportedOperationException() {
-        assertThrows(
+        assertThrows( // NOSONAR: we only have one method invocation, false alarm
                 UnsupportedOperationException.class,
                 () ->
                         userKnowledgeManager.setKnowledgeIngestionStatus(

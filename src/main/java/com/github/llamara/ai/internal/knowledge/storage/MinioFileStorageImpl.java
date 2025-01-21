@@ -33,9 +33,11 @@ import jakarta.inject.Inject;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
+import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
+import io.minio.Result;
 import io.minio.StatObjectArgs;
 import io.minio.UploadObjectArgs;
 import io.minio.errors.ErrorResponseException;
@@ -44,6 +46,7 @@ import io.minio.errors.InternalException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
+import io.minio.messages.Item;
 import io.quarkus.runtime.Startup;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -175,6 +178,27 @@ class MinioFileStorageImpl implements FileStorage {
             throw new UnexpectedFileStorageFailureException(S3_EXCEPTION_MESSAGE, e);
         } catch (ErrorResponseException e) {
             throw new UnexpectedFileStorageFailureException(S3_ERROR_RESPONSE_MESSAGE, e);
+        }
+    }
+
+    @Override
+    public void deleteAllFiles() throws UnexpectedFileStorageFailureException {
+        for (Result<Item> result :
+                minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).build())) {
+            try {
+                deleteFile(result.get().objectName());
+            } catch (InsufficientDataException
+                    | InternalException
+                    | InvalidKeyException
+                    | NoSuchAlgorithmException
+                    | XmlParserException e) {
+                throw new UnexpectedFileStorageFailureException(
+                        "Unexpected exception thrown while deleting all files from bucket", e);
+            } catch (InvalidResponseException | IOException | ServerException e) {
+                throw new UnexpectedFileStorageFailureException(S3_EXCEPTION_MESSAGE, e);
+            } catch (ErrorResponseException e) {
+                throw new UnexpectedFileStorageFailureException(S3_ERROR_RESPONSE_MESSAGE, e);
+            }
         }
     }
 }
