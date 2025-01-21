@@ -22,6 +22,7 @@
         <quarkus-langchain4j.version>0.23.3</quarkus-langchain4j.version> <!-- remember to sync LangChain4j version when upgrading -->
         <langchain4j.version>1.0.0-alpha1</langchain4j.version>
         <skipITs>true</skipITs>
+        <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <licenses>
