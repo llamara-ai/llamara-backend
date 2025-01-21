@@ -22,13 +22,11 @@ package com.github.llamara.ai.internal.chat.history;
 import com.github.llamara.ai.config.chat.ChatHistoryConfig;
 import com.github.llamara.ai.internal.StartupException;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import dev.langchain4j.data.message.ChatMessageType;
 import io.quarkus.logging.Log;
 import io.quarkus.redis.client.RedisClientName;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
@@ -65,25 +63,28 @@ class RedisChatHistoryStore implements ChatHistoryStore {
         }
     }
 
-    public Uni<List<ChatMessageRecord>> getMessages(Object memoryId) {
-        return listCommands.lrange(memoryId.toString(), 0, -1);
+    @Override
+    public Uni<List<ChatMessageRecord>> getMessages(Object historyId) {
+        return listCommands.lrange(historyId.toString(), 0, -1);
     }
 
-    public Uni<Void> addMessage(Object memoryId, ChatMessageType type, String text) {
+    @Override
+    public Uni<Void> addMessage(Object historyId, ChatMessageRecord message) {
         return listCommands
-                .rpush(memoryId.toString(), new ChatMessageRecord(type, text, Instant.now()))
+                .rpush(historyId.toString(), message)
                 .chain(
                         () ->
                                 listCommands.ltrim(
-                                        memoryId.toString(), -1 * (long) config.maxMessages(), -1))
+                                        historyId.toString(), -1 * (long) config.maxMessages(), -1))
                 .onFailure()
                 .invoke(
                         failure ->
                                 Log.errorf(
                                         "Failed to add message to history for '%s'.",
-                                        memoryId, failure));
+                                        historyId, failure));
     }
 
+    @Override
     public Uni<Void> deleteMessages(Object memoryId) {
         return keyCommands.del(memoryId.toString()).replaceWithVoid();
     }

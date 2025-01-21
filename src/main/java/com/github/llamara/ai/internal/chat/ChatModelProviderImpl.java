@@ -114,6 +114,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                                     .chatMemoryProvider(chatMemoryProvider)
                                     .retrievalAugmentor(retrievalAugmentor)
                                     .build(),
+                            config,
                             chatHistoryStore);
 
             ChatModelContainer cm =
