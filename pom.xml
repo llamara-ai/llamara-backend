@@ -22,6 +22,9 @@
         <quarkus-langchain4j.version>0.23.3</quarkus-langchain4j.version> <!-- remember to sync LangChain4j version when upgrading -->
         <langchain4j.version>1.0.0-alpha1</langchain4j.version>
         <skipITs>true</skipITs>
+        <!-- Configure SonarQube Cloud -->
+        <sonar.organization>llamara-ai</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <licenses>

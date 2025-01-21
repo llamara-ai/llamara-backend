@@ -1,0 +1,46 @@
+name: SonarQube
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build & Analyze
+    strategy:
+      matrix:
+        java: [ '21' ]
+        maven: [ '3.9.9' ]
+        sonar: [ '5.0.0.4389' ]
+
+    runs-on: 'ubuntu-24.04'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Maven Build
+        uses: ./.github/actions/maven-build
+        with:
+          java: ${{ matrix.java }}
+          maven: ${{ matrix.maven }}
+          command: 'verify'
+          skip_spotless: 'true'
+          skip_changed_files: 'true'
+
+      - name: SonarQube Analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B --show-version --file pom.xml org.sonarsource.scanner.maven:sonar-maven-plugin:${{ matrix.sonar }}:sonar -Dsonar.projectKey=llamara-ai_llamara-backend
