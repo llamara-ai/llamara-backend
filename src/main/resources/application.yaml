@@ -91,3 +91,8 @@ retrieval:
   
     Information:
     {{contents}}
+
+quarkus:
+  minio:
+    # The name of the MinIO bucket to use.
+    bucket-name: llamara
