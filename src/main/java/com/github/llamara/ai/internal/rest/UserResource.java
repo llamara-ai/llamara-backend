@@ -98,6 +98,9 @@ class UserResource {
 
         UserInfoDTO(SecurityIdentity identity, UserInfo userInfo) {
             this.username = identity.getPrincipal().getName();
+            if (this.username.isBlank()) {
+                this.username = null;
+            }
             this.roles = identity.getRoles();
             this.anonymous = identity.isAnonymous();
             this.name = userInfo.getName();
