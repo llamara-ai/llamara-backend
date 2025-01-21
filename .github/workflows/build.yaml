@@ -1,30 +1,81 @@
-name: CI Publish Docker
+name: CI Build
 
 on:
+  # Build main container:
+  workflow_dispatch:
   push:
     branches: ['main']
     paths-ignore: ['**/*.md']
-    # Publish semver tags as releases.
+    # Build release container:
     tags:
       - 'v*.*'
       - 'v*.*.*'
+  # Dry run for PRs:
+  pull_request:
+    branches: ['main']
+    paths-ignore: ['**/*.md']
 
-env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  IMAGE_NAME: ${{ github.repository }}
-
+permissions:
+  contents: write
 
 jobs:
-  publish-docker:
+  build:
+    name: Maven Build
     strategy:
       matrix:
-        os: [ 'ubuntu-24.04' ]
         java: [ '21' ]
         maven: [ '3.9.9' ]
 
-    runs-on: ${{ matrix.os }}
+    runs-on: 'ubuntu-24.04'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Maven Build
+        uses: ./.github/actions/maven-build
+        with:
+          java: ${{ matrix.java }}
+          maven: ${{ matrix.maven }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
+      - name: Update dependency graph
+        if: github.event_name != 'pull_request'
+        uses: advanced-security/maven-dependency-submission-action@v4
+
+      - name: Upload packaged application
+        uses: actions/upload-artifact@v4
+        with:
+          name: quarkus-app
+          path: |
+            target/quarkus-app
+
+      - name: Upload OpenAPI schema
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-schema
+          path: |
+            target/openapi
+
+      - name: Upload test coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: |
+            target/jacoco-report
+
+  publish-docker:
+    name: Docker Build & Publish
+    needs: build
+
+    runs-on: 'ubuntu-24.04'
+
+    env:
+      # Use docker.io for Docker Hub if empty
+      REGISTRY: ghcr.io
+      # github.repository as <account>/<repo>
+      IMAGE_NAME: ${{ github.repository }}
 
     permissions:
       contents: read
@@ -48,6 +99,7 @@ jobs:
       # Install the cosign tool
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
+        if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@v3
         with:
           cosign-release: 'v2.2.4'
@@ -61,6 +113,7 @@ jobs:
       # Login against a Docker registry
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -75,12 +128,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Maven Build
-        uses: ./.github/actions/maven-build
+      - name: Download packaged application
+        uses: actions/download-artifact@v4
         with:
-          java: ${{ matrix.java }}
-          maven: ${{ matrix.maven }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          name: quarkus-app
+          path: target/quarkus-app
 
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
@@ -88,9 +140,9 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
-          push: true
           file: src/main/docker/Dockerfile.jvm
           context: .
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
@@ -106,6 +158,7 @@ jobs:
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
       - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
         env:
           # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
           TAGS: ${{ steps.meta.outputs.tags }}
