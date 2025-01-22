@@ -43,6 +43,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -255,5 +256,79 @@ class KnowledgeResource {
             Log.error("Error while uploading files to knowledge.", e);
             throw e;
         }
+    }
+
+    @RolesAllowed({Roles.ADMIN, Roles.USER})
+    @Blocking
+    @PUT
+    @Path("/{id}/label")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "setKnowledgeLabel",
+            summary = "Set the label of a single knowledge identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(responseCode = "404", description = "No knowledge with the given id found.")
+    public void setKnowledgeLabel(
+            @PathParam("id")
+                    @Parameter(
+                            name = "id",
+                            description = "UID of the knowledge to set the label for",
+                            required = true)
+                    UUID id,
+            @QueryParam("label")
+                    @Parameter(
+                            name = "label",
+                            description = "the knowledge label to set",
+                            required = true)
+                    String label)
+            throws KnowledgeNotFoundException {
+        knowledgeManager.setLabel(id, label);
+    }
+
+    @RolesAllowed({Roles.ADMIN, Roles.USER})
+    @Blocking
+    @PUT
+    @Path("/{id}/tag")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "addKnowledgeTag",
+            summary = "Add a tag to a single knowledge identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(responseCode = "404", description = "No knowledge with the given id found.")
+    public void addKnowledgeTag(
+            @PathParam("id")
+                    @Parameter(
+                            name = "id",
+                            description = "UID of the knowledge to which the tag should be added",
+                            required = true)
+                    UUID id,
+            @QueryParam("tag") @Parameter(name = "tag", description = "tag to add", required = true)
+                    String tag)
+            throws KnowledgeNotFoundException {
+        knowledgeManager.addTag(id, tag);
+    }
+
+    @RolesAllowed({Roles.ADMIN, Roles.USER})
+    @Blocking
+    @DELETE
+    @Path("/{id}/tag")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "removeKnowledgeTag",
+            summary = "Remove a tag from a single knowledge identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(responseCode = "404", description = "No knowledge with the given id found.")
+    public void removeKnowledgeTag(
+            @PathParam("id")
+                    @Parameter(
+                            name = "id",
+                            description = "UID of the knowledge to which the tag should be removed",
+                            required = true)
+                    UUID id,
+            @QueryParam("tag")
+                    @Parameter(name = "tag", description = "tag to remove", required = true)
+                    String tag)
+            throws KnowledgeNotFoundException {
+        knowledgeManager.removeTag(id, tag);
     }
 }

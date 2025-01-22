@@ -142,6 +142,13 @@ class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTe
                     () -> sessionManager.getChatHistory(UUID.randomUUID()).await().indefinitely());
             verify(chatHistoryStore, never()).getMessages(any());
         }
+
+        @Test
+        void setSessionLabelThrowsAndDoesNothing() {
+            assertThrows(
+                    SessionNotFoundException.class,
+                    () -> sessionManager.setSessionLabel(UUID.randomUUID(), "label"));
+        }
     }
 
     @Nested
@@ -183,6 +190,13 @@ class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTe
                     SessionNotFoundException.class,
                     () -> sessionManager.getChatHistory(foreignSessionId).await().indefinitely());
             verify(chatHistoryStore, never()).getMessages(any());
+        }
+
+        @Test
+        void setSessionLabelThrowsAndDoesNothingForForeignSession() {
+            assertThrows(
+                    SessionNotFoundException.class,
+                    () -> sessionManager.setSessionLabel(foreignSessionId, "label"));
         }
     }
 
@@ -230,6 +244,20 @@ class AuthenticatedUserSessionManagerImplTest extends BaseForAuthenticatedUserTe
             UniAssertSubscriber<Collection<ChatMessageRecord>> subscriber =
                     uni.subscribe().withSubscriber(UniAssertSubscriber.create());
             subscriber.assertCompleted().assertItem(Collections.emptyList());
+        }
+
+        @Test
+        void setSessionLabelSetsSessionLabel() throws SessionNotFoundException {
+            sessionManager.setSessionLabel(ownSessionId, "label");
+
+            assertDoesNotThrow(
+                    () ->
+                            assertEquals(
+                                    "label",
+                                    userAwareSessionRepository
+                                            .findById(ownSessionId)
+                                            .getLabel()
+                                            .orElse(null)));
         }
     }
 }

@@ -83,4 +83,14 @@ public interface SessionManager {
      *     user
      */
     Uni<List<ChatMessageRecord>> getChatHistory(UUID sessionId) throws SessionNotFoundException;
+
+    /**
+     * Sets the label of the given session.
+     *
+     * @param sessionId the ID of the session
+     * @param label the new session label
+     * @throws SessionNotFoundException if no session with the given ID was found for the current
+     *     user
+     */
+    void setSessionLabel(UUID sessionId, String label) throws SessionNotFoundException;
 }

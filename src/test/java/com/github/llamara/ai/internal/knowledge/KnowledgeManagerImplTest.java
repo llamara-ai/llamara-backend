@@ -32,6 +32,7 @@ import com.github.llamara.ai.internal.security.user.User;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.UUID;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -528,6 +529,60 @@ class KnowledgeManagerImplTest {
             KnowledgeManager.NamedFileContainer fileContainer =
                     assertDoesNotThrow(() -> knowledgeManager.getFile(knowledgeId));
             assertEquals(FILE_NAME, fileContainer.fileName());
+        }
+
+        @Test
+        void setLabelSetsLabel() {
+            assertDoesNotThrow(() -> knowledgeManager.setLabel(knowledgeId, "label"));
+
+            assertDoesNotThrow(
+                    () ->
+                            assertEquals(
+                                    "label",
+                                    knowledgeManager
+                                            .getKnowledge(knowledgeId)
+                                            .getLabel()
+                                            .orElse(null)));
+        }
+
+        @Test
+        void addTagAddsTags() {
+            assertDoesNotThrow(() -> knowledgeManager.addTag(knowledgeId, "tag1"));
+            assertDoesNotThrow(() -> knowledgeManager.addTag(knowledgeId, "tag2"));
+
+            assertDoesNotThrow(
+                    () ->
+                            assertEquals(
+                                    Set.of("tag1", "tag2"),
+                                    knowledgeManager.getKnowledge(knowledgeId).getTags()));
+        }
+
+        @Test
+        void removeTagRemovesTag() throws KnowledgeNotFoundException {
+            // setup
+            knowledgeManager.addTag(knowledgeId, "tag1");
+
+            // test
+            assertDoesNotThrow(() -> knowledgeManager.removeTag(knowledgeId, "tag1"));
+            assertDoesNotThrow(
+                    () ->
+                            assertEquals(
+                                    Set.of(),
+                                    knowledgeManager.getKnowledge(knowledgeId).getTags()));
+        }
+
+        @Test
+        void removeTagDoesNothingIfTagNotExists() throws KnowledgeNotFoundException {
+            // setup
+            knowledgeManager.addTag(knowledgeId, "tag1");
+
+            // test
+            assertDoesNotThrow(() -> knowledgeManager.removeTag(knowledgeId, "tag2"));
+            assertDoesNotThrow(
+                    () ->
+                            assertEquals(
+                                    Set.of("tag1"),
+                                    knowledgeManager.getKnowledge(knowledgeId).getTags()));
         }
     }
 }

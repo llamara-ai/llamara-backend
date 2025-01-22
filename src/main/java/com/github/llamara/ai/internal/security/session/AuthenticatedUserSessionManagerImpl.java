@@ -126,4 +126,12 @@ public class AuthenticatedUserSessionManagerImpl implements SessionManager {
         enforceSessionValid(sessionId);
         return chatHistoryStore.getMessages(sessionId);
     }
+
+    @Transactional
+    @Override
+    public void setSessionLabel(UUID sessionId, String label) throws SessionNotFoundException {
+        Session session = userAwareSessionRepository.findById(sessionId);
+        session.setLabel(label);
+        userAwareSessionRepository.persist(session);
+    }
 }

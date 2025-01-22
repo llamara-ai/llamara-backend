@@ -295,7 +295,7 @@ class UserKnowledgeManagerImplTest {
         }
 
         @Test
-        void getForeignKnowledgeThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
+        void getFileThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
             assertThrows(
                     KnowledgeNotFoundException.class,
                     () -> userKnowledgeManager.getFile(foreignKnowledgeId));
@@ -306,6 +306,27 @@ class UserKnowledgeManagerImplTest {
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
             userKnowledgeManager.getFile(ownKnowledgeId);
             verify(knowledgeManager, times(1)).getFile(ownKnowledgeId);
+        }
+
+        @Test
+        void setKnowledgeLabelThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.setLabel(foreignKnowledgeId, "label"));
+        }
+
+        @Test
+        void addKnowledgeTagThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.addTag(foreignKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.removeTag(foreignKnowledgeId, "tag"));
         }
     }
 
@@ -382,6 +403,27 @@ class UserKnowledgeManagerImplTest {
             assertThrows(
                     ForbiddenException.class,
                     () -> userKnowledgeManager.removePermission(sharedKnowledgeId, FOREIGN_USER));
+        }
+
+        @Test
+        void setKnowledgeLabelThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.setLabel(sharedKnowledgeId, "label"));
+        }
+
+        @Test
+        void addKnowledgeTagThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.addTag(sharedKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removeTag(sharedKnowledgeId, "tag"));
         }
     }
 
@@ -481,6 +523,27 @@ class UserKnowledgeManagerImplTest {
             assertThrows( // NOSONAR: We want to check exactly for the given exception
                     ForbiddenException.class,
                     () -> userKnowledgeManager.removePermission(UUID.randomUUID(), OWN_USER));
+        }
+
+        @Test
+        void setKnowledgeLabelThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.setLabel(publicKnowledgeId, "label"));
+        }
+
+        @Test
+        void addKnowledgeTagThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.addTag(publicKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removeTag(publicKnowledgeId, "tag"));
         }
     }
 }

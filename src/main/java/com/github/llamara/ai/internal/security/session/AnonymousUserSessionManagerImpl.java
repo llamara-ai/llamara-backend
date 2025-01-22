@@ -141,4 +141,9 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
     public Uni<List<ChatMessageRecord>> getChatHistory(UUID sessionId) {
         return Uni.createFrom().item(Collections::emptyList);
     }
+
+    @Override
+    public void setSessionLabel(UUID sessionId, String label) throws SessionNotFoundException {
+        // do nothing
+    }
 }

@@ -260,4 +260,30 @@ class ChatResource {
             throws SessionNotFoundException {
         return sessionManager.getChatHistory(sessionId);
     }
+
+    @Blocking
+    @PUT
+    @Path("/sessions/{sessionId}/label")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "setSessionLabel",
+            summary = "Set the label of a session identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(responseCode = "404", description = "No session with the given ID found.")
+    public void setLabel(
+            @PathParam("sessionId")
+                    @Parameter(
+                            name = "sessionId",
+                            description = "UID of the session to set the label for",
+                            required = true)
+                    UUID sessionId,
+            @QueryParam("label")
+                    @Parameter(
+                            name = "label",
+                            description = "session label to set",
+                            required = true)
+                    String label)
+            throws SessionNotFoundException {
+        sessionManager.setSessionLabel(sessionId, label);
+    }
 }
