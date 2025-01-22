@@ -159,9 +159,4 @@ class AnonymousUserSessionManagerImplTest {
                 uni.subscribe().withSubscriber(UniAssertSubscriber.create());
         subscriber.assertCompleted().assertItem(Collections.emptyList());
     }
-
-    @Test
-    void setSessionLabelDoesNothing() throws SessionNotFoundException {
-        sessionManager.setSessionLabel(UUID.randomUUID(), "label");
-    }
 }
