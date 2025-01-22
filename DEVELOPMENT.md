@@ -39,6 +39,14 @@ You can add the license header to your source files using:
 ./mvnw license:update-file-header
 ```
 
+## Clean code & Code quality
+
+This project is using [SonarQube Cloud](https://sonarcloud.io/) for code quality analysis.
+
+SonarQube will automatically run for all commits to main as well as pull requests, and report the results in the GitHub checks and as a comment in the pull request.
+
+The SonarQube dashboard is available at [SonarQube Cloud: LLAMARA AI: llamara-backend](https://sonarcloud.io/project/overview?id=llamara-ai_llamara-backend).
+
 ## Upgrading the application
 
 To upgrade Quarkus execute the following command:
