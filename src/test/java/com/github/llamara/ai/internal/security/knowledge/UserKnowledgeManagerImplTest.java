@@ -316,6 +316,12 @@ class UserKnowledgeManagerImplTest {
         }
 
         @Test
+        void setKnowledgeLabelSetsLabelForOwnKnowledge() throws KnowledgeNotFoundException {
+            userKnowledgeManager.setLabel(ownKnowledgeId, "label");
+            verify(knowledgeManager, times(1)).setLabel(ownKnowledgeId, "label");
+        }
+
+        @Test
         void addKnowledgeTagThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
             assertThrows(
                     KnowledgeNotFoundException.class,
@@ -323,10 +329,22 @@ class UserKnowledgeManagerImplTest {
         }
 
         @Test
+        void addKnowledgeTagAddsTagToOwnKnowledge() throws KnowledgeNotFoundException {
+            userKnowledgeManager.addTag(ownKnowledgeId, "tag");
+            verify(knowledgeManager, times(1)).addTag(ownKnowledgeId, "tag");
+        }
+
+        @Test
         void removeKnowledgeTagThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
             assertThrows(
                     KnowledgeNotFoundException.class,
                     () -> userKnowledgeManager.removeTag(foreignKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagRemovesTagFromOwnKnowledge() throws KnowledgeNotFoundException {
+            userKnowledgeManager.removeTag(ownKnowledgeId, "tag");
+            verify(knowledgeManager, times(1)).removeTag(ownKnowledgeId, "tag");
         }
     }
 

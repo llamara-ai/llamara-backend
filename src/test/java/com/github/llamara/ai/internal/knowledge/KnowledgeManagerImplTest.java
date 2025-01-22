@@ -248,6 +248,27 @@ class KnowledgeManagerImplTest {
                 () -> knowledgeManager.getFile(UUID.randomUUID()));
     }
 
+    @Test
+    void setLabelThrowsKnowledgeNotFoundExceptionIfNoKnowledge() {
+        assertThrows(
+                KnowledgeNotFoundException.class,
+                () -> knowledgeManager.addTag(UUID.randomUUID(), "label"));
+    }
+
+    @Test
+    void addTagThrowsKnowledgeNotFoundExceptionIfNoKnowledge() {
+        assertThrows(
+                KnowledgeNotFoundException.class,
+                () -> knowledgeManager.addTag(UUID.randomUUID(), "tag"));
+    }
+
+    @Test
+    void removeTagThrowsKnowledgeNotFoundExceptionIfNoKnowledge() {
+        assertThrows(
+                KnowledgeNotFoundException.class,
+                () -> knowledgeManager.removeTag(UUID.randomUUID(), "tag"));
+    }
+
     @Nested
     class WithKnowledgeFile {
         UUID knowledgeId;
