@@ -11,6 +11,7 @@
         <release-plugin.version>3.1.1</release-plugin.version>
         <surefire-plugin.version>3.5.2</surefire-plugin.version>
         <spotless.version>2.44.2</spotless.version>
+        <license-plugin.version>2.5.0</license-plugin.version>
         <java.version>21</java.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -335,7 +336,15 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>2.5.0</version>
+                    <version>${license-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check-file-header</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <configuration>
                         <inceptionYear>2024</inceptionYear>
                         <licenseName>apache_v2</licenseName>
@@ -344,6 +353,8 @@
                         <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
                         <useJavaNoReformatCommentStartTag>false</useJavaNoReformatCommentStartTag>
                         <trimHeaderLine>true</trimHeaderLine>
+                        <failOnMissingHeader>true</failOnMissingHeader>
+                        <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
 
                         <roots>
                             <root>src/main/java</root>
