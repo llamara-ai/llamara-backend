@@ -67,35 +67,38 @@ class ChatMemoryProviderImpl implements ChatMemoryProvider {
 
         this.delegate =
                 switch (config.window()) {
-                    case MESSAGE -> memoryId -> {
-                        if (config.maxMessages().isEmpty()) {
-                            throw new StartupException(
-                                    INITIALIZATION_FAILURE_MESSAGE,
-                                    new IllegalStateException(
-                                            "maxMessages config must be set for message window"));
-                        }
-                        return MessageWindowChatMemory.builder()
-                                .id(memoryId)
-                                .maxMessages(config.maxMessages().get())
-                                .chatMemoryStore(store)
-                                .build();
-                    };
-                    case TOKEN -> memoryId -> {
-                        if (config.maxTokens().isEmpty() || config.tokenizer().isEmpty()) {
-                            throw new StartupException(
-                                    INITIALIZATION_FAILURE_MESSAGE,
-                                    new IllegalStateException(
-                                            "maxTokens and tokenizer config must be set for token"
-                                                    + " window"));
-                        }
-                        return TokenWindowChatMemory.builder()
-                                .id(memoryId)
-                                .maxTokens(
-                                        config.maxTokens().get(),
-                                        produceTokenizer(config.tokenizer().get()))
-                                .chatMemoryStore(store)
-                                .build();
-                    };
+                    case MESSAGE ->
+                            memoryId -> {
+                                if (config.maxMessages().isEmpty()) {
+                                    throw new StartupException(
+                                            INITIALIZATION_FAILURE_MESSAGE,
+                                            new IllegalStateException(
+                                                    "maxMessages config must be set for message"
+                                                            + " window"));
+                                }
+                                return MessageWindowChatMemory.builder()
+                                        .id(memoryId)
+                                        .maxMessages(config.maxMessages().get())
+                                        .chatMemoryStore(store)
+                                        .build();
+                            };
+                    case TOKEN ->
+                            memoryId -> {
+                                if (config.maxTokens().isEmpty() || config.tokenizer().isEmpty()) {
+                                    throw new StartupException(
+                                            INITIALIZATION_FAILURE_MESSAGE,
+                                            new IllegalStateException(
+                                                    "maxTokens and tokenizer config must be set for"
+                                                            + " token window"));
+                                }
+                                return TokenWindowChatMemory.builder()
+                                        .id(memoryId)
+                                        .maxTokens(
+                                                config.maxTokens().get(),
+                                                produceTokenizer(config.tokenizer().get()))
+                                        .chatMemoryStore(store)
+                                        .build();
+                            };
                 };
     }
 
