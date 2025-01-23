@@ -95,6 +95,11 @@ retrieval:
     
     Information:
     {{contents}}
+  missing-knowledge-prompt-template: |-
+      {{userMessage}}
+      
+      Answer based on your own knowledge.
+      You MUST state that you are answering based on your own knowledge.
 
 quarkus:
   minio:

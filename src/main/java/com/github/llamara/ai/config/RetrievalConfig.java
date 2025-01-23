@@ -29,4 +29,6 @@ import io.smallrye.config.ConfigMapping;
 @ConfigMapping(prefix = "retrieval")
 public interface RetrievalConfig {
     String promptTemplate();
+
+    String missingKnowledgePromptTemplate();
 }
