@@ -19,6 +19,7 @@ as well as possibly serving research findings in an accessible way to the public
   - TXT
   - and everything else supported by [Apache Tika](https://tika.apache.org/)
 - Provide **reference to the source** of knowledge in the generated response with the ability to download the file-based source
+- Configurable prompt template for RAG
 - **Interchangeable LLM** (chat model) for each request
 - Extensive **management of knowledge** (including the ability to set label and tags)
 - **Multi-User support** with Single-Sign-On (SSO) support through external OIDC providers (we recommend [Keycloak](https://www.keycloak.org/)):
@@ -31,6 +32,7 @@ as well as possibly serving research findings in an accessible way to the public
   - [OpenAI](https://platform.openai.com/docs/models#models-overview)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
   - [Ollama](https://ollama.com/)
+- Configure common model parameters such as temperature, top-p, frequency penalty & presence penalty for each model
 - Integration with the following embedding model providers:
   - [OpenAI](https://platform.openai.com/docs/models#embeddings)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)

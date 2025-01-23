@@ -95,6 +95,8 @@ retrieval:
     
     Information:
     {{contents}}
+  # The missing knowledge prompt template is used to prompt the chat model for its own knowledge if no context was retrieved.
+  # It must contain the {{userMessage}} variable.
   missing-knowledge-prompt-template: |-
       {{userMessage}}
       
