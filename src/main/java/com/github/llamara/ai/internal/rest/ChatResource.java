@@ -115,7 +115,7 @@ class ChatResource {
     @APIResponse(
             responseCode = "404",
             description = "No chat model or no session with given ID found.")
-    public String chat(
+    public String prompt(
             @QueryParam("uid")
                     @Parameter(
                             name = "uid",

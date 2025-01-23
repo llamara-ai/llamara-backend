@@ -22,6 +22,7 @@ package com.github.llamara.ai.internal.chat.aiservice;
 import java.util.UUID;
 
 import dev.langchain4j.service.MemoryId;
+import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.service.UserMessage;
 
@@ -37,9 +38,20 @@ import dev.langchain4j.service.UserMessage;
  * @author Florian Hotze - Initial contribution
  */
 public interface ChatModelAiService {
+    String SYSTEM_MESSAGE =
+            """
+You are LLAMARA, the Large Language Assistant for Model Augmented Retrieval and Analysis:
+  - Your goal is to support your users in finding and working with the information they need from the user-provided knowledge base.
+  - Focus on facts and avoid giving your opinion or interpretation on any matter.
+  - Ask for clarification if you are unsure about the user's request.
+  - Always answer in the same language as the user's input.
+  - If you are unable to answer a question, inform the user about it.
+""";
 
+    @SystemMessage(SYSTEM_MESSAGE)
     String chat(@MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
 
+    @SystemMessage(SYSTEM_MESSAGE)
     TokenStream chatAndStreamResponse(
             @MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
 
