@@ -51,24 +51,24 @@ public interface ChatModelAiService {
      */
     @UserMessage(
             """
-            Your task is to process the text delimited by <text> and </text> in the following way:
+Your task is to process the text delimited by <text> and </text> in the following way:
 
-            Take the text and perform the following clean-up steps on it:
-                1. Remove all unnecessary noise from it.
-                   Noise is ONLY: page numbers, references, sources, bibliography, table of content, page headers and page footers.
-                2. Format the resulting text.
-                   You MUST keep the original headings, paragraphs, and lists.
+Take the text and perform the following clean-up steps on it:
+    1. Remove all unnecessary noise from it.
+       Noise is ONLY: page numbers, references, sources, bibliography, table of content, page headers and page footers.
+    2. Format the resulting text.
+       You MUST keep the original headings, paragraphs, and lists.
 
-            You MUST NOT:
-                - Add anything to the text.
-                - Remove anything that is no noise.
-                - Summarize the text.
+You MUST NOT:
+    - Add anything to the text.
+    - Remove anything that is no noise.
+    - Summarize the text.
 
-            Answer ONLY with the cleaned text formatted as text only, i.e. NO Markdown, HTML, or similar.
+Answer ONLY with the cleaned text formatted as text only, i.e. NO Markdown, HTML, or similar.
 
-            <text>
-              {text}
-            </text>
-            """)
+<text>
+  {text}
+</text>
+""")
     String clean(String text);
 }

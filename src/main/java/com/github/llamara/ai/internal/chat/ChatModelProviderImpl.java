@@ -130,16 +130,17 @@ class ChatModelProviderImpl implements ChatModelProvider {
 
     private ChatLanguageModel produceChatLanguageModel(ChatModelConfig.ModelConfig config) {
         return switch (config.provider()) {
-            case OPENAI -> OpenAiChatModel.builder()
-                    .baseUrl(config.baseUrl().orElse(null))
-                    .apiKey(env.getOpenaiApiKey())
-                    .modelName(config.model())
-                    .temperature(config.temperature().orElse(null))
-                    .topP(config.topP().orElse(null))
-                    .frequencyPenalty(config.frequencyPenalty().orElse(null))
-                    .presencePenalty(config.presencePenalty().orElse(null))
-                    .maxCompletionTokens(config.maxTokens().orElse(null))
-                    .build();
+            case OPENAI ->
+                    OpenAiChatModel.builder()
+                            .baseUrl(config.baseUrl().orElse(null))
+                            .apiKey(env.getOpenaiApiKey())
+                            .modelName(config.model())
+                            .temperature(config.temperature().orElse(null))
+                            .topP(config.topP().orElse(null))
+                            .frequencyPenalty(config.frequencyPenalty().orElse(null))
+                            .presencePenalty(config.presencePenalty().orElse(null))
+                            .maxCompletionTokens(config.maxTokens().orElse(null))
+                            .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {
                     throw new StartupException(
@@ -182,16 +183,17 @@ class ChatModelProviderImpl implements ChatModelProvider {
     private StreamingChatLanguageModel produceStreamingChatLanguageModel(
             ChatModelConfig.ModelConfig config) {
         return switch (config.provider()) {
-            case OPENAI -> OpenAiStreamingChatModel.builder()
-                    .baseUrl(config.baseUrl().orElse(null))
-                    .apiKey(env.getOpenaiApiKey())
-                    .modelName(config.model())
-                    .temperature(config.temperature().orElse(null))
-                    .topP(config.topP().orElse(null))
-                    .frequencyPenalty(config.frequencyPenalty().orElse(null))
-                    .presencePenalty(config.presencePenalty().orElse(null))
-                    .maxCompletionTokens(config.maxTokens().orElse(null))
-                    .build();
+            case OPENAI ->
+                    OpenAiStreamingChatModel.builder()
+                            .baseUrl(config.baseUrl().orElse(null))
+                            .apiKey(env.getOpenaiApiKey())
+                            .modelName(config.model())
+                            .temperature(config.temperature().orElse(null))
+                            .topP(config.topP().orElse(null))
+                            .frequencyPenalty(config.frequencyPenalty().orElse(null))
+                            .presencePenalty(config.presencePenalty().orElse(null))
+                            .maxCompletionTokens(config.maxTokens().orElse(null))
+                            .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {
                     throw new StartupException(

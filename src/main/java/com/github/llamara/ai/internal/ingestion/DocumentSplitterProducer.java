@@ -51,12 +51,13 @@ class DocumentSplitterProducer {
     @ApplicationScoped
     public DocumentSplitter produceDocumentSplitter() {
         return switch (config.type()) {
-            case LINE -> new DocumentByLineSplitter(
-                    config.maxSegmentSize(), config.maxOverlapSize());
-            case PARAGRAPH -> new DocumentByParagraphSplitter(
-                    config.maxSegmentSize(), config.maxOverlapSize());
-            case RECURSIVE -> DocumentSplitters.recursive(
-                    config.maxSegmentSize(), config.maxOverlapSize());
+            case LINE ->
+                    new DocumentByLineSplitter(config.maxSegmentSize(), config.maxOverlapSize());
+            case PARAGRAPH ->
+                    new DocumentByParagraphSplitter(
+                            config.maxSegmentSize(), config.maxOverlapSize());
+            case RECURSIVE ->
+                    DocumentSplitters.recursive(config.maxSegmentSize(), config.maxOverlapSize());
         };
     }
 }

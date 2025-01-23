@@ -64,11 +64,12 @@ class EmbeddingModelProducer {
                 config.model(), config.provider());
 
         return switch (config.provider()) {
-            case OPENAI -> OpenAiEmbeddingModel.builder()
-                    .baseUrl(config.baseUrl().orElse(null))
-                    .apiKey(env.getOpenaiApiKey())
-                    .modelName(config.model())
-                    .build();
+            case OPENAI ->
+                    OpenAiEmbeddingModel.builder()
+                            .baseUrl(config.baseUrl().orElse(null))
+                            .apiKey(env.getOpenaiApiKey())
+                            .modelName(config.model())
+                            .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {
                     throw new IllegalArgumentException(
@@ -79,12 +80,13 @@ class EmbeddingModelProducer {
                         .model(config.model())
                         .build();
             }
-            case AZURE -> AzureOpenAiEmbeddingModel.builder()
-                    .endpoint(buildAzureOpenaiEndpoint(config))
-                    .apiKey(env.getAzureApiKey())
-                    .apiVersion(AZURE_OPENAI_API_VERSION)
-                    .maxRetries(3)
-                    .build();
+            case AZURE ->
+                    AzureOpenAiEmbeddingModel.builder()
+                            .endpoint(buildAzureOpenaiEndpoint(config))
+                            .apiKey(env.getAzureApiKey())
+                            .apiVersion(AZURE_OPENAI_API_VERSION)
+                            .maxRetries(3)
+                            .build();
         };
     }
 }
