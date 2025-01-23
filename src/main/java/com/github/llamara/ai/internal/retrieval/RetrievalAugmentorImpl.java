@@ -19,11 +19,9 @@
  */
 package com.github.llamara.ai.internal.retrieval;
 
-import com.github.llamara.ai.config.RetrievalConfig;
 import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
-import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -32,13 +30,11 @@ import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metad
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.rag.AugmentationRequest;
 import dev.langchain4j.rag.AugmentationResult;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.rag.content.injector.ContentInjector;
-import dev.langchain4j.rag.content.injector.DefaultContentInjector;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.Metadata;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -47,22 +43,22 @@ import io.quarkus.security.identity.SecurityIdentity;
 /**
  * Implementation of the {@link RetrievalAugmentor} using the {@link EmbeddingStore} and {@link
  * EmbeddingModel} CDI beans. It augments the user message with the knowledge from the {@link
- * EmbeddingStore}.
+ * EmbeddingStore}. See <a
+ * href="https://docs.langchain4j.dev/tutorials/rag/#retrieval-augmentor">LangChain4j Docs: RAG:
+ * Retrieval Augmentor</a>.
  *
  * @author Florian Hotze - Initial contribution
  */
 @ApplicationScoped
 class RetrievalAugmentorImpl implements RetrievalAugmentor {
-    private final RetrievalConfig config;
     private final RetrievalAugmentor delegate;
 
     @Inject
     RetrievalAugmentorImpl(
-            RetrievalConfig config,
             EmbeddingStore<TextSegment> store,
             EmbeddingModel model,
+            ContentInjector contentInjector,
             SecurityIdentity identity) {
-        this.config = config;
         // see https://docs.langchain4j.dev/tutorials/rag/#query-transformer
         // We may use a custom query transformer here to improve the quality of the response by
         // modifying or expanding the original query
@@ -84,12 +80,6 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
                                         .isEqualTo(
                                                 PermissionMetadataMapper.identityToMetadataQuery(
                                                         identity)))
-                        .build();
-        // https://docs.langchain4j.dev/tutorials/rag/#content-injector
-        ContentInjector contentInjector =
-                DefaultContentInjector.builder()
-                        .metadataKeysToInclude(List.of(MetadataKeys.KNOWLEDGE_ID))
-                        .promptTemplate(PromptTemplate.from(config.promptTemplate()))
                         .build();
         this.delegate =
                 DefaultRetrievalAugmentor.builder()
