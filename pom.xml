@@ -293,6 +293,8 @@
         <configuration>
           <pushChanges>false</pushChanges>
           <tagNameFormat>v@{project.version}</tagNameFormat>
+          <preparationGoals>clean spotless:apply verify</preparationGoals>
+          <completionGoals>spotless:apply</completionGoals>
         </configuration>
       </plugin>
       <plugin>
