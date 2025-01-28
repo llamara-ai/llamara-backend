@@ -24,7 +24,7 @@ as well as possibly serving research findings in an accessible way to the public
 - Extensive **management of knowledge** (including the ability to set label and tags)
 - **Multi-User support** with Single-Sign-On (SSO) support through external OIDC providers (we recommend [Keycloak](https://www.keycloak.org/)):
   - Admins can manage all knowledge added to LLAMARA.
-  - Users can add individual knowledge and share it with other users of LLAMARA through fine-grained permissions.
+  - Users can add individual knowledge and share it with other users of LLAMARA through fine-grained permissions. This can be disabled to allow only admins to manage knowledge.
   - Anonymous access can be enabled to allow anyone to make us of the publicly shared knowledge.
 - **Multiple sessions** per user with server-side chat history
 - Serve a **JavaScript Single-Page-Application** (SPA) as frontend
