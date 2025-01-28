@@ -1,6 +1,7 @@
 security:
   anonymous-user-enabled: false
   anonymous-user-session-timeout: 300 # Inactivity in seconds after which an anonymous session is removed from chat memory
+  admin-write-only-enabled: false # With this enabled, only admins have write-access to knowledge, i.e. regular users cannot add or modify knowledge
 
 frontend:
   # Provide the configuration for the frontend OIDC client

@@ -19,6 +19,7 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
+import com.github.llamara.ai.config.SecurityConfig;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
@@ -87,6 +88,7 @@ class UserKnowledgeManagerImplTest {
     @InjectSpy FileStorage fileStorage;
     @InjectMock EmbeddingStorePermissionMetadataManager embeddingStorePermissionMetadataManager;
 
+    @InjectMock SecurityConfig config;
     @InjectSpy UserAwareKnowledgeRepository userAwareKnowledgeRepository;
     @InjectSpy AuthenticatedUserManagerImpl authenticatedUserManager;
     @InjectMock AuthenticatedUserSessionManagerImpl authenticatedSessionManager;
@@ -111,6 +113,7 @@ class UserKnowledgeManagerImplTest {
         userKnowledgeManager =
                 new UserKnowledgeManagerImpl(
                         knowledgeManager,
+                        config,
                         userAwareKnowledgeRepository,
                         authenticatedUserManager,
                         identity);
@@ -134,7 +137,15 @@ class UserKnowledgeManagerImplTest {
         clearAllInvocations();
     }
 
-    void setupAuthenticatedIdentity() {
+    void setupAdminIdentity() {
+        when(identity.getPrincipal()).thenReturn(OWN_USER::getUsername);
+        when(identity.isAnonymous()).thenReturn(false);
+        when(identity.getRoles()).thenReturn(Set.of(Roles.ADMIN));
+        when(identity.hasRole(Roles.ADMIN)).thenReturn(true);
+        when(identity.hasRole(Roles.USER)).thenReturn(true);
+    }
+
+    void setupRegularIdentity() {
         when(identity.getPrincipal()).thenReturn(OWN_USER::getUsername);
         when(identity.isAnonymous()).thenReturn(false);
         when(identity.getRoles()).thenReturn(Set.of(Roles.USER));
@@ -174,7 +185,7 @@ class UserKnowledgeManagerImplTest {
             foreignKnowledgeId =
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREIGN_USER);
 
-            setupAuthenticatedIdentity();
+            setupRegularIdentity();
 
             clearAllInvocations();
 
@@ -364,7 +375,7 @@ class UserKnowledgeManagerImplTest {
                     sharedKnowledgeId, IngestionStatus.SUCCEEDED);
             knowledgeManager.setPermission(sharedKnowledgeId, OWN_USER, Permission.READONLY);
 
-            setupAuthenticatedIdentity();
+            setupRegularIdentity();
 
             clearAllInvocations();
 
@@ -459,6 +470,7 @@ class UserKnowledgeManagerImplTest {
             userKnowledgeManager =
                     new UserKnowledgeManagerImpl(
                             knowledgeManager,
+                            config,
                             userAwareKnowledgeRepository,
                             anonymousUserManager,
                             identity);
@@ -562,6 +574,169 @@ class UserKnowledgeManagerImplTest {
             assertThrows(
                     ForbiddenException.class,
                     () -> userKnowledgeManager.removeTag(publicKnowledgeId, "tag"));
+        }
+    }
+
+    @Nested
+    class RegularUserWithSharedReadWriteKnowledgeAndWithAdminWriteOnlyEnabled {
+        UUID sharedKnowledgeId;
+
+        @BeforeEach
+        void setup()
+                throws UnexpectedFileStorageFailureException,
+                        IOException,
+                        IllegalPermissionModificationException,
+                        KnowledgeNotFoundException {
+            sharedKnowledgeId =
+                    knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREIGN_USER);
+            knowledgeManager.setKnowledgeIngestionStatus(
+                    sharedKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setPermission(sharedKnowledgeId, OWN_USER, Permission.READWRITE);
+
+            when(config.adminWriteOnlyEnabled()).thenReturn(true);
+
+            setupRegularIdentity();
+
+            clearAllInvocations();
+
+            assertEquals(1, knowledgeRepository.count());
+        }
+
+        @Test
+        void deleteKnowledgeThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.deleteKnowledge(sharedKnowledgeId));
+        }
+
+        @Test
+        void addSourceThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE));
+        }
+
+        @Test
+        void updateSourceThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () ->
+                            userKnowledgeManager.updateSource(
+                                    sharedKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
+        }
+
+        @Test
+        void setPermissionThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    sharedKnowledgeId, OWN_USER, Permission.READWRITE));
+        }
+
+        @Test
+        void removePermissionThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removePermission(sharedKnowledgeId, OWN_USER));
+        }
+
+        @Test
+        void addKnowledgeTagThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.addTag(sharedKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removeTag(sharedKnowledgeId, "tag"));
+        }
+
+        @Test
+        void setKnowledgeLabelThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.setLabel(sharedKnowledgeId, "label"));
+        }
+    }
+
+    @Nested
+    class AdminUserWithOwnKnowledgeAndWithAdminWriteOnlyEnabled {
+        UUID ownKnowledgeId;
+
+        @BeforeEach
+        void setup() throws UnexpectedFileStorageFailureException, IOException {
+            ownKnowledgeId = knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, OWN_USER);
+            knowledgeManager.setKnowledgeIngestionStatus(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+
+            when(config.adminWriteOnlyEnabled()).thenReturn(true);
+
+            setupAdminIdentity();
+
+            clearAllInvocations();
+
+            assertEquals(1, knowledgeRepository.count());
+        }
+
+        @Test
+        void deleteKnowledgeDeletesOwnKnowledge()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            userKnowledgeManager.deleteKnowledge(ownKnowledgeId);
+            verify(knowledgeManager, times(1)).deleteKnowledge(ownKnowledgeId);
+        }
+
+        @Test
+        void updateSourceFileUpdatesOwnKnowledge()
+                throws IOException,
+                        KnowledgeNotFoundException,
+                        UnexpectedFileStorageFailureException {
+            userKnowledgeManager.updateSource(ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE);
+            verify(knowledgeManager, times(1))
+                    .updateSource(ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE);
+        }
+
+        @Test
+        void setPermissionSetsPermissionForOwnKnowledge()
+                throws KnowledgeNotFoundException, IllegalPermissionModificationException {
+            // setup
+            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
+            userKnowledgeManager.setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
+            verify(knowledgeManager, times(1))
+                    .setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
+        }
+
+        @Test
+        void removePermissionRemovesPermissionForOwnKnowledge()
+                throws KnowledgeNotFoundException, IllegalPermissionModificationException {
+            // setup
+            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
+            userKnowledgeManager.removePermission(ownKnowledgeId, FOREIGN_USER);
+            verify(knowledgeManager, times(1)).removePermission(ownKnowledgeId, FOREIGN_USER);
+        }
+
+        @Test
+        void addKnowledgeTagAddsTagToOwnKnowledge() throws KnowledgeNotFoundException {
+            userKnowledgeManager.addTag(ownKnowledgeId, "tag");
+            verify(knowledgeManager, times(1)).addTag(ownKnowledgeId, "tag");
+        }
+
+        @Test
+        void removeKnowledgeTagRemovesTagFromOwnKnowledge() throws KnowledgeNotFoundException {
+            userKnowledgeManager.removeTag(ownKnowledgeId, "tag");
+            verify(knowledgeManager, times(1)).removeTag(ownKnowledgeId, "tag");
+        }
+
+        @Test
+        void setKnowledgeLabelSetsLabelForOwnKnowledge() throws KnowledgeNotFoundException {
+            userKnowledgeManager.setLabel(ownKnowledgeId, "label");
+            verify(knowledgeManager, times(1)).setLabel(ownKnowledgeId, "label");
         }
     }
 }

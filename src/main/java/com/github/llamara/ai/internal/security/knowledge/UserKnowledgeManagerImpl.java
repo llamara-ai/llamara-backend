@@ -19,6 +19,7 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
+import com.github.llamara.ai.config.SecurityConfig;
 import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
@@ -54,6 +55,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 @ApplicationScoped
 public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     private final KnowledgeManager delegate;
+    private final SecurityConfig config;
     private final UserAwareKnowledgeRepository userAwareRepository;
     private final UserManager userManager;
 
@@ -62,10 +64,12 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Inject
     UserKnowledgeManagerImpl(
             KnowledgeManager delegate,
+            SecurityConfig config,
             UserAwareKnowledgeRepository userAwareRepository,
             UserManager userManager,
             SecurityIdentity identity) {
         this.delegate = delegate;
+        this.config = config;
         this.userAwareRepository = userAwareRepository;
         this.userManager = userManager;
         this.identity = identity;
@@ -131,6 +135,9 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
         if (identity.hasRole(Roles.ADMIN)) {
             return;
         }
+        if (config.adminWriteOnlyEnabled()) {
+            throw new ForbiddenException();
+        }
         Knowledge knowledge = getKnowledge(id);
         Permission permission = knowledge.getPermission(identity.getPrincipal().getName());
         if (permission == Permission.READONLY) {
@@ -150,6 +157,10 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException {
+        if (!identity.hasRole(Roles.ADMIN) && config.adminWriteOnlyEnabled()) {
+            throw new ForbiddenException();
+        }
+
         enforceAuthenticated();
         userManager.enforceRegistered();
 

@@ -32,4 +32,12 @@ public interface SecurityConfig {
     boolean anonymousUserEnabled();
 
     int anonymousUserSessionTimeout();
+
+    /**
+     * Determines whether write access to the knowledge base is restricted to admins only. When
+     * enabled, only users with admin privileges can make modifications.
+     *
+     * @return
+     */
+    boolean adminWriteOnlyEnabled();
 }
