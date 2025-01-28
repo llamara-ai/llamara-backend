@@ -135,15 +135,14 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
         if (identity.hasRole(Roles.ADMIN)) {
             return;
         }
-        if (config.adminWriteOnlyEnabled()) {
-            throw new ForbiddenException();
-        }
         Knowledge knowledge = getKnowledge(id);
         Permission permission = knowledge.getPermission(identity.getPrincipal().getName());
         if (permission == Permission.READONLY) {
             throw new ForbiddenException();
         } else if (permission == Permission.NONE) {
             throw new KnowledgeNotFoundException(id);
+        } else if (config.adminWriteOnlyEnabled()) {
+            throw new ForbiddenException();
         }
     }
 
@@ -157,12 +156,11 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException {
+        enforceAuthenticated();
+        userManager.enforceRegistered();
         if (!identity.hasRole(Roles.ADMIN) && config.adminWriteOnlyEnabled()) {
             throw new ForbiddenException();
         }
-
-        enforceAuthenticated();
-        userManager.enforceRegistered();
 
         String checksum = Utils.generateChecksum(file);
         Optional<Knowledge> existingKnowledge = userAwareRepository.existsChecksum(checksum);
