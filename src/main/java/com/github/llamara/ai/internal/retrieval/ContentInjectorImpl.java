@@ -60,12 +60,10 @@ class ContentInjectorImpl implements ContentInjector {
 
     @Override
     public ChatMessage inject(List<Content> contents, ChatMessage chatMessage) {
-        if (contents.isEmpty()) {
-            if (chatMessage instanceof UserMessage userMessage) {
-                return new UserMessage(
-                        config.missingKnowledgePromptTemplate()
-                                .replace(USER_MESSAGE_TEMPLATE, userMessage.singleText()));
-            }
+        if (contents.isEmpty() && chatMessage instanceof UserMessage userMessage) {
+            return new UserMessage(
+                    config.missingKnowledgePromptTemplate()
+                            .replace(USER_MESSAGE_TEMPLATE, userMessage.singleText()));
         }
 
         return delegate.inject(contents, chatMessage);
