@@ -35,7 +35,7 @@ import io.quarkus.security.identity.SecurityIdentity;
  * @author Florian Hotze - Initial contribution
  */
 public final class PermissionMetadataMapper {
-    private static final String DELIMITER = "|";
+    public static final String DELIMITER = "|";
 
     private PermissionMetadataMapper() {}
 
@@ -46,13 +46,16 @@ public final class PermissionMetadataMapper {
      * @return
      */
     public static String permissionsToMetadataEntry(Map<User, Permission> permissions) {
-        return DELIMITER
-                + permissions.entrySet().stream()
+        String inner =
+                permissions.entrySet().stream()
                         .filter(entry -> entry.getValue() != Permission.NONE)
                         .map(Map.Entry::getKey)
                         .map(User::getUsername)
-                        .collect(Collectors.joining(DELIMITER))
-                + DELIMITER;
+                        .collect(Collectors.joining(DELIMITER));
+        if (inner.isEmpty()) {
+            return "";
+        }
+        return DELIMITER + inner + DELIMITER;
     }
 
     /**
@@ -63,6 +66,9 @@ public final class PermissionMetadataMapper {
      * @return
      */
     public static String identityToMetadataQuery(SecurityIdentity identity) {
+        if (identity.isAnonymous()) {
+            return DELIMITER + Users.ANY_USERNAME + DELIMITER;
+        }
         return DELIMITER + identity.getPrincipal().getName() + DELIMITER;
     }
 }
