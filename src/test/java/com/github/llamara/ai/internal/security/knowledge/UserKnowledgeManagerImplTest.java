@@ -175,7 +175,7 @@ class UserKnowledgeManagerImplTest {
     }
 
     @Nested
-    class AuthenticatedUserWithOwnAndForeignKnowledge {
+    class RegularUserWithOwnAndForeignKnowledge {
         UUID ownKnowledgeId;
         UUID foreignKnowledgeId;
 
@@ -227,15 +227,15 @@ class UserKnowledgeManagerImplTest {
         @Test
         void deleteKnowledgeDeletesOwnKnowledge()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
-            userKnowledgeManager.deleteKnowledge(ownKnowledgeId);
+            assertDoesNotThrow(() -> userKnowledgeManager.deleteKnowledge(ownKnowledgeId));
             verify(knowledgeManager, times(1)).deleteKnowledge(ownKnowledgeId);
         }
 
         @Test
-        void addSourceFileReturnsExistingKnowledgeIfFileAlreadyExists()
-                throws IOException, UnexpectedFileStorageFailureException {
+        void addSourceFileReturnsExistingKnowledgeIfFileAlreadyExists() {
             UUID existingKnowledgeId =
-                    userKnowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE);
+                    assertDoesNotThrow(
+                            () -> userKnowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE));
             assertEquals(ownKnowledgeId, existingKnowledgeId);
         }
 
@@ -253,7 +253,10 @@ class UserKnowledgeManagerImplTest {
                 throws IOException,
                         KnowledgeNotFoundException,
                         UnexpectedFileStorageFailureException {
-            userKnowledgeManager.updateSource(ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE);
+            assertDoesNotThrow(
+                    () ->
+                            userKnowledgeManager.updateSource(
+                                    ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
             verify(knowledgeManager, times(1))
                     .updateSource(ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE);
         }
@@ -278,7 +281,10 @@ class UserKnowledgeManagerImplTest {
             knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
 
             // test
-            userKnowledgeManager.setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
+            assertDoesNotThrow(
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    ownKnowledgeId, FOREIGN_USER, Permission.READONLY));
             verify(knowledgeManager, times(1))
                     .setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
         }
@@ -301,7 +307,8 @@ class UserKnowledgeManagerImplTest {
             knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
 
             // test
-            userKnowledgeManager.removePermission(ownKnowledgeId, FOREIGN_USER);
+            assertDoesNotThrow(
+                    () -> userKnowledgeManager.removePermission(ownKnowledgeId, FOREIGN_USER));
             verify(knowledgeManager, times(1)).removePermission(ownKnowledgeId, FOREIGN_USER);
         }
 
@@ -315,7 +322,7 @@ class UserKnowledgeManagerImplTest {
         @Test
         void getFileReturnsOwnKnowledge()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
-            userKnowledgeManager.getFile(ownKnowledgeId);
+            assertDoesNotThrow(() -> userKnowledgeManager.getFile(ownKnowledgeId));
             verify(knowledgeManager, times(1)).getFile(ownKnowledgeId);
         }
 
@@ -328,7 +335,7 @@ class UserKnowledgeManagerImplTest {
 
         @Test
         void setKnowledgeLabelSetsLabelForOwnKnowledge() throws KnowledgeNotFoundException {
-            userKnowledgeManager.setLabel(ownKnowledgeId, "label");
+            assertDoesNotThrow(() -> userKnowledgeManager.setLabel(ownKnowledgeId, "label"));
             verify(knowledgeManager, times(1)).setLabel(ownKnowledgeId, "label");
         }
 
@@ -341,7 +348,7 @@ class UserKnowledgeManagerImplTest {
 
         @Test
         void addKnowledgeTagAddsTagToOwnKnowledge() throws KnowledgeNotFoundException {
-            userKnowledgeManager.addTag(ownKnowledgeId, "tag");
+            assertDoesNotThrow(() -> userKnowledgeManager.addTag(ownKnowledgeId, "tag"));
             verify(knowledgeManager, times(1)).addTag(ownKnowledgeId, "tag");
         }
 
@@ -354,13 +361,13 @@ class UserKnowledgeManagerImplTest {
 
         @Test
         void removeKnowledgeTagRemovesTagFromOwnKnowledge() throws KnowledgeNotFoundException {
-            userKnowledgeManager.removeTag(ownKnowledgeId, "tag");
+            assertDoesNotThrow(() -> userKnowledgeManager.removeTag(ownKnowledgeId, "tag"));
             verify(knowledgeManager, times(1)).removeTag(ownKnowledgeId, "tag");
         }
     }
 
     @Nested
-    class AuthenticatedUserWithSharedReadOnlyKnowledge {
+    class RegularUserWithSharedReadOnlyKnowledge {
         UUID sharedKnowledgeId;
 
         @BeforeEach
@@ -578,20 +585,15 @@ class UserKnowledgeManagerImplTest {
     }
 
     @Nested
-    class RegularUserWithSharedReadWriteKnowledgeAndWithAdminWriteOnlyEnabled {
-        UUID sharedKnowledgeId;
+    class RegularUserWithOwnAndForeignKnowledgeAndWithAdminWriteOnlyEnabled {
+        UUID ownKnowledgeId;
+        UUID foreignKnowledgeId;
 
         @BeforeEach
-        void setup()
-                throws UnexpectedFileStorageFailureException,
-                        IOException,
-                        IllegalPermissionModificationException,
-                        KnowledgeNotFoundException {
-            sharedKnowledgeId =
+        void setup() throws UnexpectedFileStorageFailureException, IOException {
+            ownKnowledgeId = knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, OWN_USER);
+            foreignKnowledgeId =
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREIGN_USER);
-            knowledgeManager.setKnowledgeIngestionStatus(
-                    sharedKnowledgeId, IngestionStatus.SUCCEEDED);
-            knowledgeManager.setPermission(sharedKnowledgeId, OWN_USER, Permission.READWRITE);
 
             when(config.adminWriteOnlyEnabled()).thenReturn(true);
 
@@ -599,14 +601,21 @@ class UserKnowledgeManagerImplTest {
 
             clearAllInvocations();
 
-            assertEquals(1, knowledgeRepository.count());
+            assertEquals(2, knowledgeRepository.count());
         }
 
         @Test
-        void deleteKnowledgeThrowsForbiddenException() {
+        void deleteKnowledgeThrowsForbiddenExceptionForOwnKnowledge() {
             assertThrows(
                     ForbiddenException.class,
-                    () -> userKnowledgeManager.deleteKnowledge(sharedKnowledgeId));
+                    () -> userKnowledgeManager.deleteKnowledge(ownKnowledgeId));
+        }
+
+        @Test
+        void deleteKnowledgeThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.deleteKnowledge(foreignKnowledgeId));
         }
 
         @Test
@@ -617,49 +626,95 @@ class UserKnowledgeManagerImplTest {
         }
 
         @Test
-        void updateSourceThrowsForbiddenException() {
+        void updateSourceThrowsForbiddenExceptionForOwnKnowledge() {
             assertThrows(
                     ForbiddenException.class,
                     () ->
                             userKnowledgeManager.updateSource(
-                                    sharedKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
+                                    ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
         }
 
         @Test
-        void setPermissionThrowsForbiddenException() {
+        void updateSourceThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () ->
+                            userKnowledgeManager.updateSource(
+                                    foreignKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
+        }
+
+        @Test
+        void setPermissionThrowsForbiddenExceptionForOwnKnowledge() {
             assertThrows(
                     ForbiddenException.class,
                     () ->
                             userKnowledgeManager.setPermission(
-                                    sharedKnowledgeId, OWN_USER, Permission.READWRITE));
+                                    ownKnowledgeId, OWN_USER, Permission.READWRITE));
         }
 
         @Test
-        void removePermissionThrowsForbiddenException() {
+        void setPermissionThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
             assertThrows(
-                    ForbiddenException.class,
-                    () -> userKnowledgeManager.removePermission(sharedKnowledgeId, OWN_USER));
+                    KnowledgeNotFoundException.class,
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    foreignKnowledgeId, OWN_USER, Permission.READWRITE));
         }
 
         @Test
-        void addKnowledgeTagThrowsForbiddenException() {
+        void removePermissionThrowsForbiddenExceptionForOwnKnowledge() {
             assertThrows(
                     ForbiddenException.class,
-                    () -> userKnowledgeManager.addTag(sharedKnowledgeId, "tag"));
+                    () -> userKnowledgeManager.removePermission(ownKnowledgeId, OWN_USER));
         }
 
         @Test
-        void removeKnowledgeTagThrowsForbiddenException() {
+        void removePermissionThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
             assertThrows(
-                    ForbiddenException.class,
-                    () -> userKnowledgeManager.removeTag(sharedKnowledgeId, "tag"));
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.removePermission(foreignKnowledgeId, OWN_USER));
         }
 
         @Test
-        void setKnowledgeLabelThrowsForbiddenException() {
+        void addKnowledgeTagThrowsForbiddenExceptionForOwnKnowledge() {
             assertThrows(
                     ForbiddenException.class,
-                    () -> userKnowledgeManager.setLabel(sharedKnowledgeId, "label"));
+                    () -> userKnowledgeManager.addTag(ownKnowledgeId, "tag"));
+        }
+
+        @Test
+        void addKnowledgeTagThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.addTag(foreignKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagThrowsForbiddenExceptionForOwnKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.removeTag(ownKnowledgeId, "tag"));
+        }
+
+        @Test
+        void removeKnowledgeTagThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.removeTag(foreignKnowledgeId, "tag"));
+        }
+
+        @Test
+        void setKnowledgeLabelThrowsForbiddenExceptionForOwnKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.setLabel(ownKnowledgeId, "label"));
+        }
+
+        @Test
+        void setKnowledgeLabelThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.setLabel(foreignKnowledgeId, "label"));
         }
     }
 
@@ -684,8 +739,22 @@ class UserKnowledgeManagerImplTest {
         @Test
         void deleteKnowledgeDeletesOwnKnowledge()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
-            userKnowledgeManager.deleteKnowledge(ownKnowledgeId);
+            assertDoesNotThrow(() -> userKnowledgeManager.deleteKnowledge(ownKnowledgeId));
             verify(knowledgeManager, times(1)).deleteKnowledge(ownKnowledgeId);
+        }
+
+        @Test
+        void addSourceFileDelegatesToKnowledgeManager()
+                throws IOException,
+                        UnexpectedFileStorageFailureException,
+                        KnowledgeNotFoundException {
+            // setup
+            userKnowledgeManager.deleteKnowledge(ownKnowledgeId);
+
+            // test
+            assertDoesNotThrow(
+                    () -> userKnowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE));
+            verify(knowledgeManager, times(1)).addSource(FILE, FILE_NAME, FILE_MIME_TYPE, OWN_USER);
         }
 
         @Test
@@ -693,7 +762,10 @@ class UserKnowledgeManagerImplTest {
                 throws IOException,
                         KnowledgeNotFoundException,
                         UnexpectedFileStorageFailureException {
-            userKnowledgeManager.updateSource(ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE);
+            assertDoesNotThrow(
+                    () ->
+                            userKnowledgeManager.updateSource(
+                                    ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE));
             verify(knowledgeManager, times(1))
                     .updateSource(ownKnowledgeId, FILE, FILE_NAME, FILE_MIME_TYPE);
         }
@@ -705,7 +777,10 @@ class UserKnowledgeManagerImplTest {
             knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
 
             // test
-            userKnowledgeManager.setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
+            assertDoesNotThrow(
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    ownKnowledgeId, FOREIGN_USER, Permission.READONLY));
             verify(knowledgeManager, times(1))
                     .setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
         }
@@ -717,25 +792,26 @@ class UserKnowledgeManagerImplTest {
             knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
 
             // test
-            userKnowledgeManager.removePermission(ownKnowledgeId, FOREIGN_USER);
+            assertDoesNotThrow(
+                    () -> userKnowledgeManager.removePermission(ownKnowledgeId, FOREIGN_USER));
             verify(knowledgeManager, times(1)).removePermission(ownKnowledgeId, FOREIGN_USER);
         }
 
         @Test
         void addKnowledgeTagAddsTagToOwnKnowledge() throws KnowledgeNotFoundException {
-            userKnowledgeManager.addTag(ownKnowledgeId, "tag");
+            assertDoesNotThrow(() -> userKnowledgeManager.addTag(ownKnowledgeId, "tag"));
             verify(knowledgeManager, times(1)).addTag(ownKnowledgeId, "tag");
         }
 
         @Test
         void removeKnowledgeTagRemovesTagFromOwnKnowledge() throws KnowledgeNotFoundException {
-            userKnowledgeManager.removeTag(ownKnowledgeId, "tag");
+            assertDoesNotThrow(() -> userKnowledgeManager.removeTag(ownKnowledgeId, "tag"));
             verify(knowledgeManager, times(1)).removeTag(ownKnowledgeId, "tag");
         }
 
         @Test
         void setKnowledgeLabelSetsLabelForOwnKnowledge() throws KnowledgeNotFoundException {
-            userKnowledgeManager.setLabel(ownKnowledgeId, "label");
+            assertDoesNotThrow(() -> userKnowledgeManager.setLabel(ownKnowledgeId, "label"));
             verify(knowledgeManager, times(1)).setLabel(ownKnowledgeId, "label");
         }
     }
