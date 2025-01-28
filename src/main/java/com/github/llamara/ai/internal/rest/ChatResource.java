@@ -208,7 +208,7 @@ class ChatResource {
     }
 
     @Blocking
-    @PUT
+    @POST
     @Path("/sessions/create")
     @ResponseStatus(201)
     @Produces(MediaType.APPLICATION_JSON)
