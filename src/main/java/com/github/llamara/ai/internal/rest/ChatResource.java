@@ -286,4 +286,25 @@ class ChatResource {
             throws SessionNotFoundException {
         sessionManager.setSessionLabel(sessionId, label);
     }
+
+    @RolesAllowed({Roles.ANONYMOUS_USER})
+    @NonBlocking
+    @PUT
+    @Path("/sessions/{sessionId}/keep-alive")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "keepAliveAnonymousSession",
+            summary = "Keeps alive an anonymous session identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(responseCode = "404", description = "No session with the given ID found.")
+    public void keepAliveAnonymousSession(
+            @PathParam("sessionId")
+                    @Parameter(
+                            name = "sessionId",
+                            description = "UID of the session to keep alive",
+                            required = true)
+                    UUID sessionId)
+            throws SessionNotFoundException {
+        sessionManager.enforceSessionValid(sessionId);
+    }
 }
