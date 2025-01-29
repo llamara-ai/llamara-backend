@@ -60,7 +60,7 @@ import io.quarkus.runtime.Startup;
 @Startup // initialize at startup to validate config
 @ApplicationScoped
 class ChatModelProviderImpl implements ChatModelProvider {
-    private static final Pattern UID_REGEX = Pattern.compile("[a-zA-z][a-zA-Z0-9_-]*");
+    private static final Pattern UID_REGEX = Pattern.compile("[a-zA-Z][a-zA-Z0-9_-]*");
     private static final String INITIALIZATION_FAILURE_MESSAGE = "Failed to initialize chat models";
 
     private final ChatModelConfig chatModelConfig;
