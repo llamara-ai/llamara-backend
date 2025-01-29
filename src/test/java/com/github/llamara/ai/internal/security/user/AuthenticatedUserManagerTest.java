@@ -25,6 +25,7 @@ import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.security.BaseForAuthenticatedUserTests;
 import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Users;
 import com.github.llamara.ai.internal.security.session.AuthenticatedUserSessionManagerImpl;
 import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
 
@@ -105,6 +106,16 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     @Test
     void getUserThrowsIfNotRegistered() {
         assertThrows(UserNotRegisteredException.class, () -> userManager.getUser());
+    }
+
+    @Transactional
+    protected User getUserAnyFromPersistence() {
+        return userRepository.findByUsername(Users.ANY_USERNAME);
+    }
+
+    @Test
+    void getUserAnyReturnsUserAnyFromPersistence() {
+        assertEquals(getUserAnyFromPersistence(), userManager.getUserAny());
     }
 
     @Nested

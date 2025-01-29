@@ -20,30 +20,39 @@
 package com.github.llamara.ai.internal.security.user;
 
 import com.github.llamara.ai.internal.security.Users;
-import com.github.llamara.ai.internal.security.session.AnonymousUserSessionManagerImpl;
-import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
+
+import jakarta.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectSpy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 /** Tests for {@link AnonymousUserManagerImpl}. */
 @QuarkusTest
 class AnonymousUserManagerTest {
-    @InjectMock AnonymousUserSessionManagerImpl sessionManager;
+    @InjectSpy TestUserRepository userRepository;
 
     private AnonymousUserManagerImpl userManager;
 
+    @Transactional
     @BeforeEach
     void setup() {
-        userManager = new AnonymousUserManagerImpl();
+        userManager = new AnonymousUserManagerImpl(userRepository);
+
+        userRepository.init();
+
+        clearInvocations(userRepository);
+
+        assertEquals(1, userRepository.count());
     }
 
     @Test
@@ -57,13 +66,23 @@ class AnonymousUserManagerTest {
     }
 
     @Test
-    void deleteDoesNothing() throws SessionNotFoundException {
+    void deleteDoesNothing() {
         userManager.delete();
-        Mockito.verify(sessionManager, never()).deleteSession(Mockito.any());
+        verify(userRepository, never()).delete(any());
+    }
+
+    @Transactional
+    protected User getUserAnyFromPersistence() {
+        return userRepository.findByUsername(Users.ANY_USERNAME);
     }
 
     @Test
-    void getUserReturnsUsersANY() {
-        assertEquals(Users.ANY, userManager.getUser());
+    void getUserReturnsUserAnyFromPersistence() {
+        assertEquals(getUserAnyFromPersistence(), userManager.getUser());
+    }
+
+    @Test
+    void getUserAnyReturnsUserAnyFromPersistence() {
+        assertEquals(getUserAnyFromPersistence(), userManager.getUserAny());
     }
 }

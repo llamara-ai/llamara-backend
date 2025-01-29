@@ -23,6 +23,7 @@ import com.github.llamara.ai.internal.security.Users;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
+import jakarta.inject.Inject;
 
 /**
  * {@link UserManager} implementation for handling anonymous users.
@@ -34,6 +35,13 @@ import jakarta.enterprise.inject.Typed;
 @Typed(AnonymousUserManagerImpl.class)
 @ApplicationScoped
 public class AnonymousUserManagerImpl implements UserManager {
+    private final UserRepository userRepository;
+
+    @Inject
+    public AnonymousUserManagerImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public boolean register() {
         return true;
@@ -52,5 +60,10 @@ public class AnonymousUserManagerImpl implements UserManager {
     @Override
     public User getUser() {
         return Users.ANY;
+    }
+
+    @Override
+    public User getUserAny() {
+        return userRepository.findByUsername(Users.ANY_USERNAME);
     }
 }

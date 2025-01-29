@@ -25,6 +25,7 @@ import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
 import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Users;
 import com.github.llamara.ai.internal.security.session.AuthenticatedUserSessionManagerImpl;
 import com.github.llamara.ai.internal.security.session.Session;
 import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
@@ -143,5 +144,10 @@ public class AuthenticatedUserManagerImpl implements UserManager {
             throw new UserNotRegisteredException(identity.getPrincipal().getName());
         }
         return user;
+    }
+
+    @Override
+    public User getUserAny() {
+        return userRepository.findByUsername(Users.ANY_USERNAME);
     }
 }

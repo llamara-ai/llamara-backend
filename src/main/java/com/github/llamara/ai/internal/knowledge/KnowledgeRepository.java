@@ -20,10 +20,7 @@
 package com.github.llamara.ai.internal.knowledge;
 
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
-import com.github.llamara.ai.internal.security.Permission;
-import com.github.llamara.ai.internal.security.Users;
 
-import java.util.List;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -37,17 +34,6 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
  */
 @ApplicationScoped
 public class KnowledgeRepository implements PanacheRepository<Knowledge> {
-    /**
-     * List all knowledge entries that are public, i.e. shared with {@link Users#ANY}.
-     *
-     * @return public knowledge
-     */
-    public List<Knowledge> listAllPublicKnowledge() {
-        return listAll().stream() // TODO: Filter in DB query
-                .filter(k -> k.getPermission(Users.ANY) != Permission.NONE)
-                .toList();
-    }
-
     /**
      * Find knowledge by its ID.
      *

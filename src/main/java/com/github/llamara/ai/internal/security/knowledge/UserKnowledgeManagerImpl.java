@@ -80,8 +80,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
         String username = identity.getPrincipal().getName();
 
         userManager.enforceRegistered();
-        Set<Knowledge> publicKnowledge =
-                new HashSet<>(userAwareRepository.listAllPublicKnowledge());
+        Set<Knowledge> publicKnowledge = new HashSet<>(userManager.getUserAny().getKnowledge());
         if (identity.isAnonymous()) {
             Log.debug("Anonymous user requested knowledge, returning only public knowledge.");
             return publicKnowledge;
