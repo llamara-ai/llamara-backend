@@ -47,7 +47,7 @@ public interface UserManager {
     void enforceRegistered() throws UserNotRegisteredException;
 
     /**
-     * Delets the current user and all his data. This includes removing all sessions.
+     * Delete the current user and all his data. This includes removing all sessions.
      *
      * @throws UserNotRegisteredException if the user is not registered
      */
@@ -60,4 +60,11 @@ public interface UserManager {
      * @throws UserNotRegisteredException if the user is not registered
      */
     User getUser() throws UserNotRegisteredException;
+
+    /**
+     * Get {@link com.github.llamara.ai.internal.security.Users#ANY} from persistence.
+     *
+     * @return the "any" user
+     */
+    User getUserAny();
 }
