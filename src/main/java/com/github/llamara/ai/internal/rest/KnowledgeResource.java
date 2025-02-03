@@ -19,12 +19,15 @@
  */
 package com.github.llamara.ai.internal.rest;
 
+import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
 import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.Roles;
 import com.github.llamara.ai.internal.security.knowledge.UserKnowledgeManager;
+import com.github.llamara.ai.internal.security.user.UserNotFoundException;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -56,6 +59,7 @@ import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
@@ -257,6 +261,87 @@ class KnowledgeResource {
             Log.error("Error while uploading files to knowledge.", e);
             throw e;
         }
+    }
+
+    @RolesAllowed({Roles.ADMIN, Roles.USER})
+    @Blocking
+    @PUT
+    @Path("/{id}/permission/{username}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "setKnowledgePermission",
+            summary = "Set a user's permission for a single knowledge identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(responseCode = "400", description = "Illegal permission modification")
+    @APIResponse(
+            responseCode = "404",
+            description =
+                    "No knowledge with the given id found or no user with the given username"
+                            + " found.")
+    public void setKnowledgePermission(
+            @PathParam("id")
+                    @Parameter(
+                            name = "id",
+                            description = "UID of the knowledge set permission for",
+                            required = true)
+                    UUID id,
+            @PathParam("username")
+                    @Parameter(
+                            name = "username",
+                            description = "name of user to set permission for",
+                            required = true)
+                    String username,
+            @RequestBody(
+                            name = "permission",
+                            description = "permission to set",
+                            content =
+                                    @Content(
+                                            mediaType = MediaType.TEXT_PLAIN,
+                                            schema =
+                                                    @Schema(
+                                                            enumeration = {
+                                                                "READWRITE",
+                                                                "READONLY"
+                                                            })))
+                    Permission permission)
+            throws KnowledgeNotFoundException,
+                    UserNotFoundException,
+                    IllegalPermissionModificationException {
+        knowledgeManager.setPermission(id, username, permission);
+    }
+
+    @RolesAllowed({Roles.ADMIN, Roles.USER})
+    @Blocking
+    @DELETE
+    @Path("/{id}/permission/{username}")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "removeKnowledgePermission",
+            summary = "Remove a user's permissions from a single knowledge identified by its ID.")
+    @APIResponse(responseCode = "200", description = "OK")
+    @APIResponse(
+            responseCode = "404",
+            description =
+                    "No knowledge with the given id found or no user with the given username"
+                            + " found.")
+    public void removeKnowledgePermissions(
+            @PathParam("id")
+                    @Parameter(
+                            name = "id",
+                            description = "UID of the knowledge to remove the permission from",
+                            required = true)
+                    UUID id,
+            @PathParam("username")
+                    @Parameter(
+                            name = "username",
+                            description = "name of user to remove permission for",
+                            required = true)
+                    String username)
+            throws KnowledgeNotFoundException,
+                    UserNotFoundException,
+                    IllegalPermissionModificationException {
+        knowledgeManager.removePermission(id, username);
     }
 
     @RolesAllowed({Roles.ADMIN, Roles.USER})

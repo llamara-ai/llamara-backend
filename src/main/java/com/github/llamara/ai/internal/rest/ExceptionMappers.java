@@ -21,8 +21,10 @@ package com.github.llamara.ai.internal.rest;
 
 import com.github.llamara.ai.internal.chat.ChatModelNotFoundException;
 import com.github.llamara.ai.internal.knowledge.EmptyFileException;
+import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
 import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
+import com.github.llamara.ai.internal.security.user.UserNotFoundException;
 import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
 
 import jakarta.ws.rs.NotFoundException;
@@ -65,6 +67,21 @@ class ExceptionMappers {
     @ServerExceptionMapper
     Response handleUserNotLoggedInException(UserNotRegisteredException e) {
         return Response.status(Response.Status.UNAUTHORIZED.getStatusCode(), "User not logged in.")
+                .build();
+    }
+
+    @ServerExceptionMapper
+    Response handleUserNotFoundException(UserNotFoundException e) {
+        return Response.status(Response.Status.NOT_FOUND.getStatusCode(), "User not found.")
+                .build();
+    }
+
+    @ServerExceptionMapper
+    Response handleIllegalPermissionModificationException(
+            IllegalPermissionModificationException e) {
+        return Response.status(
+                        Response.Status.BAD_REQUEST.getStatusCode(),
+                        "Illegal permission modification.")
                 .build();
     }
 

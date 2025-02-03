@@ -30,6 +30,8 @@ import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.Roles;
 import com.github.llamara.ai.internal.security.user.User;
 import com.github.llamara.ai.internal.security.user.UserManager;
+import com.github.llamara.ai.internal.security.user.UserNotFoundException;
+import com.github.llamara.ai.internal.security.user.UserRepository;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -56,7 +58,8 @@ import io.quarkus.security.identity.SecurityIdentity;
 public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     private final KnowledgeManager delegate;
     private final SecurityConfig config;
-    private final UserAwareKnowledgeRepository userAwareRepository;
+    private final UserAwareKnowledgeRepository userAwareKnowledgeRepository;
+    private final UserRepository userRepository;
     private final UserManager userManager;
 
     private final SecurityIdentity identity;
@@ -65,12 +68,14 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     UserKnowledgeManagerImpl(
             KnowledgeManager delegate,
             SecurityConfig config,
-            UserAwareKnowledgeRepository userAwareRepository,
+            UserAwareKnowledgeRepository userAwareKnowledgeRepository,
+            UserRepository userRepository,
             UserManager userManager,
             SecurityIdentity identity) {
         this.delegate = delegate;
         this.config = config;
-        this.userAwareRepository = userAwareRepository;
+        this.userAwareKnowledgeRepository = userAwareKnowledgeRepository;
+        this.userRepository = userRepository;
         this.userManager = userManager;
         this.identity = identity;
     }
@@ -101,7 +106,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public Knowledge getKnowledge(UUID id) throws KnowledgeNotFoundException {
         userManager.enforceRegistered();
-        Knowledge knowledge = userAwareRepository.findById(id);
+        Knowledge knowledge = userAwareKnowledgeRepository.findById(id);
         if (knowledge == null) {
             throw new KnowledgeNotFoundException(id);
         }
@@ -162,7 +167,8 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
         }
 
         String checksum = Utils.generateChecksum(file);
-        Optional<Knowledge> existingKnowledge = userAwareRepository.existsChecksum(checksum);
+        Optional<Knowledge> existingKnowledge =
+                userAwareKnowledgeRepository.existsChecksum(checksum);
         if (existingKnowledge.isPresent()) {
             return existingKnowledge.get().getId();
         }
@@ -186,10 +192,34 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     }
 
     @Override
+    public void setPermission(UUID id, String username, Permission permission)
+            throws KnowledgeNotFoundException,
+                    UserNotFoundException,
+                    IllegalPermissionModificationException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException(username);
+        }
+        setPermission(id, user, permission);
+    }
+
+    @Override
     public void removePermission(UUID id, User user)
             throws KnowledgeNotFoundException, IllegalPermissionModificationException {
         enforceKnowledgeEditable(id);
         delegate.removePermission(id, user);
+    }
+
+    @Override
+    public void removePermission(UUID id, String username)
+            throws KnowledgeNotFoundException,
+                    UserNotFoundException,
+                    IllegalPermissionModificationException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException(username);
+        }
+        removePermission(id, user);
     }
 
     @Override

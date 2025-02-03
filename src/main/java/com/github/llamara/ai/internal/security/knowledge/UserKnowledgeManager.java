@@ -20,9 +20,14 @@
 package com.github.llamara.ai.internal.security.knowledge;
 
 import com.github.llamara.ai.internal.knowledge.EmptyFileException;
+import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
+import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.user.User;
+import com.github.llamara.ai.internal.security.user.UserNotFoundException;
 import com.github.llamara.ai.internal.security.user.UserNotRegisteredException;
 
 import java.io.IOException;
@@ -67,4 +72,39 @@ public interface UserKnowledgeManager extends KnowledgeManager {
     @Override
     UUID addSource(Path file, String fileName, String contentType)
             throws IOException, UnexpectedFileStorageFailureException;
+
+    /**
+     * Set the {@link Permission} for a {@link User} for a knowledge specified by its id.
+     *
+     * <p>Implementation should delegate to {@link UserKnowledgeManager#setPermission(UUID, User,
+     * Permission)}.
+     *
+     * @param id persistent unique id of knowledge
+     * @param username the name of the user to set the permission for
+     * @param permission the permission to set
+     * @throws KnowledgeNotFoundException if no knowledge with the given id was found
+     * @throws UserNotFoundException if no user with the given username was found
+     * @throws IllegalPermissionModificationException if the permission modification is illegal
+     */
+    void setPermission(UUID id, String username, Permission permission)
+            throws KnowledgeNotFoundException,
+                    UserNotFoundException,
+                    IllegalPermissionModificationException;
+
+    /**
+     * Remove the permission for a {@link User} for a knowledge specified by its id.
+     *
+     * <p>Implementation should delegate to {@link UserKnowledgeManager#setPermission(UUID, User,
+     * Permission)}.
+     *
+     * @param id persistent unique id of knowledge
+     * @param username the name of the user to remove the permission for
+     * @throws KnowledgeNotFoundException if no knowledge with the given id was found
+     * @throws UserNotFoundException if no user with the given username was found
+     * @throws IllegalPermissionModificationException if the permission modification is illegal
+     */
+    void removePermission(UUID id, String username)
+            throws KnowledgeNotFoundException,
+                    UserNotFoundException,
+                    IllegalPermissionModificationException;
 }

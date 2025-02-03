@@ -38,6 +38,7 @@ import com.github.llamara.ai.internal.security.user.AnonymousUserManagerImpl;
 import com.github.llamara.ai.internal.security.user.AuthenticatedUserManagerImpl;
 import com.github.llamara.ai.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.security.user.User;
+import com.github.llamara.ai.internal.security.user.UserNotFoundException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -115,6 +116,7 @@ class UserKnowledgeManagerImplTest {
                         knowledgeManager,
                         config,
                         userAwareKnowledgeRepository,
+                        userRepository,
                         authenticatedUserManager,
                         identity);
 
@@ -290,6 +292,30 @@ class UserKnowledgeManagerImplTest {
         }
 
         @Test
+        void setPermissionWithUsernameThrowsUserNotFoundExceptionIfUserNotFound() {
+            assertThrows(
+                    UserNotFoundException.class,
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    ownKnowledgeId, "unknown", Permission.READONLY));
+        }
+
+        @Test
+        void setPermissionWithUsernameSetsPermissionForOwnKnowledge()
+                throws KnowledgeNotFoundException, IllegalPermissionModificationException {
+            // setup
+            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
+            assertDoesNotThrow(
+                    () ->
+                            userKnowledgeManager.setPermission(
+                                    ownKnowledgeId, "foreign", Permission.READONLY));
+            verify(knowledgeManager, times(1))
+                    .setPermission(ownKnowledgeId, FOREIGN_USER, Permission.READONLY);
+        }
+
+        @Test
         void removePermissionThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
             // setup
             knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
@@ -309,6 +335,25 @@ class UserKnowledgeManagerImplTest {
             // test
             assertDoesNotThrow(
                     () -> userKnowledgeManager.removePermission(ownKnowledgeId, FOREIGN_USER));
+            verify(knowledgeManager, times(1)).removePermission(ownKnowledgeId, FOREIGN_USER);
+        }
+
+        @Test
+        void removePermissionWithUsernameThrowsUserNotFoundExceptionIfUserNotFound() {
+            assertThrows(
+                    UserNotFoundException.class,
+                    () -> userKnowledgeManager.removePermission(ownKnowledgeId, "unknown"));
+        }
+
+        @Test
+        void removePermissionWithUsernameRemovesPermissionForOwnKnowledge()
+                throws KnowledgeNotFoundException, IllegalPermissionModificationException {
+            // setup
+            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
+            assertDoesNotThrow(
+                    () -> userKnowledgeManager.removePermission(ownKnowledgeId, "foreign"));
             verify(knowledgeManager, times(1)).removePermission(ownKnowledgeId, FOREIGN_USER);
         }
 
@@ -479,6 +524,7 @@ class UserKnowledgeManagerImplTest {
                             knowledgeManager,
                             config,
                             userAwareKnowledgeRepository,
+                            userRepository,
                             anonymousUserManager,
                             identity);
 
