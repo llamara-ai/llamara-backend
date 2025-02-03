@@ -77,8 +77,8 @@ class AnonymousUserManagerTest {
     }
 
     @Test
-    void getUserReturnsUserAnyFromPersistence() {
-        assertEquals(getUserAnyFromPersistence(), userManager.getUser());
+    void getCurrentUserReturnsUserAnyFromPersistence() {
+        assertEquals(getUserAnyFromPersistence(), userManager.getCurrentUser());
     }
 
     @Test

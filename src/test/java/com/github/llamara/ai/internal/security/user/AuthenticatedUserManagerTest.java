@@ -104,8 +104,8 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     }
 
     @Test
-    void getUserThrowsIfNotRegistered() {
-        assertThrows(UserNotRegisteredException.class, () -> userManager.getUser());
+    void getCurrentUserThrowsIfNotRegistered() {
+        assertThrows(UserNotRegisteredException.class, () -> userManager.getCurrentUser());
     }
 
     @Transactional

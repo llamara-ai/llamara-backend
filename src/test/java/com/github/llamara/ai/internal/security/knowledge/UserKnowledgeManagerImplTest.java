@@ -116,7 +116,6 @@ class UserKnowledgeManagerImplTest {
                         knowledgeManager,
                         config,
                         userAwareKnowledgeRepository,
-                        userRepository,
                         authenticatedUserManager,
                         identity);
 
@@ -524,7 +523,6 @@ class UserKnowledgeManagerImplTest {
                             knowledgeManager,
                             config,
                             userAwareKnowledgeRepository,
-                            userRepository,
                             anonymousUserManager,
                             identity);
 

@@ -97,7 +97,7 @@ public class AuthenticatedUserManagerImpl implements UserManager {
 
     @Override
     public void delete() {
-        User user = getUser();
+        User user = getCurrentUser();
         for (Session session : user.getSessions()) {
             try {
                 authenticatedUserSessionManager.deleteSession(session.getId());
@@ -138,10 +138,19 @@ public class AuthenticatedUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUser() throws UserNotRegisteredException {
+    public User getCurrentUser() throws UserNotRegisteredException {
         User user = userRepository.findByUsername(identity.getPrincipal().getName());
         if (user == null) {
             throw new UserNotRegisteredException(identity.getPrincipal().getName());
+        }
+        return user;
+    }
+
+    @Override
+    public User getUser(String username) throws UserNotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException(username);
         }
         return user;
     }

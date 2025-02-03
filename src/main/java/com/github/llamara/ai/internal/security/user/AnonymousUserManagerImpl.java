@@ -58,8 +58,17 @@ public class AnonymousUserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getUser() {
+    public User getCurrentUser() {
         return Users.ANY;
+    }
+
+    @Override
+    public User getUser(String username) throws UserNotFoundException {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UserNotFoundException(username);
+        }
+        return user;
     }
 
     @Override

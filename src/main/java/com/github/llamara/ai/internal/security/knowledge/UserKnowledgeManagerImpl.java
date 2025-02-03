@@ -31,7 +31,6 @@ import com.github.llamara.ai.internal.security.Roles;
 import com.github.llamara.ai.internal.security.user.User;
 import com.github.llamara.ai.internal.security.user.UserManager;
 import com.github.llamara.ai.internal.security.user.UserNotFoundException;
-import com.github.llamara.ai.internal.security.user.UserRepository;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -58,8 +57,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     private final KnowledgeManager delegate;
     private final SecurityConfig config;
-    private final UserAwareKnowledgeRepository userAwareKnowledgeRepository;
-    private final UserRepository userRepository;
+    private final UserAwareKnowledgeRepository userAwareRepository;
     private final UserManager userManager;
 
     private final SecurityIdentity identity;
@@ -68,14 +66,12 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     UserKnowledgeManagerImpl(
             KnowledgeManager delegate,
             SecurityConfig config,
-            UserAwareKnowledgeRepository userAwareKnowledgeRepository,
-            UserRepository userRepository,
+            UserAwareKnowledgeRepository userAwareRepository,
             UserManager userManager,
             SecurityIdentity identity) {
         this.delegate = delegate;
         this.config = config;
-        this.userAwareKnowledgeRepository = userAwareKnowledgeRepository;
-        this.userRepository = userRepository;
+        this.userAwareRepository = userAwareRepository;
         this.userManager = userManager;
         this.identity = identity;
     }
@@ -98,7 +94,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
                 "Authenticated, non-admin user '%s' requested knowledge, returning user knowledge"
                         + " and public knowledge.",
                 username);
-        Set<Knowledge> userKnowledge = new HashSet<>(userManager.getUser().getKnowledge());
+        Set<Knowledge> userKnowledge = new HashSet<>(userManager.getCurrentUser().getKnowledge());
         userKnowledge.addAll(publicKnowledge);
         return userKnowledge;
     }
@@ -106,7 +102,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public Knowledge getKnowledge(UUID id) throws KnowledgeNotFoundException {
         userManager.enforceRegistered();
-        Knowledge knowledge = userAwareKnowledgeRepository.findById(id);
+        Knowledge knowledge = userAwareRepository.findById(id);
         if (knowledge == null) {
             throw new KnowledgeNotFoundException(id);
         }
@@ -167,8 +163,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
         }
 
         String checksum = Utils.generateChecksum(file);
-        Optional<Knowledge> existingKnowledge =
-                userAwareKnowledgeRepository.existsChecksum(checksum);
+        Optional<Knowledge> existingKnowledge = userAwareRepository.existsChecksum(checksum);
         if (existingKnowledge.isPresent()) {
             return existingKnowledge.get().getId();
         }
@@ -196,10 +191,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
             throws KnowledgeNotFoundException,
                     UserNotFoundException,
                     IllegalPermissionModificationException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException(username);
-        }
+        User user = userManager.getUser(username);
         setPermission(id, user, permission);
     }
 
@@ -215,10 +207,7 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
             throws KnowledgeNotFoundException,
                     UserNotFoundException,
                     IllegalPermissionModificationException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UserNotFoundException(username);
-        }
+        User user = userManager.getUser(username);
         removePermission(id, user);
     }
 

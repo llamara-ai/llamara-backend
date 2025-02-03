@@ -59,7 +59,16 @@ public interface UserManager {
      * @return the user
      * @throws UserNotRegisteredException if the user is not registered
      */
-    User getUser() throws UserNotRegisteredException;
+    User getCurrentUser() throws UserNotRegisteredException;
+
+    /**
+     * Get the user with the given username.
+     *
+     * @param username name of the user
+     * @return the user
+     * @throws UserNotFoundException if no user with the given username was found
+     */
+    User getUser(String username) throws UserNotFoundException;
 
     /**
      * Get {@link com.github.llamara.ai.internal.security.Users#ANY} from persistence.
