@@ -19,6 +19,8 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
+import static com.github.llamara.ai.internal.Utils.generateChecksum;
+
 import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
@@ -42,7 +44,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import static com.github.llamara.ai.internal.Utils.generateChecksum;
 import static dev.langchain4j.data.document.Document.ABSOLUTE_DIRECTORY_PATH;
 import static dev.langchain4j.data.document.Document.FILE_NAME;
 

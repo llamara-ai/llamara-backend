@@ -19,6 +19,9 @@
  */
 package com.github.llamara.ai.internal.chat;
 
+import static com.github.llamara.ai.internal.Utils.AZURE_OPENAI_API_VERSION;
+import static com.github.llamara.ai.internal.Utils.buildAzureOpenaiEndpoint;
+
 import com.github.llamara.ai.config.EnvironmentVariables;
 import com.github.llamara.ai.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.StartupException;
@@ -33,9 +36,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
-import static com.github.llamara.ai.internal.Utils.AZURE_OPENAI_API_VERSION;
-import static com.github.llamara.ai.internal.Utils.buildAzureOpenaiEndpoint;
 
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatLanguageModel;
