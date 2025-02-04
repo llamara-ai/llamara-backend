@@ -34,9 +34,11 @@ import com.github.llamara.ai.internal.security.user.User;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -299,6 +301,40 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         Knowledge knowledge = getKnowledge(id);
         knowledge.setLabel(label);
         repository.persist(knowledge);
+    }
+
+    @Override
+    public void retryFailedIngestion(UUID id)
+            throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+        Knowledge knowledge = getKnowledge(id);
+        if (knowledge.getIngestionStatus() != IngestionStatus.FAILED) {
+            return;
+        }
+
+        QuarkusTransaction.begin();
+        knowledge = getKnowledge(id);
+        repository.persist(knowledge);
+        NamedFileContainer file = getFile(id);
+        Map<String, String> metadata = createEmbeddingMetadata(knowledge);
+        Path tempFile = null;
+        try (InputStream fileContent = file.content()) {
+            tempFile = Files.createTempDirectory("").resolve(UUID.randomUUID().toString() + ".tmp");
+            Files.copy(fileContent, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            knowledge.setIngestionStatus(IngestionStatus.PENDING);
+            ingestToStore(tempFile, metadata);
+        } catch (IOException e) {
+            System.err.println("Error creating or copying file: " + e.getMessage());
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    System.err.println("Failed to delete temporary file: " + e.getMessage());
+                }
+            }
+        }
+
+        QuarkusTransaction.commit();
     }
 
     @Override

@@ -230,6 +230,14 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     }
 
     @Override
+    public void retryFailedIngestion(UUID id)
+            throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+        enforceKnowledgeEditable(id);
+
+        delegate.retryFailedIngestion(id);
+    }
+
+    @Override
     public NamedFileContainer getFile(UUID id)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
         userManager.enforceRegistered();

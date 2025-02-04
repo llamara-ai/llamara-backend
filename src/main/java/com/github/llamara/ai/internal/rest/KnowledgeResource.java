@@ -417,4 +417,26 @@ class KnowledgeResource {
             throws KnowledgeNotFoundException {
         knowledgeManager.removeTag(id, tag);
     }
+
+    @RolesAllowed({Roles.ADMIN, Roles.USER})
+    @Blocking
+    @PUT
+    @Path("/retry/{id}/ingestion")
+    @ResponseStatus(200)
+    @Operation(
+            operationId = "retryFailedIngestion",
+            summary = "Retry failed ingestion of a single knowledge identified by it ID.",
+            description = "If the Ingestion status isn't failed, nothing happens.")
+    @APIResponse(responseCode = "200", description = "OK.")
+    @APIResponse(responseCode = "404", description = "No knowledge with the given id found.")
+    public void retryFailedIngestion(
+            @PathParam("id")
+                    @Parameter(
+                            name = "id",
+                            description = "UID of the knowledge to retry",
+                            required = true)
+                    UUID id)
+            throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+        knowledgeManager.retryFailedIngestion(id);
+    }
 }

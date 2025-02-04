@@ -204,6 +204,18 @@ public interface KnowledgeManager {
     void setLabel(UUID id, String label) throws KnowledgeNotFoundException;
 
     /**
+     * Retry failed ingestion of a knowledge specified by its id. If the ingestion status isn't
+     * {@link com.github.llamara.ai.internal.ingestion.IngestionStatus#FAILED}, does nothing.
+     *
+     * @param id persistent unique id of knowledge
+     * @throws KnowledgeNotFoundException if no knowledge with the given id was found
+     * @throws UnexpectedFileStorageFailureException if a {@link FileStorage} operation failed
+     *     unexpectedly
+     */
+    void retryFailedIngestion(UUID id)
+            throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException;
+
+    /**
      * Get the source file of the file-based knowledge specified by its id.
      *
      * @param id persistent unique id of knowledge

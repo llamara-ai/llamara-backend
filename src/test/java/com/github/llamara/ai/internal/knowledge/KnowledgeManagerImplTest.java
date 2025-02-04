@@ -269,6 +269,13 @@ class KnowledgeManagerImplTest {
                 () -> knowledgeManager.removeTag(UUID.randomUUID(), "tag"));
     }
 
+    @Test
+    void retryFailedIngestionThrowsKnowledgeNotFoundExceptionIfNoKnowledge() {
+        assertThrows(
+                KnowledgeNotFoundException.class,
+                () -> knowledgeManager.retryFailedIngestion(UUID.randomUUID()));
+    }
+
     @Nested
     class WithKnowledgeFile {
         UUID knowledgeId;
@@ -604,6 +611,30 @@ class KnowledgeManagerImplTest {
                             assertEquals(
                                     Set.of("tag1"),
                                     knowledgeManager.getKnowledge(knowledgeId).getTags()));
+        }
+
+        @Test
+        void retryFailedIngestionDoesNothingIfKnowledgeIngestionStatusIsSucceeded()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.retryFailedIngestion(knowledgeId);
+            verify(documentIngestor, times(0)).ingestDocument(any());
+        }
+
+        @Test
+        void retryFailedIngestionDoesNothingIfKnowledgeIngestionStatusIsPending()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.PENDING);
+            knowledgeManager.retryFailedIngestion(knowledgeId);
+            verify(documentIngestor, times(0)).ingestDocument(any());
+        }
+
+        @Test
+        void retryFailedIngestionDoesDispatchIngestionIfKnowledgeIngestionStatusIsFailed()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.FAILED);
+            knowledgeManager.retryFailedIngestion(knowledgeId);
+            verify(documentIngestor, times(1)).ingestDocument(any());
         }
     }
 }

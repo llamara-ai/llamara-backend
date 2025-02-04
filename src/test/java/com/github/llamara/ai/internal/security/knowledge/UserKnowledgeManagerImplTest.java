@@ -408,6 +408,20 @@ class UserKnowledgeManagerImplTest {
             assertDoesNotThrow(() -> userKnowledgeManager.removeTag(ownKnowledgeId, "tag"));
             verify(knowledgeManager, times(1)).removeTag(ownKnowledgeId, "tag");
         }
+
+        @Test
+        void retryFailedIngestionThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.retryFailedIngestion(foreignKnowledgeId));
+        }
+
+        @Test
+        void retryFailedIngestionRetriesFailedIngestionForOwnKnowledge()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            assertDoesNotThrow(() -> userKnowledgeManager.retryFailedIngestion(ownKnowledgeId));
+            verify(knowledgeManager, times(1)).retryFailedIngestion(ownKnowledgeId);
+        }
     }
 
     @Nested
@@ -504,6 +518,13 @@ class UserKnowledgeManagerImplTest {
             assertThrows(
                     ForbiddenException.class,
                     () -> userKnowledgeManager.removeTag(sharedKnowledgeId, "tag"));
+        }
+
+        @Test
+        void retryFailedIngestionThrowsForbiddenExceptionIfReadOnlyKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.retryFailedIngestion(sharedKnowledgeId));
         }
     }
 
@@ -625,6 +646,13 @@ class UserKnowledgeManagerImplTest {
             assertThrows(
                     ForbiddenException.class,
                     () -> userKnowledgeManager.removeTag(publicKnowledgeId, "tag"));
+        }
+
+        @Test
+        void retryFailedIngestionThrowsForbiddenException() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.retryFailedIngestion(publicKnowledgeId));
         }
     }
 
@@ -760,6 +788,20 @@ class UserKnowledgeManagerImplTest {
                     KnowledgeNotFoundException.class,
                     () -> userKnowledgeManager.setLabel(foreignKnowledgeId, "label"));
         }
+
+        @Test
+        void retryFailedIngestionThrowsForbiddenExceptionForOwnKnowledge() {
+            assertThrows(
+                    ForbiddenException.class,
+                    () -> userKnowledgeManager.retryFailedIngestion(ownKnowledgeId));
+        }
+
+        @Test
+        void retryFailedIngestionThrowsKnowledgeNotFoundExceptionForForeignKnowledge() {
+            assertThrows(
+                    KnowledgeNotFoundException.class,
+                    () -> userKnowledgeManager.retryFailedIngestion(foreignKnowledgeId));
+        }
     }
 
     @Nested
@@ -857,6 +899,13 @@ class UserKnowledgeManagerImplTest {
         void setKnowledgeLabelSetsLabelForOwnKnowledge() throws KnowledgeNotFoundException {
             assertDoesNotThrow(() -> userKnowledgeManager.setLabel(ownKnowledgeId, "label"));
             verify(knowledgeManager, times(1)).setLabel(ownKnowledgeId, "label");
+        }
+
+        @Test
+        void retryFailedIngestionRetriesFailedIngestionForOwnKnowledge()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            assertDoesNotThrow(() -> userKnowledgeManager.retryFailedIngestion(ownKnowledgeId));
+            verify(knowledgeManager, times(1)).retryFailedIngestion(ownKnowledgeId);
         }
     }
 }
