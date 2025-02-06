@@ -87,10 +87,10 @@ class ExceptionMappers {
 
     /**
      * Restore default handling of {@link WebApplicationException}s like {@link NotFoundException}
-     * and {@BadRequestException}.
+     * and {@link jakarta.ws.rs.BadRequestException}.
      *
-     * @param e
-     * @return
+     * @param e web application exception
+     * @return HTTP response
      */
     @ServerExceptionMapper
     Response handleWebApplicationException(WebApplicationException e) {
@@ -100,8 +100,8 @@ class ExceptionMappers {
     /**
      * Handle all other exceptions. Avoid that the server returns a stack trace to the client.
      *
-     * @param e
-     * @return
+     * @param e exception
+     * @return HTTP response
      */
     @ServerExceptionMapper
     Response handleException(Exception e) {

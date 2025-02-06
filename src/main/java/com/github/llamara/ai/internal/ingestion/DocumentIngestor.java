@@ -35,7 +35,7 @@ public interface DocumentIngestor {
      *
      * <p>This method MUST be implemented non-blocking (asynchronously)!
      *
-     * @param document
+     * @param document the document to ingest
      */
     void ingestDocument(Document document);
 }

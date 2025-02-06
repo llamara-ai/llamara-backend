@@ -37,7 +37,7 @@ public class KnowledgeRepository implements PanacheRepository<Knowledge> {
     /**
      * Find knowledge by its ID.
      *
-     * @param id
+     * @param id the ID of the knowledge entry to find
      * @return the entity found, or <code>null</code> if not found
      */
     public Knowledge findById(UUID id) {
@@ -47,8 +47,8 @@ public class KnowledgeRepository implements PanacheRepository<Knowledge> {
     /**
      * Get the number of knowledge entries that have the given checksum.
      *
-     * @param checksum
-     * @return
+     * @param checksum the checksum to count the entries for
+     * @return the number of entries with the given checksum
      */
     public long countChecksum(String checksum) {
         return find("checksum", checksum).count();
@@ -57,8 +57,8 @@ public class KnowledgeRepository implements PanacheRepository<Knowledge> {
     /**
      * Set the status of knowledge identified by its ID if it exists.
      *
-     * @param id
-     * @param status
+     * @param id the ID of the knowledge entry to set the status for
+     * @param status the status to set
      */
     @Transactional
     public void setStatusFor(UUID id, IngestionStatus status) {

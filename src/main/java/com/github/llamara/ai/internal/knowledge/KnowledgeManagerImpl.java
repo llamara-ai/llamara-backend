@@ -368,7 +368,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     /**
      * Remove embeddings belonging to the given id from the {@link EmbeddingStore}.
      *
-     * @param id
+     * @param id the id of the knowledge to remove embeddings for
      */
     private void deleteEmbeddings(UUID id) {
         Filter filter = new IsEqualTo(MetadataKeys.KNOWLEDGE_ID, id);
@@ -378,8 +378,8 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     /**
      * Ingest a file specified by its {@link Path} to the {@link EmbeddingStore}.
      *
-     * @param file
-     * @param metadata
+     * @param file the file to ingest
+     * @param metadata the metadata to attach to the embeddings
      */
     private void ingestToStore(Path file, Map<String, String> metadata) {
         DocumentSource ds = FileSystemSource.from(file);

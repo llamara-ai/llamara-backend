@@ -161,8 +161,8 @@ public abstract class BaseForAuthenticatedUserTests {
     /**
      * Set up knowledge with the given permission for the current {@link SecurityIdentity}.
      *
-     * @param permission
-     * @return
+     * @param permission the permission
+     * @return the ID of the created knowledge
      */
     @Transactional
     protected UUID setupKnowledgeWithPermission(Permission permission) {

@@ -40,7 +40,7 @@ import dev.langchain4j.data.document.splitter.DocumentSplitters;
  */
 @ApplicationScoped
 class DocumentSplitterProducer {
-    DocumentSplitterConfig config;
+    private final DocumentSplitterConfig config;
 
     @Inject
     DocumentSplitterProducer(DocumentSplitterConfig config) {

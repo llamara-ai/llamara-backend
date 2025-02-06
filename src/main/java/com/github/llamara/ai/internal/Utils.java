@@ -44,12 +44,12 @@ public final class Utils {
     /**
      * Generates a MD5 checksum for the given file.
      *
-     * @param file
-     * @return
-     * @throws IOException
+     * @param file the file to generate the checksum for
+     * @return the MD5 checksum
+     * @throws IOException if an I/O error occurs reading the file
      */
     public static String generateChecksum(Path file) throws IOException {
-        MessageDigest md5 = null;
+        MessageDigest md5;
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {

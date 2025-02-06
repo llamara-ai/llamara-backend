@@ -59,8 +59,8 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
      *   <li>Anonymous users only have access if {@link Users#ANY} has read access.
      * </ul>
      *
-     * @param knowledge
-     * @return
+     * @param knowledge the knowledge entry to check
+     * @return <code>true</code> if the user has read permission, <code>false</code> otherwise
      */
     private boolean hasReadPermission(Knowledge knowledge) {
         if (identity.hasRole(Roles.ADMIN)) {
@@ -76,7 +76,7 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
      * Find a knowledge entry by its ID and check if the user has at least read permission. Admins
      * have access to everything.
      *
-     * @param id
+     * @param id the ID of the knowledge entry
      * @return the entity found, or <code>null</code> if not found
      */
     @Override
@@ -96,8 +96,8 @@ public class UserAwareKnowledgeRepository extends KnowledgeRepository {
      * everything, as admins should be able to up add a source themselves if it is already in the
      * system.
      *
-     * @param checksum
-     * @return
+     * @param checksum the checksum to check for
+     * @return the knowledge entry if it exists and the user has at least read/write permission
      */
     @Transactional
     public Optional<Knowledge> existsChecksum(String checksum) {

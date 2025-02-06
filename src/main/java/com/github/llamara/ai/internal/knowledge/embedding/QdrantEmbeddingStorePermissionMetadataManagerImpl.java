@@ -27,6 +27,7 @@ import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
@@ -62,10 +63,8 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
         QdrantGrpcClient.Builder grpcClientBuilder =
                 QdrantGrpcClient.newBuilder(config.host(), config.port(), config.tls());
 
-        String apiKey = env.getQdrantApiKey().orElse(null);
-        if (apiKey != null) {
-            grpcClientBuilder.withApiKey(apiKey);
-        }
+        Optional<String> apiKey = env.getQdrantApiKey();
+        apiKey.ifPresent(grpcClientBuilder::withApiKey);
 
         this.client = new QdrantClient(grpcClientBuilder.build());
         this.collectionName = config.collectionName();
@@ -75,7 +74,7 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
     public void checkConnectionAndInit() {
         boolean collectionExists;
         try {
-            collectionExists = client.collectionExistsAsync(collectionName).get().booleanValue();
+            collectionExists = client.collectionExistsAsync(collectionName).get();
         } catch (InterruptedException // NOSONAR
                 | ExecutionException // NOSONAR
                         e) { // we don't want to re-interrupt or rethrow as we abort startup

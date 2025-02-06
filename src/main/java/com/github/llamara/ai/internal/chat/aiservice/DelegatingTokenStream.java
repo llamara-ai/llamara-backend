@@ -50,8 +50,8 @@ public abstract class DelegatingTokenStream implements TokenStream {
     }
 
     @Override
-    public TokenStream onNext(Consumer<String> tokenHandler) {
-        delegate.onNext(tokenHandler);
+    public TokenStream onNext(Consumer<String> tokenHandler) { // NOSONAR: we need this
+        delegate.onNext(tokenHandler); // NOSONAR: we need this
         return this;
     }
 
@@ -74,8 +74,9 @@ public abstract class DelegatingTokenStream implements TokenStream {
     }
 
     @Override
-    public TokenStream onComplete(Consumer<Response<AiMessage>> completionHandler) {
-        delegate.onComplete(completionHandler);
+    public TokenStream onComplete(
+            Consumer<Response<AiMessage>> completionHandler) { // NOSONAR: we need this
+        delegate.onComplete(completionHandler); // NOSONAR: we need this
         return this;
     }
 

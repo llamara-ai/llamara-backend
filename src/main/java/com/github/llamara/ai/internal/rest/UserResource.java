@@ -92,9 +92,9 @@ class UserResource {
 
     public static class UserInfoDTO {
         public String username; // NOSONAR: this is a DTO
-        public Set<String> roles; // NOSONAR: this is a DTO
-        public boolean anonymous; // NOSONAR: this is a DTO
-        public String name; // NOSONAR: this is a DTO
+        public final Set<String> roles; // NOSONAR: this is a DTO
+        public final boolean anonymous; // NOSONAR: this is a DTO
+        public final String name; // NOSONAR: this is a DTO
 
         UserInfoDTO(SecurityIdentity identity, UserInfo userInfo) {
             this.username = identity.getPrincipal().getName();

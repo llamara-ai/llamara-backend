@@ -58,8 +58,8 @@ You are LLAMARA, the Large Language Assistant for Model Augmented Retrieval and 
     /**
      * Clean the given text by removing unnecessary noise and formatting it.
      *
-     * @param text
-     * @return
+     * @param text the text to clean
+     * @return the cleaned text
      */
     @UserMessage(
             """

@@ -58,18 +58,18 @@ public interface ChatModelConfig {
          * output more random, while lower values like 0.2 will make it more focused and
          * deterministic. It is generally recommended altering this or topP but not both.
          *
-         * @return
+         * @return sampling temperature
          */
         @WithDefault("0.7")
         Double temperature();
 
         /**
-         * We An alternative to sampling with temperature, called nucleus sampling, where the model
+         * An alternative to sampling with temperature, called nucleus sampling, where the model
          * considers the results of the tokens with top_p probability mass. So 0.1 means only the
          * tokens comprising the top 10% probability mass are considered. It is generally
          * recommended altering this or temperature but not both.
          *
-         * @return
+         * @return top_p
          */
         Optional<Double> topP();
 
@@ -78,7 +78,7 @@ public interface ChatModelConfig {
          * frequency in the text so far, decreasing the model's likelihood to repeat the same line
          * verbatim.
          *
-         * @return
+         * @return frequency penalty
          */
         Optional<Double> frequencyPenalty();
 
@@ -86,7 +86,7 @@ public interface ChatModelConfig {
          * Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they
          * appear in the text so far, increasing the model's likelihood to talk about new topics.
          *
-         * @return
+         * @return presence penalty
          */
         Optional<Double> presencePenalty();
 
@@ -95,7 +95,7 @@ public interface ChatModelConfig {
          * visible output tokens and reasoning tokens. This value can be used to control costs for
          * API calls.
          *
-         * @return
+         * @return max tokens
          */
         Optional<Integer> maxTokens();
     }

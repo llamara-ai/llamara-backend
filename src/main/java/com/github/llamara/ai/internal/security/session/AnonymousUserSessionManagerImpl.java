@@ -143,7 +143,7 @@ public class AnonymousUserSessionManagerImpl implements SessionManager {
     }
 
     @Override
-    public void setSessionLabel(UUID sessionId, String label) throws SessionNotFoundException {
+    public void setSessionLabel(UUID sessionId, String label) {
         // do nothing
     }
 }

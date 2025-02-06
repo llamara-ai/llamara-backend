@@ -37,7 +37,7 @@ public interface SecurityConfig {
      * Determines whether write access to the knowledge base is restricted to admins only. When
      * enabled, only users with admin privileges can make modifications.
      *
-     * @return
+     * @return whether write access is restricted to admins only
      */
     boolean adminWriteOnlyEnabled();
 }

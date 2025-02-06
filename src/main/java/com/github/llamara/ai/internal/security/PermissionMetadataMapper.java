@@ -42,8 +42,8 @@ public final class PermissionMetadataMapper {
     /**
      * Convert {@link Knowledge} permissions to the {@link MetadataKeys#PERMISSION} metadata entry.
      *
-     * @param permissions
-     * @return
+     * @param permissions the permissions to convert
+     * @return the metadata entry
      */
     public static String permissionsToMetadataEntry(Map<User, Permission> permissions) {
         String inner =
@@ -62,8 +62,8 @@ public final class PermissionMetadataMapper {
      * Convert a {@link SecurityIdentity} to the query string to check the {@link
      * MetadataKeys#PERMISSION} metadata entry for.
      *
-     * @param identity
-     * @return
+     * @param identity the identity to convert
+     * @return the query string
      */
     public static String identityToMetadataQuery(SecurityIdentity identity) {
         if (identity.isAnonymous()) {

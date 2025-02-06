@@ -106,14 +106,15 @@ public interface KnowledgeManager {
      * <p>Implementations should set {@link Permission#OWNER} for the given {@link User} and add the
      * given user to the embedding's {@link MetadataKeys#PERMISSION} metadata.
      *
-     * @param file
-     * @param fileName
-     * @param contentType
+     * @param file the file to add
+     * @param fileName the name of the file to add
+     * @param contentType the content type of the file
      * @param owner the owner of the knowledge
-     * @return
-     * @throws EmptyFileException
-     * @throws IOException
-     * @throws UnexpectedFileStorageFailureException
+     * @return the id of the added knowledge
+     * @throws EmptyFileException if the file is empty
+     * @throws IOException if calculating the file checksum failed
+     * @throws UnexpectedFileStorageFailureException if a {@link FileStorage} operation failed
+     *     unexpectedly
      */
     default UUID addSource(Path file, String fileName, String contentType, User owner)
             throws IOException, UnexpectedFileStorageFailureException {

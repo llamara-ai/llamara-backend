@@ -48,7 +48,7 @@ public interface EmbeddingStorePermissionMetadataManager {
      * <p>Implementations have to use {@link PermissionMetadataMapper#permissionsToMetadataEntry} to
      * convert the permissions to a metadata entry.
      *
-     * @param knowledge
+     * @param knowledge the knowledge to update the permission metadata for
      */
     void updatePermissionMetadata(Knowledge knowledge);
 }

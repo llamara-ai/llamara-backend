@@ -49,7 +49,7 @@ public class EnvironmentVariables {
     /**
      * Returns the Azure API key, that is required for the Azure models.
      *
-     * @return
+     * @return Azure API key
      */
     public String getAzureApiKey() {
         if (azureApiKey.isPresent()) {
@@ -61,7 +61,7 @@ public class EnvironmentVariables {
     /**
      * Returns the OpenAI API key, that is required for the OpenAI models.
      *
-     * @return
+     * @return OpenAI API key
      */
     public String getOpenaiApiKey() {
         if (openaiApiKey.isPresent()) {
@@ -73,7 +73,7 @@ public class EnvironmentVariables {
     /**
      * Returns the optional Qdrant API key..
      *
-     * @return
+     * @return Qdrant API key
      */
     public Optional<String> getQdrantApiKey() {
         return qdrantApiKey;
