@@ -92,7 +92,7 @@ If needed, specify passwords through the `QUARKUS_REDIS_CHAT_MEMORY_PASSWORD` an
 
 #### Qdrant
 
-This application requires a [Qdrant Vector Database](https://qdrant.tech/qdrant-vector-database/) on `localhost:6334` (gRPC) (default).
+This application requires a [Qdrant Vector Database](https://qdrant.tech/qdrant-vector-database/) >= 1.13.0 on `localhost:6334` (gRPC) (default).
 If needed, specify an API key through the `QDRANT_API_KEY` environment variable.
 
 LLAMARA will create the required collection according to the configured collection name and vector size,
@@ -160,6 +160,4 @@ LLAMARA backend redirects all 404 requests outside of its own [endpoints](#endpo
 
 ## Known Issues
 
-- Filtering embeddings by permissions in the retrieval step only works if knowledge has only a single permission set.
-  The contains filter from <https://github.com/langchain4j/langchain4j/pull/2344> is needed to properly implement permissions in the retrieval step.
 - Native image does not work with Qdrant embedding store, see <https://github.com/quarkiverse/quarkus-langchain4j/issues/1216>.
