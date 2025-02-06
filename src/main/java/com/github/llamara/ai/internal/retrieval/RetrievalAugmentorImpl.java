@@ -69,15 +69,10 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
                         .embeddingStore(store)
                         // Possible improvement: Return more results and use reranking
                         .maxResults(3)
-                        // Filter the results to only include knowledge the user has access to
-                        // Note: We cannot implement our own filter because the embedding store also
-                        // needs to support it
-                        // TODO: Enable the following filter as soon as contains filter is available
-                        // .filter(metadataKey(MetadataKeys.PERMISSION).contains(PermissionMetadataMapper.usernameToMetadataQuery(identity)))
-                        // problem: admins currently cannot use all knowledge in retrieval step
+                        // Note: admins cannot use all knowledge in retrieval step
                         .filter(
                                 metadataKey(MetadataKeys.PERMISSION)
-                                        .isEqualTo(
+                                        .containsString(
                                                 PermissionMetadataMapper.identityToMetadataQuery(
                                                         identity)))
                         .build();

@@ -97,8 +97,7 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
                 client.createPayloadIndexAsync(
                                 collectionName,
                                 MetadataKeys.KNOWLEDGE_ID,
-                                Collections.PayloadSchemaType
-                                        .Keyword, // TODO: Use Uuid once supported
+                                Collections.PayloadSchemaType.Uuid,
                                 null,
                                 null,
                                 null,
