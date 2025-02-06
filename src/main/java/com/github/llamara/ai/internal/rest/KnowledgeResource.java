@@ -425,15 +425,14 @@ class KnowledgeResource {
     @ResponseStatus(200)
     @Operation(
             operationId = "retryFailedIngestion",
-            summary = "Retry failed ingestion of a single knowledge identified by it ID.",
-            description = "If the Ingestion status isn't failed, nothing happens.")
+            summary = "Retry the failed ingestion of a single knowledge identified by it ID.")
     @APIResponse(responseCode = "200", description = "OK.")
     @APIResponse(responseCode = "404", description = "No knowledge with the given id found.")
     public void retryFailedIngestion(
             @PathParam("id")
                     @Parameter(
                             name = "id",
-                            description = "UID of the knowledge to retry",
+                            description = "UID of the knowledge to retry the ingestion for",
                             required = true)
                     UUID id)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {

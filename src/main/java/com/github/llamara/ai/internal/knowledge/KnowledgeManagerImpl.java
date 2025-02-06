@@ -32,9 +32,9 @@ import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 import com.github.llamara.ai.internal.security.user.User;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -304,40 +304,6 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     }
 
     @Override
-    public void retryFailedIngestion(UUID id)
-            throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
-        Knowledge knowledge = getKnowledge(id);
-        if (knowledge.getIngestionStatus() != IngestionStatus.FAILED) {
-            return;
-        }
-
-        QuarkusTransaction.begin();
-        knowledge = getKnowledge(id);
-        repository.persist(knowledge);
-        NamedFileContainer file = getFile(id);
-        Map<String, String> metadata = createEmbeddingMetadata(knowledge);
-        Path tempFile = null;
-        try (InputStream fileContent = file.content()) {
-            tempFile = Files.createTempDirectory("").resolve(UUID.randomUUID().toString() + ".tmp");
-            Files.copy(fileContent, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            knowledge.setIngestionStatus(IngestionStatus.PENDING);
-            ingestToStore(tempFile, metadata);
-        } catch (IOException e) {
-            System.err.println("Error creating or copying file: " + e.getMessage());
-        } finally {
-            if (tempFile != null) {
-                try {
-                    Files.deleteIfExists(tempFile);
-                } catch (IOException e) {
-                    System.err.println("Failed to delete temporary file: " + e.getMessage());
-                }
-            }
-        }
-
-        QuarkusTransaction.commit();
-    }
-
-    @Override
     public NamedFileContainer getFile(UUID id)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
         Knowledge knowledge = getKnowledge(id);
@@ -349,6 +315,38 @@ class KnowledgeManagerImpl implements KnowledgeManager {
             throw new RuntimeException( // NOSONAR: this should never happen
                     String.format(FILE_STORAGE_FILE_NOT_FOUND_PATTERN, knowledge.getId()), e);
         }
+    }
+
+    @Override
+    public void retryFailedIngestion(UUID id)
+            throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+        Knowledge knowledge = getKnowledge(id);
+
+        // Do nothing if ingestion status is not FAILED
+        if (knowledge.getIngestionStatus() != IngestionStatus.FAILED) {
+            return;
+        }
+
+        // Get the file from the file storage and save it as temporary file
+        NamedFileContainer fc = getFile(id);
+        File tempFile;
+        try {
+            tempFile = File.createTempFile("knowledge_" + id, null);
+            tempFile.deleteOnExit(); // the file will be deleted when the JVM exits
+            Files.copy(fc.content(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new UnexpectedFileStorageFailureException(
+                    "Failed to temporary save retrieved file to disk", e);
+        }
+
+        // Create metadata
+        Map<String, String> metadata = createEmbeddingMetadata(knowledge);
+
+        // Reset ingestion status
+        setKnowledgeIngestionStatus(id, IngestionStatus.PENDING);
+
+        // Retry ingestion
+        ingestToStore(tempFile.toPath(), metadata);
     }
 
     private Map<String, String> createFileMetadata(String checksum, String contentType) {

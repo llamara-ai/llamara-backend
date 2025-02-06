@@ -616,24 +616,49 @@ class KnowledgeManagerImplTest {
         @Test
         void retryFailedIngestionDoesNothingIfKnowledgeIngestionStatusIsSucceeded()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            // setup
             knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.SUCCEEDED);
+
+            // test
             knowledgeManager.retryFailedIngestion(knowledgeId);
+
             verify(documentIngestor, times(0)).ingestDocument(any());
         }
 
         @Test
         void retryFailedIngestionDoesNothingIfKnowledgeIngestionStatusIsPending()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            // setup
             knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.PENDING);
+
+            // test
             knowledgeManager.retryFailedIngestion(knowledgeId);
+
             verify(documentIngestor, times(0)).ingestDocument(any());
         }
 
         @Test
-        void retryFailedIngestionDoesDispatchIngestionIfKnowledgeIngestionStatusIsFailed()
-                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+        void retryFailedIngestionSetsIngestionStatusToPendingIfIngestionStatusIsFailed()
+                throws UnexpectedFileStorageFailureException, KnowledgeNotFoundException {
+            // setup
             knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.FAILED);
+
+            // test
             knowledgeManager.retryFailedIngestion(knowledgeId);
+
+            verify(knowledgeRepository, times(1))
+                    .setStatusFor(knowledgeId, IngestionStatus.PENDING);
+        }
+
+        @Test
+        void retryFailedIngestionDispatchesIngestionIfKnowledgeIngestionStatusIsFailed()
+                throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+            // setup
+            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.FAILED);
+
+            // test
+            knowledgeManager.retryFailedIngestion(knowledgeId);
+
             verify(documentIngestor, times(1)).ingestDocument(any());
         }
     }

@@ -25,7 +25,7 @@ package com.github.llamara.ai.internal.knowledge.storage;
  * @author Florian Hotze - Initial contribution
  */
 public class UnexpectedFileStorageFailureException extends Exception {
-    UnexpectedFileStorageFailureException(String message, Throwable cause) {
+    public UnexpectedFileStorageFailureException(String message, Throwable cause) {
         super(message, cause);
     }
 }
