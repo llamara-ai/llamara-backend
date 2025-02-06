@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 /**
  * Provides configuration for the {@link ChatModelContainer}s. Model parameter descriptions are
@@ -59,7 +60,8 @@ public interface ChatModelConfig {
          *
          * @return
          */
-        Optional<Double> temperature();
+        @WithDefault("0.7")
+        Double temperature();
 
         /**
          * We An alternative to sampling with temperature, called nucleus sampling, where the model
