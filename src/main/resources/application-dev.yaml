@@ -47,3 +47,4 @@ quarkus:
       devservices:
         port: 6334
         shared: false
+        qdrant-image-name: docker.io/qdrant/qdrant:v1.13.2-unprivileged
