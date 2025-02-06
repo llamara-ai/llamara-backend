@@ -233,7 +233,7 @@ class ChatResource {
         sessionManager.deleteSession(sessionId);
     }
 
-    @Blocking
+    @NonBlocking
     @GET
     @Path("/sessions/{sessionId}/history")
     @Produces(MediaType.APPLICATION_JSON)
@@ -288,7 +288,7 @@ class ChatResource {
     }
 
     @RolesAllowed({Roles.ANONYMOUS_USER})
-    @NonBlocking
+    @NonBlocking // because AnonymousUserSessionManagerImpl is not relying on blocking I/O
     @PUT
     @Path("/sessions/{sessionId}/keep-alive")
     @ResponseStatus(200)
