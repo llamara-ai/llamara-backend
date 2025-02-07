@@ -89,6 +89,18 @@ public class HistoryInterceptingAiService extends DelegatingChatModelAiService {
     }
 
     @Override
+    public String chatWithoutSystemMessage(UUID sessionId, boolean history, String prompt) {
+        if (!history) {
+            return super.chatWithoutSystemMessage(sessionId, false, prompt);
+        }
+
+        promptConsumer.accept(sessionId, prompt);
+        String response = super.chatWithoutSystemMessage(sessionId, true, prompt);
+        responseConsumer.accept(sessionId, new AiMessage(response));
+        return response;
+    }
+
+    @Override
     public TokenStream chatAndStreamResponse(UUID sessionId, boolean history, String prompt) {
         if (!history) {
             return super.chatAndStreamResponse(sessionId, false, prompt);

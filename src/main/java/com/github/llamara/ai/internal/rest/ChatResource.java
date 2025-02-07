@@ -22,7 +22,6 @@ package com.github.llamara.ai.internal.rest;
 import com.github.llamara.ai.internal.chat.ChatModelContainer;
 import com.github.llamara.ai.internal.chat.ChatModelNotFoundException;
 import com.github.llamara.ai.internal.chat.ChatModelProvider;
-import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
 import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
 import com.github.llamara.ai.internal.security.Roles;
 import com.github.llamara.ai.internal.security.session.Session;
@@ -131,8 +130,14 @@ class ChatResource {
             String prompt)
             throws ChatModelNotFoundException, SessionNotFoundException {
         sessionManager.enforceSessionValid(sessionId);
-        ChatModelAiService chatModelAiService = chatModelProvider.getModel(uid).service();
-        return chatModelAiService.chat(sessionId, !identity.isAnonymous(), prompt);
+        ChatModelContainer chatModel = chatModelProvider.getModel(uid);
+        if (chatModel.config().systemPromptEnabled()) {
+            return chatModel.service().chat(sessionId, !identity.isAnonymous(), prompt);
+        } else {
+            return chatModel
+                    .service()
+                    .chatWithoutSystemMessage(sessionId, !identity.isAnonymous(), prompt);
+        }
     }
 
     /*

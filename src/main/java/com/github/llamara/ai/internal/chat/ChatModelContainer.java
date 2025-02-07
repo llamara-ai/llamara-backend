@@ -28,10 +28,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Container for a chat model, containing information about the chat model and the {@link
  * ChatModelAiService}s.
  *
- * @param uid
- * @param label
- * @param description
- * @param service
+ * @param uid the UID of the chat model
+ * @param label the label of the chat model
+ * @param description the description of the chat model
+ * @param provider the {@link ChatModelConfig.ChatModelProvider}
+ * @param config the {@link ChatModelConfig.ModelConfig}
+ * @param service the {@link ChatModelAiService} of the chat model
  * @author Florian Hotze - Initial contribution
  */
 public record ChatModelContainer(
@@ -39,4 +41,5 @@ public record ChatModelContainer(
         String label,
         String description,
         ChatModelConfig.ChatModelProvider provider,
+        @JsonIgnore ChatModelConfig.ModelConfig config,
         @JsonIgnore ChatModelAiService service) {}

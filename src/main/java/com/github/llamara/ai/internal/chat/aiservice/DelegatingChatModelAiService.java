@@ -57,6 +57,11 @@ public abstract class DelegatingChatModelAiService implements ChatModelAiService
     }
 
     @Override
+    public String chatWithoutSystemMessage(UUID sessionId, boolean history, String prompt) {
+        return delegate.chatWithoutSystemMessage(sessionId, history, prompt);
+    }
+
+    @Override
     public TokenStream chatAndStreamResponse(UUID sessionId, boolean history, String prompt) {
         return delegate.chatAndStreamResponse(sessionId, history, prompt);
     }
