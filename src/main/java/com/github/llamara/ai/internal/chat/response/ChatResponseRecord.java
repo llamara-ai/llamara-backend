@@ -17,26 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package com.github.llamara.ai.internal.chat;
+package com.github.llamara.ai.internal.chat.response;
 
-import com.github.llamara.ai.config.chat.ChatModelConfig;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 /**
- * Container for a chat model, containing information about the chat model and the {@link
- * ChatModel}.
+ * Record for a chat response.
  *
- * @param uid the UID of the chat model
- * @param label the label of the chat model
- * @param description the description of the chat model
- * @param provider the {@link ChatModelConfig.ChatModelProvider}
- * @param model the {@link ChatModel}
+ * @param response the response from the chat model
+ * @param sources the sources used by the chat model to generate the response
  * @author Florian Hotze - Initial contribution
  */
-public record ChatModelContainer(
-        String uid,
-        String label,
-        String description,
-        ChatModelConfig.ChatModelProvider provider,
-        @JsonIgnore ChatModel model) {}
+public record ChatResponseRecord(String response, List<RagSourceRecord> sources) {}

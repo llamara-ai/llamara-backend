@@ -20,15 +20,14 @@
 package com.github.llamara.ai.internal.chat;
 
 import com.github.llamara.ai.config.chat.ChatModelConfig;
-import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
 
 import java.util.Collection;
 
 /**
  * The chat model provider provides access to the configured {@link ChatModelContainer}s.
  *
- * <p>It processes the {@link ChatModelConfig} and creates the {@link ChatModelAiService}s to
- * interface with the configured models.
+ * <p>It processes the {@link ChatModelConfig} and creates the {@link AiService}s to interface with
+ * the configured models.
  *
  * @author Florian Hotze - Initial contribution
  */

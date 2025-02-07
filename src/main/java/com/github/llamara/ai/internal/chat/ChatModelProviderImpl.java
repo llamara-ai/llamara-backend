@@ -25,9 +25,7 @@ import static com.github.llamara.ai.internal.Utils.buildAzureOpenaiEndpoint;
 import com.github.llamara.ai.config.EnvironmentVariables;
 import com.github.llamara.ai.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.StartupException;
-import com.github.llamara.ai.internal.chat.aiservice.ChatModelAiService;
 import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
-import com.github.llamara.ai.internal.chat.history.HistoryInterceptingAiService;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -106,15 +104,15 @@ class ChatModelProviderImpl implements ChatModelProvider {
             ChatLanguageModel clm = produceChatLanguageModel(config);
             StreamingChatLanguageModel sclm = produceStreamingChatLanguageModel(config);
 
-            ChatModelAiService service =
-                    new HistoryInterceptingAiService(
-                            AiServices.builder(ChatModelAiService.class)
+            ChatModel model =
+                    new ChatModel(
+                            config,
+                            AiServices.builder(AiService.class)
                                     .chatLanguageModel(clm)
                                     .streamingChatLanguageModel(sclm)
                                     .chatMemoryProvider(chatMemoryProvider)
                                     .retrievalAugmentor(retrievalAugmentor)
                                     .build(),
-                            config,
                             chatHistoryStore);
 
             ChatModelContainer cm =
@@ -123,8 +121,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                             config.label().orElse(config.uid()),
                             config.description().orElse(config.provider() + " " + config.model()),
                             config.provider(),
-                            config,
-                            service);
+                            model);
             chatModels.put(config.uid(), cm);
         }
     }
