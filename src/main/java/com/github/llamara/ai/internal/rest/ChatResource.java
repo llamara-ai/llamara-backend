@@ -244,7 +244,7 @@ class ChatResource {
         sessionManager.deleteSession(sessionId);
     }
 
-    @NonBlocking
+    @Blocking // because session validation is relying on blocking I/O
     @GET
     @Path("/sessions/{sessionId}/history")
     @Produces(MediaType.APPLICATION_JSON)
