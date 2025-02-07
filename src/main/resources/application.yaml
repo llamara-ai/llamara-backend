@@ -47,6 +47,14 @@ chat:
       model: gpt-4o-mini
       label: GPT 4o Mini
       description: OpenAI GPT 4 Omni Mini
+    # OpenAI reasoning models require disabling the system prompt and setting the temperature to 1.0
+    #- uid: o1-mini
+    #  provider: openai
+    #  model: o1-mini
+    #  label: o1 Mini
+    #  description: OpenAI o1 Mini
+    #  system-prompt-enabled: false
+    #  temperature: 1.0
     # Ollama models need base URL and model config
     #- uid: llama3-1
     #  provider: ollama

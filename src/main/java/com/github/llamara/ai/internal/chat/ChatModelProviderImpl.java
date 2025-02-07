@@ -123,6 +123,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                             config.label().orElse(config.uid()),
                             config.description().orElse(config.provider() + " " + config.model()),
                             config.provider(),
+                            config,
                             service);
             chatModels.put(config.uid(), cm);
         }

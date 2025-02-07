@@ -51,6 +51,9 @@ You are LLAMARA, the Large Language Assistant for Model Augmented Retrieval and 
     @SystemMessage(SYSTEM_MESSAGE)
     String chat(@MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
 
+    String chatWithoutSystemMessage(
+            @MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
+
     @SystemMessage(SYSTEM_MESSAGE)
     TokenStream chatAndStreamResponse(
             @MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
