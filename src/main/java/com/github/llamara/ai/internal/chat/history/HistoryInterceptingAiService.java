@@ -29,9 +29,9 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessageType;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.TokenStream;
 
 /**
@@ -42,7 +42,7 @@ import dev.langchain4j.service.TokenStream;
  */
 public class HistoryInterceptingAiService extends DelegatingChatModelAiService {
     private final BiConsumer<UUID, String> promptConsumer;
-    private final BiConsumer<UUID, AiMessage> responseConsumer;
+    private final BiConsumer<UUID, String> responseConsumer;
 
     public HistoryInterceptingAiService(
             ChatModelAiService delegate,
@@ -68,7 +68,7 @@ public class HistoryInterceptingAiService extends DelegatingChatModelAiService {
                                         sessionId,
                                         new ChatMessageRecord(
                                                 ChatMessageType.AI,
-                                                response.text(),
+                                                response,
                                                 Instant.now(),
                                                 config.provider(),
                                                 config.model()))
@@ -77,26 +77,26 @@ public class HistoryInterceptingAiService extends DelegatingChatModelAiService {
     }
 
     @Override
-    public String chat(UUID sessionId, boolean history, String prompt) {
+    public Result<String> chat(UUID sessionId, boolean history, String prompt) {
         if (!history) {
             return super.chat(sessionId, false, prompt);
         }
 
         promptConsumer.accept(sessionId, prompt);
-        String response = super.chat(sessionId, true, prompt);
-        responseConsumer.accept(sessionId, new AiMessage(response));
+        Result<String> response = super.chat(sessionId, true, prompt);
+        responseConsumer.accept(sessionId, response.content());
         return response;
     }
 
     @Override
-    public String chatWithoutSystemMessage(UUID sessionId, boolean history, String prompt) {
+    public Result<String> chatWithoutSystemMessage(UUID sessionId, boolean history, String prompt) {
         if (!history) {
             return super.chatWithoutSystemMessage(sessionId, false, prompt);
         }
 
         promptConsumer.accept(sessionId, prompt);
-        String response = super.chatWithoutSystemMessage(sessionId, true, prompt);
-        responseConsumer.accept(sessionId, new AiMessage(response));
+        Result<String> response = super.chatWithoutSystemMessage(sessionId, true, prompt);
+        responseConsumer.accept(sessionId, response.content());
         return response;
     }
 
@@ -109,7 +109,7 @@ public class HistoryInterceptingAiService extends DelegatingChatModelAiService {
         promptConsumer.accept(sessionId, prompt);
         return new CompletionInterceptingTokenStream(
                 super.chatAndStreamResponse(sessionId, true, prompt),
-                response -> responseConsumer.accept(sessionId, response.aiMessage()));
+                response -> responseConsumer.accept(sessionId, response.aiMessage().text()));
     }
 
     /**
