@@ -22,6 +22,7 @@ package com.github.llamara.ai.internal.chat.aiservice;
 import java.util.UUID;
 
 import dev.langchain4j.service.MemoryId;
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.service.UserMessage;
@@ -49,9 +50,9 @@ You are LLAMARA, the Large Language Assistant for Model Augmented Retrieval and 
 """;
 
     @SystemMessage(SYSTEM_MESSAGE)
-    String chat(@MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
+    Result<String> chat(@MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
 
-    String chatWithoutSystemMessage(
+    Result<String> chatWithoutSystemMessage(
             @MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
 
     @SystemMessage(SYSTEM_MESSAGE)

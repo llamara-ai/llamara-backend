@@ -23,6 +23,7 @@ import com.github.llamara.ai.config.chat.ChatModelConfig;
 
 import java.util.UUID;
 
+import dev.langchain4j.service.Result;
 import dev.langchain4j.service.TokenStream;
 
 /**
@@ -52,12 +53,12 @@ public abstract class DelegatingChatModelAiService implements ChatModelAiService
     }
 
     @Override
-    public String chat(UUID sessionId, boolean history, String prompt) {
+    public Result<String> chat(UUID sessionId, boolean history, String prompt) {
         return delegate.chat(sessionId, history, prompt);
     }
 
     @Override
-    public String chatWithoutSystemMessage(UUID sessionId, boolean history, String prompt) {
+    public Result<String> chatWithoutSystemMessage(UUID sessionId, boolean history, String prompt) {
         return delegate.chatWithoutSystemMessage(sessionId, history, prompt);
     }
 

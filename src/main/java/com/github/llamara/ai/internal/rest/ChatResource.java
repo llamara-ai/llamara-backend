@@ -19,6 +19,7 @@
  */
 package com.github.llamara.ai.internal.rest;
 
+import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.chat.ChatModelContainer;
 import com.github.llamara.ai.internal.chat.ChatModelNotFoundException;
 import com.github.llamara.ai.internal.chat.ChatModelProvider;
@@ -28,6 +29,7 @@ import com.github.llamara.ai.internal.security.session.Session;
 import com.github.llamara.ai.internal.security.session.SessionManager;
 import com.github.llamara.ai.internal.security.session.SessionNotFoundException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +46,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
+import dev.langchain4j.service.Result;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;
 import io.smallrye.common.annotation.NonBlocking;
@@ -105,16 +108,16 @@ class ChatResource {
     @POST
     @Path("/prompt")
     @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Operation(operationId = "prompt", summary = "Send a prompt to the given chat model.")
     @APIResponse(
             responseCode = "200",
             description = "OK",
-            content = @Content(schema = @Schema(implementation = String.class)))
+            content = @Content(schema = @Schema(implementation = ChatResponseDTO.class)))
     @APIResponse(
             responseCode = "404",
             description = "No chat model or no session with given ID found.")
-    public String prompt(
+    public ChatResponseDTO prompt(
             @QueryParam("uid")
                     @Parameter(
                             name = "uid",
@@ -131,13 +134,16 @@ class ChatResource {
             throws ChatModelNotFoundException, SessionNotFoundException {
         sessionManager.enforceSessionValid(sessionId);
         ChatModelContainer chatModel = chatModelProvider.getModel(uid);
+        Result<String> result;
         if (chatModel.config().systemPromptEnabled()) {
-            return chatModel.service().chat(sessionId, !identity.isAnonymous(), prompt);
+            result = chatModel.service().chat(sessionId, !identity.isAnonymous(), prompt);
         } else {
-            return chatModel
-                    .service()
-                    .chatWithoutSystemMessage(sessionId, !identity.isAnonymous(), prompt);
+            result =
+                    chatModel
+                            .service()
+                            .chatWithoutSystemMessage(sessionId, !identity.isAnonymous(), prompt);
         }
+        return new ChatResponseDTO(result);
     }
 
     /*
@@ -311,5 +317,25 @@ class ChatResource {
                     UUID sessionId)
             throws SessionNotFoundException {
         sessionManager.enforceSessionValid(sessionId);
+    }
+
+    public static class ChatResponseDTO {
+        public final String response;
+        public final List<SourceRecord> sources = new ArrayList<>();
+
+        public ChatResponseDTO(Result<String> result) {
+            this.response = result.content();
+            result.sources().stream()
+                    .map(dev.langchain4j.rag.content.Content::textSegment)
+                    .forEach(
+                            ts ->
+                                    sources.add(
+                                            new SourceRecord(
+                                                    ts.metadata()
+                                                            .getUUID(MetadataKeys.KNOWLEDGE_ID),
+                                                    ts.text())));
+        }
+
+        public record SourceRecord(UUID knowledgeId, String content) {}
     }
 }
