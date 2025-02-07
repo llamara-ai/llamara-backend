@@ -17,14 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package com.github.llamara.ai.internal.chat.aiservice;
+package com.github.llamara.ai.internal.chat;
 
 import java.util.UUID;
 
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.Result;
 import dev.langchain4j.service.SystemMessage;
-import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.service.UserMessage;
 
 /**
@@ -38,7 +37,7 @@ import dev.langchain4j.service.UserMessage;
  *
  * @author Florian Hotze - Initial contribution
  */
-public interface ChatModelAiService {
+public interface AiService {
     String SYSTEM_MESSAGE =
             """
 You are LLAMARA, the Large Language Assistant for Model Augmented Retrieval and Analysis:
@@ -50,14 +49,9 @@ You are LLAMARA, the Large Language Assistant for Model Augmented Retrieval and 
 """;
 
     @SystemMessage(SYSTEM_MESSAGE)
-    Result<String> chat(@MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
+    Result<String> chat(@MemoryId UUID sessionId, @UserMessage String prompt);
 
-    Result<String> chatWithoutSystemMessage(
-            @MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
-
-    @SystemMessage(SYSTEM_MESSAGE)
-    TokenStream chatAndStreamResponse(
-            @MemoryId UUID sessionId, boolean history, @UserMessage String prompt);
+    Result<String> chatWithoutSystemMessage(@MemoryId UUID sessionId, @UserMessage String prompt);
 
     /**
      * Clean the given text by removing unnecessary noise and formatting it.

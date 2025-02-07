@@ -20,8 +20,10 @@
 package com.github.llamara.ai.internal.chat.history;
 
 import com.github.llamara.ai.config.chat.ChatModelConfig;
+import com.github.llamara.ai.internal.chat.response.RagSourceRecord;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.langchain4j.data.message.ChatMessageType;
@@ -32,6 +34,8 @@ import dev.langchain4j.data.message.ChatMessageType;
  * @param type the type of the message, e.g. AI or USER
  * @param text the text of the message
  * @param timestamp the timestamp of the message
+ * @param sources if the message is an AI message: the sources used by the chat model to generate
+ *     the response
  * @param modelProvider if the message is an AI message: the provider of the chat model, else <code>
  *     null</code>
  * @param modelName if the message is an AI message: the name of the chat model, else <code>null
@@ -42,5 +46,6 @@ public record ChatMessageRecord(
         ChatMessageType type,
         String text,
         Instant timestamp,
+        @JsonInclude(JsonInclude.Include.NON_NULL) List<RagSourceRecord> sources,
         @JsonInclude(JsonInclude.Include.NON_NULL) ChatModelConfig.ChatModelProvider modelProvider,
         @JsonInclude(JsonInclude.Include.NON_NULL) String modelName) {}
