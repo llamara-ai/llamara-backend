@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.llamara.ai</groupId>
   <artifactId>llamara-backend</artifactId>
-  <version>0.6.0</version>
+  <version>0.6.1-SNAPSHOT</version>
 
   <licenses>
     <license>
@@ -15,7 +15,7 @@
   <scm>
     <connection>scm:git:https://github.com/llamara-ai/llamara-backend.git</connection>
     <developerConnection>scm:git:https://github.com/llamara-ai/llamara-backend.git</developerConnection>
-    <tag>v0.6.0</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/llamara-ai/llamara-backend</url>
   </scm>
 
