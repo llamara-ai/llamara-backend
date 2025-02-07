@@ -136,60 +136,6 @@ class ChatResource {
         return chatModel.chat(sessionId, !identity.isAnonymous(), prompt);
     }
 
-    /*
-    // Note: This method is currently broken when using blocking chat memory and/or blocking
-    // retrieval augmentor.
-    @Blocking
-    @POST
-    @Path("/prompt/stream")
-    @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.SERVER_SENT_EVENTS)
-    @Operation(
-            operationId = "sendPromptStreamResponse",
-            summary = "Send a prompt to the given chat model.")
-    @APIResponse(
-            responseCode = "200",
-            description = "OK",
-            content =
-                    @Content(
-                            mediaType = MediaType.SERVER_SENT_EVENTS,
-                            schema = @Schema(implementation = String.class)))
-    @APIResponse(
-            responseCode = "404",
-            description = "No chat model or no session with given ID found.")
-    public Multi<String> streamingPrompt(
-            @QueryParam("uid")
-                    @Parameter(
-                            name = "uid",
-                            description = "UID of the chat model to use",
-                            required = true)
-                    String uid,
-            @QueryParam("sessionId")
-                    @Parameter(
-                            name = "sessionId",
-                            description = "ID of the session to use",
-                            required = true)
-                    UUID sessionId,
-            String prompt)
-            throws ChatModelNotFoundException, SessionNotFoundException {
-        sessionManager.enforceSessionValid(sessionId);
-        AiService chatModelAiService = chatModelProvider.getModel(uid).service();
-        Multi<String> sourceMulti =
-                Multi.createFrom()
-                        .emitter(
-                                emitter ->
-                                        chatModelAiService
-                                                .chatAndStreamResponse(
-                                                        sessionId, !identity.isAnonymous(), prompt)
-                                                .onNext(emitter::emit)
-                                                .onError(emitter::fail)
-                                                .onComplete(response -> emitter.complete())
-                                                .start());
-
-        return RestMulti.fromMultiData(sourceMulti).withDemand(1).status(200).build();
-    }
-    */
-
     @Blocking
     @GET
     @Path("/sessions")
