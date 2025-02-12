@@ -69,12 +69,14 @@ public interface KnowledgeManager {
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException;
 
     /**
-     * Set the ingestion status of knowledge identified by its ID if it exists.
+     * Set the ingestion metadata of knowledge identified by its ID if it exists.
      *
      * @param id persistent unique id of knowledge
      * @param status the new ingestion status
+     * @param tokenCount the number of tokens used for the ingestion or <code>null</code>
      */
-    default void setKnowledgeIngestionStatus(UUID id, IngestionStatus status) {
+    default void setKnowledgeIngestionMetadata(
+            UUID id, IngestionStatus status, Integer tokenCount) {
         throw new UnsupportedOperationException("Not supported by this KnowledgeManager.");
     }
 

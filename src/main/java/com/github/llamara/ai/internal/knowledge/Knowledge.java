@@ -81,6 +81,9 @@ public class Knowledge {
     @Column(name = "ingestion_status", nullable = false)
     private IngestionStatus ingestionStatus;
 
+    @Column(name = "token_count")
+    private Integer tokenCount;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt;
@@ -104,6 +107,7 @@ public class Knowledge {
     @Enumerated(EnumType.STRING)
     private final Map<User, Permission> permissions = new HashMap<>();
 
+    @Column(name = "label")
     private String label;
 
     @ElementCollection // specify that tags is a collection of elements
@@ -169,6 +173,15 @@ public class Knowledge {
      */
     public IngestionStatus getIngestionStatus() {
         return ingestionStatus;
+    }
+
+    /**
+     * Get the number of tokens in the knowledge source.
+     *
+     * @return
+     */
+    public Optional<Integer> getTokenCount() {
+        return Optional.ofNullable(tokenCount);
     }
 
     /**
@@ -272,6 +285,15 @@ public class Knowledge {
      */
     void setIngestionStatus(IngestionStatus status) {
         this.ingestionStatus = status;
+    }
+
+    /**
+     * Update the number of tokens of the knowledge source.
+     *
+     * @param tokenCount
+     */
+    void setTokenCount(Integer tokenCount) {
+        this.tokenCount = tokenCount;
     }
 
     /**

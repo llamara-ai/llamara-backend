@@ -80,6 +80,8 @@ class UserKnowledgeManagerImplTest {
     private static final User OWN_USER = new User("own");
     private static final User FOREIGN_USER = new User("foreign");
 
+    private static final int TOKEN_COUNT = 5000;
+
     @Inject TestUserRepository userRepository;
 
     // for TestKnowledgeManagerImpl
@@ -171,8 +173,8 @@ class UserKnowledgeManagerImplTest {
         assertThrows( // NOSONAR: we only have one method invocation, false alarm
                 UnsupportedOperationException.class,
                 () ->
-                        userKnowledgeManager.setKnowledgeIngestionStatus(
-                                UUID.randomUUID(), IngestionStatus.SUCCEEDED));
+                        userKnowledgeManager.setKnowledgeIngestionMetadata(
+                                UUID.randomUUID(), IngestionStatus.SUCCEEDED, TOKEN_COUNT));
     }
 
     @Nested
@@ -265,7 +267,8 @@ class UserKnowledgeManagerImplTest {
         @Test
         void setPermissionThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertThrows(
@@ -279,7 +282,8 @@ class UserKnowledgeManagerImplTest {
         void setPermissionSetsPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
@@ -303,7 +307,8 @@ class UserKnowledgeManagerImplTest {
         void setPermissionWithUsernameSetsPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
@@ -317,7 +322,8 @@ class UserKnowledgeManagerImplTest {
         @Test
         void removePermissionThrowsKnowledgeNotFoundExceptionIfForeignKnowledge() {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertThrows(
@@ -329,7 +335,8 @@ class UserKnowledgeManagerImplTest {
         void removePermissionRemovesPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
@@ -348,7 +355,8 @@ class UserKnowledgeManagerImplTest {
         void removePermissionWithUsernameRemovesPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
@@ -436,8 +444,8 @@ class UserKnowledgeManagerImplTest {
                         KnowledgeNotFoundException {
             sharedKnowledgeId =
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREIGN_USER);
-            knowledgeManager.setKnowledgeIngestionStatus(
-                    sharedKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    sharedKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
             knowledgeManager.setPermission(sharedKnowledgeId, OWN_USER, Permission.READONLY);
 
             setupRegularIdentity();
@@ -551,8 +559,8 @@ class UserKnowledgeManagerImplTest {
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, OWN_USER);
             publicKnowledgeId =
                     knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, FOREIGN_USER);
-            knowledgeManager.setKnowledgeIngestionStatus(
-                    publicKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    publicKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
             knowledgeManager.setPermission(publicKnowledgeId, Users.ANY, Permission.READONLY);
 
             setupAnonymousIdentity();
@@ -811,7 +819,8 @@ class UserKnowledgeManagerImplTest {
         @BeforeEach
         void setup() throws UnexpectedFileStorageFailureException, IOException {
             ownKnowledgeId = knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE, OWN_USER);
-            knowledgeManager.setKnowledgeIngestionStatus(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             when(config.adminWriteOnlyEnabled()).thenReturn(true);
 
@@ -860,7 +869,8 @@ class UserKnowledgeManagerImplTest {
         void setPermissionSetsPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
@@ -875,7 +885,8 @@ class UserKnowledgeManagerImplTest {
         void removePermissionRemovesPermissionForOwnKnowledge()
                 throws KnowledgeNotFoundException, IllegalPermissionModificationException {
             // setup
-            knowledgeRepository.setStatusFor(ownKnowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    ownKnowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
