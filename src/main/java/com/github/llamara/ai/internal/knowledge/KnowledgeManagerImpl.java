@@ -126,8 +126,8 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     }
 
     @Override
-    public void setKnowledgeIngestionStatus(UUID id, IngestionStatus status) {
-        repository.setStatusFor(id, status);
+    public void setKnowledgeIngestionMetadata(UUID id, IngestionStatus status, Integer tokenCount) {
+        repository.setIngestionMetadata(id, status, tokenCount);
     }
 
     private Knowledge addSourceInternal(Path file, String fileName, String contentType)
@@ -343,7 +343,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         Map<String, String> metadata = createEmbeddingMetadata(knowledge);
 
         // Reset ingestion status
-        setKnowledgeIngestionStatus(id, IngestionStatus.PENDING);
+        setKnowledgeIngestionMetadata(id, IngestionStatus.PENDING, null);
 
         // Retry ingestion
         ingestToStore(tempFile.toPath(), metadata);

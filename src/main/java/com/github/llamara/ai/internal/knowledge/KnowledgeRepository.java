@@ -55,18 +55,20 @@ public class KnowledgeRepository implements PanacheRepository<Knowledge> {
     }
 
     /**
-     * Set the status of knowledge identified by its ID if it exists.
+     * Set the ingestion metadata of knowledge identified by its ID if it exists.
      *
-     * @param id the ID of the knowledge entry to set the status for
-     * @param status the status to set
+     * @param id the ID of the knowledge entry to set the ingestion metadata for
+     * @param status the {@link IngestionStatus} to set
+     * @param tokenCount the number of tokens used for the ingestion
      */
     @Transactional
-    public void setStatusFor(UUID id, IngestionStatus status) {
+    public void setIngestionMetadata(UUID id, IngestionStatus status, Integer tokenCount) {
         Knowledge knowledge = findById(id);
         if (knowledge == null) {
             return;
         }
         knowledge.setIngestionStatus(status);
+        knowledge.setTokenCount(tokenCount);
         persist(knowledge);
     }
 }

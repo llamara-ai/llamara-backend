@@ -73,6 +73,8 @@ class KnowledgeManagerImplTest {
     private static final String FILE_MIME_TYPE = "text/plain";
     private static final String FILE_CHECKSUM;
 
+    private static final int TOKEN_COUNT = 5000;
+
     static {
         try {
             FILE_CHECKSUM = Utils.generateChecksum(FILE);
@@ -170,8 +172,8 @@ class KnowledgeManagerImplTest {
     void setKnowledgeIngestionStatusDoesNothingIfNoKnowledge() {
         assertDoesNotThrow(
                 () ->
-                        knowledgeManager.setKnowledgeIngestionStatus(
-                                UUID.randomUUID(), IngestionStatus.SUCCEEDED));
+                        knowledgeManager.setKnowledgeIngestionMetadata(
+                                UUID.randomUUID(), IngestionStatus.SUCCEEDED, TOKEN_COUNT));
         verify(knowledgeRepository, never()).persist((Knowledge) any());
     }
 
@@ -343,7 +345,8 @@ class KnowledgeManagerImplTest {
 
         @Test
         void setKnowledgeIngestionStatusSetsStatus() {
-            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
             Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
             assertEquals(IngestionStatus.SUCCEEDED, knowledge.getIngestionStatus());
         }
@@ -442,7 +445,8 @@ class KnowledgeManagerImplTest {
         @Test
         void setPermissionThrowsIllegalPermissionModificationExceptionForPermissionNONE() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertThrows(
@@ -457,7 +461,8 @@ class KnowledgeManagerImplTest {
         @Test
         void setPermissionThrowsIllegalPermissionModificationExceptionForPermissionOWNER() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertThrows(
@@ -476,7 +481,8 @@ class KnowledgeManagerImplTest {
         void
                 setPermissionThrowsIllegalPermissionModificationExceptionForChangingOwnersPermission() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertThrows(
@@ -489,7 +495,8 @@ class KnowledgeManagerImplTest {
         @Test
         void setPermissionSetsPermission() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertDoesNotThrow(
@@ -503,7 +510,8 @@ class KnowledgeManagerImplTest {
         @Test
         void setPermissionUpdatesPermissionMetadata() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
             Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
 
             // test
@@ -519,7 +527,8 @@ class KnowledgeManagerImplTest {
         void
                 removePermissionThrowsIllegalPermissionModificationExceptionForRemovingOwnersPermission() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             assertThrows(
@@ -531,7 +540,8 @@ class KnowledgeManagerImplTest {
         void removePermissionRemovesPermission()
                 throws IllegalPermissionModificationException, KnowledgeNotFoundException {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
             knowledgeManager.setPermission(knowledgeId, OTHER_USER, Permission.READONLY);
 
             // test
@@ -543,7 +553,8 @@ class KnowledgeManagerImplTest {
         @Test
         void removePermissionUpdatesPermissionMetadata() {
             // setup
-            knowledgeRepository.setStatusFor(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
             Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
 
             // test
@@ -617,7 +628,8 @@ class KnowledgeManagerImplTest {
         void retryFailedIngestionDoesNothingIfKnowledgeIngestionStatusIsSucceeded()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
             // setup
-            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.SUCCEEDED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
 
             // test
             knowledgeManager.retryFailedIngestion(knowledgeId);
@@ -629,7 +641,8 @@ class KnowledgeManagerImplTest {
         void retryFailedIngestionDoesNothingIfKnowledgeIngestionStatusIsPending()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
             // setup
-            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.PENDING);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    knowledgeId, IngestionStatus.PENDING, null);
 
             // test
             knowledgeManager.retryFailedIngestion(knowledgeId);
@@ -641,20 +654,22 @@ class KnowledgeManagerImplTest {
         void retryFailedIngestionSetsIngestionStatusToPendingIfIngestionStatusIsFailed()
                 throws UnexpectedFileStorageFailureException, KnowledgeNotFoundException {
             // setup
-            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.FAILED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    knowledgeId, IngestionStatus.FAILED, null);
 
             // test
             knowledgeManager.retryFailedIngestion(knowledgeId);
 
             verify(knowledgeRepository, times(1))
-                    .setStatusFor(knowledgeId, IngestionStatus.PENDING);
+                    .setIngestionMetadata(knowledgeId, IngestionStatus.PENDING, null);
         }
 
         @Test
         void retryFailedIngestionDispatchesIngestionIfKnowledgeIngestionStatusIsFailed()
                 throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
             // setup
-            knowledgeManager.setKnowledgeIngestionStatus(knowledgeId, IngestionStatus.FAILED);
+            knowledgeManager.setKnowledgeIngestionMetadata(
+                    knowledgeId, IngestionStatus.FAILED, null);
 
             // test
             knowledgeManager.retryFailedIngestion(knowledgeId);

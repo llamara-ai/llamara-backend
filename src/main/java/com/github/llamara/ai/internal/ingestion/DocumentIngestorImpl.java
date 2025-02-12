@@ -87,25 +87,31 @@ class DocumentIngestorImpl implements DocumentIngestor {
                 .onItem()
                 .invoke(
                         result -> {
-                            if (result.tokenUsage() != null) {
+                            Integer tokenCount =
+                                    result.tokenUsage() != null
+                                            ? result.tokenUsage().inputTokenCount()
+                                            : null;
+                            if (tokenCount != null) {
                                 Log.infof(
                                         "Successfully ingested document '%s' using %d" + " tokens.",
                                         knowledgeId, result.tokenUsage().inputTokenCount());
                             } else {
                                 Log.infof("Successfully ingested document '%s'.", knowledgeId);
                             }
-                            knowledgeManager.setKnowledgeIngestionStatus(
+                            knowledgeManager.setKnowledgeIngestionMetadata(
                                     document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
-                                    IngestionStatus.SUCCEEDED);
+                                    IngestionStatus.SUCCEEDED,
+                                    tokenCount);
                         })
                 // Specify handling of failure
                 .onFailure()
                 .invoke(
                         throwable -> {
                             Log.errorf("Failed to ingest document '%s'.", knowledgeId, throwable);
-                            knowledgeManager.setKnowledgeIngestionStatus(
+                            knowledgeManager.setKnowledgeIngestionMetadata(
                                     document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
-                                    IngestionStatus.FAILED);
+                                    IngestionStatus.FAILED,
+                                    null);
                         })
                 // Subscribe to the Uni, i.e. start the operation
                 .subscribe()
