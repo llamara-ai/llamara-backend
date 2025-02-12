@@ -114,7 +114,7 @@ public class ChatModel {
                 .addMessage(
                         sessionId,
                         new ChatMessageRecord(
-                                ChatMessageType.USER, prompt, Instant.now(), null, null, null))
+                                ChatMessageType.USER, prompt, Instant.now(), null, null))
                 .subscribe()
                 .with(item -> {}, failure -> {});
     }
@@ -134,8 +134,7 @@ public class ChatModel {
                                 response.response(),
                                 Instant.now(),
                                 response.sources(),
-                                config.provider(),
-                                config.model()))
+                                config.uid()))
                 .subscribe()
                 .with(item -> {}, failure -> {});
     }
