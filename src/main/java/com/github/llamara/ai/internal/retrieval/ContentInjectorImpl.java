@@ -55,7 +55,7 @@ import dev.langchain4j.rag.content.injector.ContentInjector;
  * @author Florian Hotze - Initial contribution
  */
 @ApplicationScoped
-public class ContentInjectorImpl implements ContentInjector {
+class ContentInjectorImpl implements ContentInjector {
     private final PromptTemplate promptTemplate;
     private final PromptTemplate noContentsPromptTemplate;
     private final List<String> textSegmentMetadataToInclude;
