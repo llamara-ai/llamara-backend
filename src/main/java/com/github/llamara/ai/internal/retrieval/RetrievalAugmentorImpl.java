@@ -38,6 +38,8 @@ import dev.langchain4j.rag.content.injector.ContentInjector;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.rag.query.Metadata;
 import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.filter.Filter;
+import io.quarkus.logging.Log;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**
@@ -69,12 +71,21 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
                         .embeddingStore(store)
                         // Possible improvement: Return more results and use reranking
                         .maxResults(3)
-                        // Note: admins cannot use all knowledge in retrieval step
-                        .filter(
-                                metadataKey(MetadataKeys.PERMISSION)
-                                        .containsString(
-                                                PermissionMetadataMapper.identityToMetadataQuery(
-                                                        identity)))
+                        // Note: Admins can manage all knowledge, but can only access knowledge with
+                        // explicit permission for retrieval
+                        // Implementation note: We must use dynamic filter to generate the filter
+                        // for each request and inject the identity
+                        .dynamicFilter(
+                                query -> {
+                                    String metadataQuery =
+                                            PermissionMetadataMapper.identityToMetadataQuery(
+                                                    identity);
+                                    Filter filter =
+                                            metadataKey(MetadataKeys.PERMISSION)
+                                                    .containsString(metadataQuery);
+                                    Log.tracef("Dynamic filter for query: %s", filter);
+                                    return filter;
+                                })
                         .build();
         this.delegate =
                 DefaultRetrievalAugmentor.builder()
