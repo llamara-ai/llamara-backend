@@ -41,6 +41,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -121,8 +122,14 @@ class KnowledgeManagerImpl implements KnowledgeManager {
             // Only source file if no other knowledge has the same source
             fileStorage.deleteFile(knowledge.getChecksum());
         }
+        Optional<String> ownerUsername = getOwnerUsername(knowledge);
         repository.delete(knowledge);
         QuarkusTransaction.commit();
+        if (ownerUsername.isPresent()) {
+            Log.infof("Deleted knowledge '%s' with owner '%s'.", id, ownerUsername.get());
+        } else {
+            Log.infof("Deleted knowledge '%s'.", id);
+        }
     }
 
     @Override
@@ -161,6 +168,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         Knowledge knowledge = addSourceInternal(file, fileName, contentType);
         // Dispatch ingestion
         ingestToStore(file, createEmbeddingMetadata(knowledge));
+        Log.infof("Added knowledge '%s' with source file '%s'.", knowledge.getId(), fileName);
         return knowledge.getId();
     }
 
@@ -179,6 +187,9 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         QuarkusTransaction.commit();
         // Dispatch ingestion
         ingestToStore(file, createEmbeddingMetadata(knowledge));
+        Log.infof(
+                "Added knowledge '%s' with source file '%s' and owner '%s'.",
+                id, fileName, owner.getUsername());
         return knowledge.getId();
     }
 
@@ -193,7 +204,9 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         String checksum = generateChecksum(file);
 
         if (knowledge.getChecksum().equals(checksum)) {
-            Log.infof("Skipping update of unchanged file source '%s'.", fileName);
+            Log.infof(
+                    "Skipping update of unchanged source file '%s' of knowledge '%s'.",
+                    fileName, id);
             return;
         }
 
@@ -220,10 +233,18 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         // Create metadata while having the transaction open to avoid
         // org.hibernate.LazyInitializationException
         Map<String, String> metadata = createEmbeddingMetadata(knowledge);
+        Optional<String> ownerUsername = getOwnerUsername(knowledge);
         // Commit transaction
         QuarkusTransaction.commit();
         // Dispatch ingestion
         ingestToStore(file, metadata);
+        if (ownerUsername.isPresent()) {
+            Log.infof(
+                    "Updated source file of knowledge '%s' with new file '%s' and owner '%s'.",
+                    id, fileName, ownerUsername.get());
+        } else {
+            Log.infof("Updated source file of knowledge '%s' with new file '%s'.", id, fileName);
+        }
     }
 
     @Transactional
@@ -373,6 +394,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     private void deleteEmbeddings(UUID id) {
         Filter filter = new IsEqualTo(MetadataKeys.KNOWLEDGE_ID, id);
         embeddingStore.removeAll(filter);
+        Log.infof("Deleted embeddings for knowledge '%s'.", id);
     }
 
     /**
@@ -395,5 +417,13 @@ class KnowledgeManagerImpl implements KnowledgeManager {
             document.metadata().put(entry.getKey(), entry.getValue());
         }
         ingestor.ingestDocument(document);
+    }
+
+    private Optional<String> getOwnerUsername(Knowledge knowledge) {
+        return knowledge.getPermissions().entrySet().stream()
+                .filter(entry -> entry.getValue() == Permission.OWNER)
+                .map(Map.Entry::getKey)
+                .map(User::getUsername)
+                .findFirst();
     }
 }

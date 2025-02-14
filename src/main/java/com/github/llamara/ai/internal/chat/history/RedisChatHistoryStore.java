@@ -70,6 +70,7 @@ class RedisChatHistoryStore implements ChatHistoryStore {
 
     @Override
     public Uni<Void> addMessage(Object historyId, ChatMessageRecord message) {
+        Log.debugf("Adding message to history for session '%s'.", historyId);
         return listCommands
                 .rpush(historyId.toString(), message)
                 .chain(
@@ -86,6 +87,7 @@ class RedisChatHistoryStore implements ChatHistoryStore {
 
     @Override
     public Uni<Void> deleteMessages(Object memoryId) {
+        Log.debugf("Deleting history for session '%s'.", memoryId);
         return keyCommands.del(memoryId.toString()).replaceWithVoid();
     }
 }

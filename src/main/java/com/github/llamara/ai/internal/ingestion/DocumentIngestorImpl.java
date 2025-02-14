@@ -93,7 +93,7 @@ class DocumentIngestorImpl implements DocumentIngestor {
                                             : null;
                             if (tokenCount != null) {
                                 Log.infof(
-                                        "Successfully ingested document '%s' using %d" + " tokens.",
+                                        "Successfully ingested document '%s' using %d tokens.",
                                         knowledgeId, result.tokenUsage().inputTokenCount());
                             } else {
                                 Log.infof("Successfully ingested document '%s'.", knowledgeId);
