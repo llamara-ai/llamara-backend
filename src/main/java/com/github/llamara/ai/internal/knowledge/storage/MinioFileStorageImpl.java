@@ -47,6 +47,7 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.minio.messages.Item;
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.Startup;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -126,6 +127,8 @@ class MinioFileStorageImpl implements FileStorage {
         } catch (ErrorResponseException e) {
             throw new UnexpectedFileStorageFailureException(S3_ERROR_RESPONSE_MESSAGE, e);
         }
+        Log.infof(
+                "Stored file '%s' with checksum '%s' in bucket '%s'.", file, checksum, bucketName);
     }
 
     @Override
@@ -143,6 +146,7 @@ class MinioFileStorageImpl implements FileStorage {
             InputStream inputStream =
                     minioClient.getObject(
                             GetObjectArgs.builder().bucket(bucketName).object(checksum).build());
+            Log.debugf("Retrieved file with checksum '%s' from bucket '%s'.", checksum, bucketName);
             return new FileContainer(inputStream, metadata);
         } catch (InsufficientDataException
                 | InternalException
@@ -179,6 +183,7 @@ class MinioFileStorageImpl implements FileStorage {
         } catch (ErrorResponseException e) {
             throw new UnexpectedFileStorageFailureException(S3_ERROR_RESPONSE_MESSAGE, e);
         }
+        Log.infof("Deleted file with checksum '%s' from bucket '%s'.", checksum, bucketName);
     }
 
     @Override
@@ -200,5 +205,6 @@ class MinioFileStorageImpl implements FileStorage {
                 throw new UnexpectedFileStorageFailureException(S3_ERROR_RESPONSE_MESSAGE, e);
             }
         }
+        Log.infof("Deleted all files from bucket '%s'.", bucketName);
     }
 }

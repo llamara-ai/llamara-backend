@@ -79,8 +79,9 @@ public class AuthenticatedUserManagerImpl implements UserManager {
             user = new User(identity.getPrincipal().getName());
             Log.infof("User '%s' not found in database, creating new entry.", user.getUsername());
             created = true;
+        } else {
+            Log.debugf("User '%s' found in database, updating user.", user.getUsername());
         }
-        Log.debugf("User '%s' found in database, updating user.", user.getUsername());
         user.setDisplayName(userInfo.getName());
         userRepository.persist(user);
         QuarkusTransaction.commit();

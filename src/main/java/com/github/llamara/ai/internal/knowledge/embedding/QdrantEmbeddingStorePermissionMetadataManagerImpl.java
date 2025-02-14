@@ -132,5 +132,6 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
                 null,
                 null,
                 null);
+        Log.infof("Updated permission metadata for knowledge '%s'.", knowledge.getId());
     }
 }

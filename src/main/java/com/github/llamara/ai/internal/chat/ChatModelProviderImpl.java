@@ -93,7 +93,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                 continue;
             }
             if (!UID_REGEX.matcher(config.uid()).matches()) {
-                Log.warnf("Invalid uid %s, skipping chat model..", config.uid());
+                Log.warnf("Invalid uid %s, skipping chat model.", config.uid());
                 continue;
             }
 

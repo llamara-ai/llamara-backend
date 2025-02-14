@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import dev.langchain4j.data.message.ChatMessageType;
 import dev.langchain4j.service.Result;
+import io.quarkus.logging.Log;
 
 /**
  * The {@link ChatModel} provides the interface to chat with the chat models. It takes care of
@@ -62,6 +63,8 @@ public class ChatModel {
      * @return the response from the chat model
      */
     public ChatResponseRecord chat(UUID sessionId, boolean history, String prompt) {
+        Log.debugf("Received chat request for session '%s'.", sessionId);
+
         if (history) {
             storePrompt(sessionId, prompt);
         }
@@ -80,6 +83,7 @@ public class ChatModel {
             storeResponse(sessionId, response);
         }
 
+        Log.infof("Answered chat request for session '%s'.", sessionId);
         return response;
     }
 
