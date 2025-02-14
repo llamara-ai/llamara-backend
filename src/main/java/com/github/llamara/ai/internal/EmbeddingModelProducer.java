@@ -42,7 +42,6 @@ import io.quarkus.runtime.Startup;
  *
  * @author Florian Hotze - Initial contribution
  */
-@Startup // initialize at startup to validate config
 @ApplicationScoped
 class EmbeddingModelProducer {
     private final EmbeddingModelConfig config;
@@ -52,10 +51,9 @@ class EmbeddingModelProducer {
     EmbeddingModelProducer(EmbeddingModelConfig config, EnvironmentVariables env) {
         this.config = config;
         this.env = env;
-
-        produceEmbeddingModel();
     }
 
+    @Startup // create bean at startup to validate config
     @Produces
     @ApplicationScoped
     EmbeddingModel produceEmbeddingModel() {

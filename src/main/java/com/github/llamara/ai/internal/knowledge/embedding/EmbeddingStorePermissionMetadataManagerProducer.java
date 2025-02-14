@@ -34,7 +34,6 @@ import io.quarkus.runtime.Startup;
  *
  * @author Florian Hotze - Initial contribution
  */
-@Startup // initialize at startup to check connection
 @ApplicationScoped
 class EmbeddingStorePermissionMetadataManagerProducer {
     private final EmbeddingStoreConfig config;
@@ -49,10 +48,9 @@ class EmbeddingStorePermissionMetadataManagerProducer {
         this.config = config;
         this.qdrantEmbeddingStorePermissionMetadataManager =
                 qdrantEmbeddingStorePermissionMetadataManager;
-
-        produceEmbeddingStorePermissionMetadataManager().checkConnectionAndInit();
     }
 
+    @Startup // create bean at startup to check connection
     @Produces
     @Default
     @ApplicationScoped

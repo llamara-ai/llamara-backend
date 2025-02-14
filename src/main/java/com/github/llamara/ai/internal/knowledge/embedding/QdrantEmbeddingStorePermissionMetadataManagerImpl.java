@@ -41,6 +41,7 @@ import io.qdrant.client.QdrantGrpcClient;
 import io.qdrant.client.grpc.Collections;
 import io.qdrant.client.grpc.Points;
 import io.quarkus.logging.Log;
+import io.quarkus.runtime.Startup;
 
 /**
  * Implementation of {@link EmbeddingStorePermissionMetadataManager} for Qdrant.
@@ -70,6 +71,7 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
         this.collectionName = config.collectionName();
     }
 
+    @Startup
     @Override
     public void checkConnectionAndInit() {
         boolean collectionExists;

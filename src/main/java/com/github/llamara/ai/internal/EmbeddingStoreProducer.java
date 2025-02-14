@@ -30,6 +30,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
 import io.quarkus.logging.Log;
+import io.quarkus.runtime.Startup;
 
 /**
  * CDI Bean Producer for {@link EmbeddingStore}. It produces the bean based on the {@link
@@ -48,6 +49,7 @@ class EmbeddingStoreProducer {
         this.env = env;
     }
 
+    @Startup // create bean at startup to validate config
     @Produces
     @ApplicationScoped
     EmbeddingStore<TextSegment> produceEmbeddingStore() {
