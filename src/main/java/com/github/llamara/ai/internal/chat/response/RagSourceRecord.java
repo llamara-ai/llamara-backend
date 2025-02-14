@@ -25,7 +25,8 @@ import java.util.UUID;
  * Record for the source of a RAG response.
  *
  * @param knowledgeId the knowledge ID the source belongs to
+ * @param embeddingId the embedding ID of the source
  * @param content the content of the source
  * @author Florian Hotze - Initial contribution
  */
-public record RagSourceRecord(UUID knowledgeId, String content) {}
+public record RagSourceRecord(UUID knowledgeId, UUID embeddingId, String content) {}

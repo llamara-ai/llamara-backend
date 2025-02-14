@@ -92,7 +92,7 @@ retrieval:
     
     Answer preferably using the following information.
     When answering using the following information, ALWAYS provide the source of the information for EACH paragraph.
-    The source is specified by the knowledge_id and MUST be in the following JSON format: { "knowledge_id": knowledge_id }.
+    The source is specified by the knowledge_id and embedding_id and MUST be in the following JSON format: { "knowledge_id": knowledge_id, "embedding_id": embedding_id }.
     Again: ALWAYS provide the source of the information for EACH paragraph.
     
     If, I repeat ONLY if explicitly asked for citation, cite the relevant parts word-by-word and provide the source of the information.

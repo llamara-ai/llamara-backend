@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 import dev.langchain4j.data.message.ChatMessageType;
+import dev.langchain4j.rag.content.ContentMetadata;
 import dev.langchain4j.service.Result;
 import io.quarkus.logging.Log;
 
@@ -97,13 +98,23 @@ public class ChatModel {
      */
     private List<RagSourceRecord> getSourcesFromResult(Result<?> result, String text) {
         return result.sources().stream()
-                .map(dev.langchain4j.rag.content.Content::textSegment)
-                .filter(ts -> text.contains(ts.metadata().getString(MetadataKeys.KNOWLEDGE_ID)))
+                // filter out sources whose embedding ID is not in the response text
+                .filter(
+                        c ->
+                                text.contains(
+                                        c.metadata().get(ContentMetadata.EMBEDDING_ID).toString()))
+                // map sources to RagSourceRecord
                 .map(
-                        ts ->
+                        c ->
                                 new RagSourceRecord(
-                                        ts.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
-                                        ts.text()))
+                                        c.textSegment()
+                                                .metadata()
+                                                .getUUID(MetadataKeys.KNOWLEDGE_ID),
+                                        UUID.fromString(
+                                                c.metadata()
+                                                        .get(ContentMetadata.EMBEDDING_ID)
+                                                        .toString()),
+                                        c.textSegment().text()))
                 .toList();
     }
 
