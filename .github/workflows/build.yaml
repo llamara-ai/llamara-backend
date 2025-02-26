@@ -19,7 +19,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  maven:
     name: Maven Build
     strategy:
       matrix:
@@ -73,9 +73,9 @@ jobs:
           repository: llamara-ai/llamara-distro
           event-type: build
 
-  publish-docker:
+  docker:
     name: Docker Build & Publish
-    needs: build
+    needs: maven
 
     runs-on: 'ubuntu-24.04'
 
@@ -148,6 +148,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           file: src/main/docker/Dockerfile.jvm
           context: .
           push: ${{ github.event_name != 'pull_request' }}
