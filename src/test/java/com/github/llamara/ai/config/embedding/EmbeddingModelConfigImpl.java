@@ -17,23 +17,28 @@
  * limitations under the License.
  * #L%
  */
-package com.github.llamara.ai.config;
+package com.github.llamara.ai.config.embedding;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
+import java.util.Optional;
 
-import io.quarkus.test.Mock;
-import io.smallrye.config.SmallRyeConfig;
-import org.eclipse.microprofile.config.Config;
+public abstract class EmbeddingModelConfigImpl implements EmbeddingModelConfig {
+    @Override
+    public EmbeddingModelProvider provider() {
+        return null;
+    }
 
-class SecurityConfigMockProducer {
-    @Inject Config config;
+    @Override
+    public Optional<String> baseUrl() {
+        return Optional.empty();
+    }
 
-    @Produces
-    @ApplicationScoped
-    @Mock
-    SecurityConfig securityConfig() {
-        return config.unwrap(SmallRyeConfig.class).getConfigMapping(SecurityConfig.class);
+    @Override
+    public Optional<String> resourceName() {
+        return Optional.empty();
+    }
+
+    @Override
+    public String model() {
+        return "";
     }
 }
