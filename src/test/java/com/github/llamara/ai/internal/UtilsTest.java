@@ -20,9 +20,7 @@
 package com.github.llamara.ai.internal;
 
 import com.github.llamara.ai.config.chat.ChatModelConfig;
-import com.github.llamara.ai.config.chat.ModelConfigImpl;
 import com.github.llamara.ai.config.embedding.EmbeddingModelConfig;
-import com.github.llamara.ai.config.embedding.EmbeddingModelConfigImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -31,6 +29,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 
@@ -61,8 +61,16 @@ class UtilsTest {
 
     @Test
     void buildAzureOpenAiEndpointBuildsEndpointForChatModelConfig() {
-        ChatModelConfig.ModelConfig modelConfig = new AzureChatModelConfig();
+        // given
+        ChatModelConfig.ModelConfig modelConfig = mock(ChatModelConfig.ModelConfig.class);
+        when(modelConfig.provider()).thenReturn(ChatModelConfig.ChatModelProvider.AZURE);
+        when(modelConfig.resourceName()).thenReturn(Optional.of("azure-resource-name"));
+        when(modelConfig.model()).thenReturn("azure-model");
+
+        // when
         String endpoint = Utils.buildAzureOpenaiEndpoint(modelConfig);
+
+        // then
         assertEquals(
                 "https://azure-resource-name.openai.azure.com/openai/deployments/azure-model",
                 endpoint);
@@ -70,15 +78,26 @@ class UtilsTest {
 
     @Test
     void buildAzureOpenAiEndpointThrowsIfResourceNameMissingForChatModelConfig() {
-        ChatModelConfig.ModelConfig modelConfig = new EmptyChatModelConfig();
+        // given
+        ChatModelConfig.ModelConfig modelConfig = mock(ChatModelConfig.ModelConfig.class);
+
+        // then
         assertThrows(
                 IllegalArgumentException.class, () -> Utils.buildAzureOpenaiEndpoint(modelConfig));
     }
 
     @Test
     void buildAzureOpenAiEndpointBuildsEndpointForEmbeddingModelConfig() {
-        EmbeddingModelConfig modelConfig = new AzureEmbeddingModelConfig();
+        // given
+        EmbeddingModelConfig modelConfig = mock(EmbeddingModelConfig.class);
+        when(modelConfig.provider()).thenReturn(EmbeddingModelConfig.EmbeddingModelProvider.AZURE);
+        when(modelConfig.resourceName()).thenReturn(Optional.of("azure-resource-name"));
+        when(modelConfig.model()).thenReturn("azure-model");
+
+        // when
         String endpoint = Utils.buildAzureOpenaiEndpoint(modelConfig);
+
+        // then
         assertEquals(
                 "https://azure-resource-name.openai.azure.com/openai/deployments/azure-model",
                 endpoint);
@@ -86,41 +105,11 @@ class UtilsTest {
 
     @Test
     void buildAzureOpenAiEndpointThrowsIfResourceNameMissingForEmbeddingModelConfig() {
-        EmbeddingModelConfig modelConfig = new EmptyEmbeddingModelConfig();
+        // given
+        EmbeddingModelConfig modelConfig = mock(EmbeddingModelConfig.class);
+
+        // then
         assertThrows(
                 IllegalArgumentException.class, () -> Utils.buildAzureOpenaiEndpoint(modelConfig));
     }
-
-    static class AzureChatModelConfig extends ModelConfigImpl {
-        @Override
-        public Optional<String> resourceName() {
-            return Optional.of("azure-resource-name");
-        }
-
-        @Override
-        public String model() {
-            return "azure-model";
-        }
-    }
-
-    static class EmptyChatModelConfig extends ModelConfigImpl {}
-
-    static class AzureEmbeddingModelConfig extends EmbeddingModelConfigImpl {
-        @Override
-        public EmbeddingModelProvider provider() {
-            return EmbeddingModelProvider.AZURE;
-        }
-
-        @Override
-        public Optional<String> resourceName() {
-            return Optional.of("azure-resource-name");
-        }
-
-        @Override
-        public String model() {
-            return "azure-model";
-        }
-    }
-
-    static class EmptyEmbeddingModelConfig extends EmbeddingModelConfigImpl {}
 }
