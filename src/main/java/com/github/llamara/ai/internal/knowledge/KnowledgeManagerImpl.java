@@ -22,6 +22,8 @@ package com.github.llamara.ai.internal.knowledge;
 import static com.github.llamara.ai.internal.Utils.generateChecksum;
 
 import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.StartupException;
+import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
@@ -39,9 +41,13 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -76,6 +82,7 @@ import io.quarkus.runtime.Startup;
 class KnowledgeManagerImpl implements KnowledgeManager {
     private static final String FILE_STORAGE_FILE_NOT_FOUND_PATTERN =
             "File for knowledge '%s' should exist in storage, but is missing";
+    private static final Path TEMP_DIR = Path.of("/tmp/llamara/knowledge");
 
     private final DocumentIngestor ingestor;
     private final EmbeddingStore<TextSegment> embeddingStore;
@@ -95,6 +102,27 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         this.embeddingStore = embeddingStore;
         this.fileStorage = fileStorage;
         this.embeddingStorePermissionMetadataManager = embeddingStorePermissionMetadataManager;
+    }
+
+    @Startup
+    void init() {
+        try {
+            if (Utils.isOsUnix()) {
+                FileAttribute<Set<PosixFilePermission>> attr =
+                        PosixFilePermissions.asFileAttribute(
+                                PosixFilePermissions.fromString("rwx------"));
+                Files.createDirectories(TEMP_DIR, attr);
+            } else {
+                File f = Files.createDirectories(TEMP_DIR).toFile();
+                if (!f.setReadable(true, true)
+                        || !f.setWritable(true, true)
+                        || !f.setExecutable(true, true)) {
+                    throw new StartupException("Failed to set permissions on temporary directory");
+                }
+            }
+        } catch (IOException e) {
+            throw new StartupException("Failed to create temporary directory", e);
+        }
     }
 
     @Override
@@ -352,7 +380,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         NamedFileContainer fc = getFile(id);
         File tempFile;
         try {
-            tempFile = File.createTempFile("knowledge_" + id, null);
+            tempFile = File.createTempFile(id.toString(), null, TEMP_DIR.toFile());
             tempFile.deleteOnExit(); // the file will be deleted when the JVM exits
             Files.copy(fc.content(), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {

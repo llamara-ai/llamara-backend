@@ -28,11 +28,15 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /** Tests for {@link Utils}. */
 class UtilsTest {
@@ -111,5 +115,28 @@ class UtilsTest {
         // then
         assertThrows(
                 IllegalArgumentException.class, () -> Utils.buildAzureOpenaiEndpoint(modelConfig));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "AIX",
+        "HP-UX",
+        "Irix",
+        "Linux",
+        "Mac OS X",
+        "Solaris",
+        "SunOS",
+        "FreeBSD",
+        "OpenBSD",
+        "NetBSD"
+    })
+    void isOsUnixReturnsTrueIfOnUnix(String osName) {
+        assertTrue(Utils.isOsUnix(osName));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Windows 10", "Windows 11", "OS/2", "OS/400", "z/OS"})
+    void isOsUnixReturnsFalseIfNotOnUnix(String osName) {
+        assertFalse(Utils.isOsUnix(osName));
     }
 }
