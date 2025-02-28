@@ -29,6 +29,8 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.lang3.SystemProperties;
+
 /**
  * Shared utilities and constants.
  *
@@ -98,5 +100,34 @@ public final class Utils {
                 + config.resourceName().get() // NOSONAR: We have checked for empty
                 + ".openai.azure.com/openai/deployments/"
                 + config.model();
+    }
+
+    /**
+     * Checks if the host operating system is Unix-like.
+     *
+     * @return <code>true</code> if the host operating system is Unix-like, <code>false</code>
+     *     otherwise
+     */
+    public static boolean isOsUnix() {
+        String osName = SystemProperties.getOsName();
+        return isOsUnix(osName);
+    }
+
+    /**
+     * Check if the given operating system is Unix-like.
+     *
+     * @param osName the name of the operating system
+     * @return <code>true</code> if the operating system is Unix-like, <code>false</code> otherwise
+     */
+    public static boolean isOsUnix(String osName) {
+        osName = osName.toLowerCase();
+        return osName.startsWith("aix")
+                || osName.startsWith("hp-ux")
+                || osName.startsWith("irix")
+                || osName.startsWith("linux")
+                || osName.startsWith("mac")
+                || osName.startsWith("solaris")
+                || osName.startsWith("sunos")
+                || osName.contains("bsd");
     }
 }
