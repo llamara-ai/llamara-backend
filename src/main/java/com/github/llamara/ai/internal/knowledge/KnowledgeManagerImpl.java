@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -104,8 +105,8 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         this.embeddingStorePermissionMetadataManager = embeddingStorePermissionMetadataManager;
     }
 
-    @Startup
-    void init() {
+    @PostConstruct
+    private void init() {
         try {
             if (Utils.isOsUnix()) {
                 FileAttribute<Set<PosixFilePermission>> attr =
