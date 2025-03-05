@@ -21,11 +21,12 @@ package com.github.llamara.ai.internal.security.user;
 
 import com.github.llamara.ai.internal.security.Users;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.runtime.Startup;
+import io.quarkus.logging.Log;
 
 /**
  * Hibernate ORM {@link PanacheRepository} for {@link User}.
@@ -34,10 +35,11 @@ import io.quarkus.runtime.Startup;
  */
 @ApplicationScoped
 public class UserRepository implements PanacheRepository<User> {
-    @Startup
+    @PostConstruct
     @Transactional
     void init() {
         if (findByUsername(Users.ANY_USERNAME) == null) {
+            Log.info("Initially persisting user ANY to database ...");
             persist(Users.ANY);
         }
     }
