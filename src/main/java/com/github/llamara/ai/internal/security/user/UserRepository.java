@@ -26,6 +26,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.logging.Log;
 
 /**
  * Hibernate ORM {@link PanacheRepository} for {@link User}.
@@ -38,6 +39,7 @@ public class UserRepository implements PanacheRepository<User> {
     @Transactional
     void init() {
         if (findByUsername(Users.ANY_USERNAME) == null) {
+            Log.info("Initially persisting user ANY to database ...");
             persist(Users.ANY);
         }
     }
