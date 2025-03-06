@@ -83,9 +83,9 @@ class DocumentIngestorImpl implements DocumentIngestor {
                         })
                 // Specify to run blocking operation on worker pool
                 .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                // Specify handling of result
-                .onItem()
-                .invoke(
+                // Subscribe to the Uni, i.e. start the operation
+                .subscribe()
+                .with(
                         result -> {
                             Integer tokenCount =
                                     result.tokenUsage() != null
@@ -102,19 +102,13 @@ class DocumentIngestorImpl implements DocumentIngestor {
                                     document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
                                     IngestionStatus.SUCCEEDED,
                                     tokenCount);
-                        })
-                // Specify handling of failure
-                .onFailure()
-                .invoke(
+                        },
                         throwable -> {
                             Log.errorf("Failed to ingest document '%s'.", knowledgeId, throwable);
                             knowledgeManager.setKnowledgeIngestionMetadata(
                                     document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
                                     IngestionStatus.FAILED,
                                     null);
-                        })
-                // Subscribe to the Uni, i.e. start the operation
-                .subscribe()
-                .with(item -> {}, failure -> {});
+                        });
     }
 }
