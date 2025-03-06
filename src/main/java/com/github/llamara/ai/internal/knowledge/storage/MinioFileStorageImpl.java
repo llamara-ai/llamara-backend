@@ -28,8 +28,6 @@ import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
@@ -48,8 +46,6 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.minio.messages.Item;
 import io.quarkus.logging.Log;
-import io.quarkus.runtime.Startup;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Implementation of the {@link FileStorage} using <a href="https://min.io/">MinIO</a> as the
@@ -57,8 +53,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  *
  * @author Florian Hotze - Initial contribution
  */
-@Startup // initialize at startup to check connection
-@ApplicationScoped
 class MinioFileStorageImpl implements FileStorage {
     private static final String S3_EXCEPTION_MESSAGE = "Unexpected exception in S3 service";
     private static final String S3_ERROR_RESPONSE_MESSAGE =
@@ -67,10 +61,7 @@ class MinioFileStorageImpl implements FileStorage {
     private final String bucketName;
     private final MinioClient minioClient;
 
-    @Inject
-    MinioFileStorageImpl(
-            MinioClient minioClient,
-            @ConfigProperty(name = "quarkus.minio.bucket-name") String bucketName) {
+    MinioFileStorageImpl(MinioClient minioClient, String bucketName) {
         this.minioClient = minioClient;
         this.bucketName = bucketName;
 
@@ -96,7 +87,7 @@ class MinioFileStorageImpl implements FileStorage {
                 | NoSuchAlgorithmException
                 | XmlParserException e) {
             throw new UnexpectedFileStorageFailureException(
-                    "Unexpected exception thrown while creating bucket if missing", e);
+                    "Unexpected exception thrown while creating missing bucket", e);
         } catch (InvalidResponseException | IOException | ServerException e) {
             throw new UnexpectedFileStorageFailureException(S3_EXCEPTION_MESSAGE, e);
         } catch (ErrorResponseException e) {
@@ -154,7 +145,7 @@ class MinioFileStorageImpl implements FileStorage {
                 | NoSuchAlgorithmException
                 | XmlParserException e) {
             throw new UnexpectedFileStorageFailureException(
-                    "Unexpected exception thrown while deleting file from bucket", e);
+                    "Unexpected exception thrown while getting file from bucket", e);
         } catch (InvalidResponseException | IOException | ServerException e) {
             throw new UnexpectedFileStorageFailureException(S3_EXCEPTION_MESSAGE, e);
         } catch (ErrorResponseException e) {

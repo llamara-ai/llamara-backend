@@ -35,15 +35,21 @@ public class EnvironmentVariables {
     private final Optional<String> azureApiKey;
     private final Optional<String> openaiApiKey;
     private final Optional<String> qdrantApiKey;
+    private final Optional<String> minioAccessKey;
+    private final Optional<String> minioSecretKey;
 
     @Inject
     EnvironmentVariables(
             @ConfigProperty(name = "AZURE_API_KEY") Optional<String> azureApiKey,
             @ConfigProperty(name = "OPENAI_API_KEY") Optional<String> openaiApiKey,
-            @ConfigProperty(name = "QDRANT_API_KEY") Optional<String> qdrantApiKey) {
+            @ConfigProperty(name = "QDRANT_API_KEY") Optional<String> qdrantApiKey,
+            @ConfigProperty(name = "MINIO_ACCESS_KEY") Optional<String> minioAccessKey,
+            @ConfigProperty(name = "MINIO_SECRET_KEY") Optional<String> minioSecretKey) {
         this.azureApiKey = azureApiKey;
         this.openaiApiKey = openaiApiKey;
         this.qdrantApiKey = qdrantApiKey;
+        this.minioAccessKey = minioAccessKey;
+        this.minioSecretKey = minioSecretKey;
     }
 
     /**
@@ -77,5 +83,29 @@ public class EnvironmentVariables {
      */
     public Optional<String> getQdrantApiKey() {
         return qdrantApiKey;
+    }
+
+    /**
+     * Returns the MinIO access key.
+     *
+     * @return MinIO access key
+     */
+    public String getMinioAccessKey() {
+        if (minioAccessKey.isPresent()) {
+            return minioAccessKey.get();
+        }
+        throw new MissingEnvironmentVariableException("MinIO access key is required but missing.");
+    }
+
+    /**
+     * Returns the MinIO secret key.
+     *
+     * @return MinIO secret key
+     */
+    public String getMinioSecretKey() {
+        if (minioSecretKey.isPresent()) {
+            return minioSecretKey.get();
+        }
+        throw new MissingEnvironmentVariableException("MinIO secret key is required but missing.");
     }
 }

@@ -5,6 +5,14 @@ embedding:
     port: 6334 # Qdrant gRPC port
     tls: false
 
+file-storage:
+  type: minio
+  url: http://localhost
+  port: 9000
+
+MINIO_ACCESS_KEY: minioaccess
+MINIO_SECRET_KEY: miniosecret
+
 quarkus:
   keycloak:
     devservices:
@@ -30,6 +38,7 @@ quarkus:
   minio:
     devservices:
       enabled: true
+      port: 9000
       shared: false
     url:
 

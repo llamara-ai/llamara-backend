@@ -39,6 +39,9 @@ as well as possibly serving research findings in an accessible way to the public
   - [Ollama](https://ollama.com/)
 - Integration with the following embedding stores:
   - [Qdrant](https://qdrant.tech/)
+- Store the uploaded files in the following file storages:
+  - [MinIO](https://min.io/)
+  - Local File System
 - Build with [Quarkus](https://quarkus.io/), the Supersonic Subatomic Java Framework
 - Uses [LangChain4j](https://docs.langchain4j.dev/), the versatile LLM integration library
 - Relies on battle-tested open-source software such as [PostgreSQL](https://www.postgresql.org/), [MinIO](https://min.io/) & [Redis](https://redis.io/)
@@ -81,8 +84,8 @@ The application requires its tables to be available in the configured JDBC datab
 
 #### MinIO
 
-The application requires a [MinIO](https://min.io) object storage on `localhost:9000` (default).
-You need to set up access and secret key through the MinIO web interface and provide them through the `QUARKUS_MINIO_ACCESS_KEY` and `QUARKUS_MINIO_SECRET_KEY` environment variables.
+The application requires a [MinIO](https://min.io) object storage on `http://localhost:9000` (default).
+You need to set up access and secret key through the MinIO web interface and provide them through the `MINIO_ACCESS_KEY` and `MINIO_SECRET_KEY` environment variables.
 
 #### Redis
 

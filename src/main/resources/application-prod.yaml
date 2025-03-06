@@ -1,3 +1,9 @@
+file-storage:
+  # You need to provide MINIO_ACCESS_KEY and MINIO_SECRET_KEY environment variables
+  type: minio
+  url: http://localhost
+  port: 9000
+
 quarkus:
   # Configure OIDC provider
   oidc:
@@ -14,13 +20,6 @@ quarkus:
   hibernate-orm:
     database:
       generation: validate
-
-  # Configure Minio client for file storage
-  # You need to provide QUARKUS_MINIO_ACCESS_KEY and QUARKUS_MINIO_SECRET_KEY environment variables
-  minio:
-    url: http://localhost
-    port: 9000
-    secure: false
 
   # Configure Redis client for chat memory & history
   redis:
