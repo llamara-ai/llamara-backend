@@ -19,6 +19,8 @@ file-storage:
   type: minio
   url: http://minio
   port: 9000
+  # Make sure that UID 185 has write access to this path when mounting it as volume
+  path: /data/knowledge
 
 quarkus:
   # Configure JDBC datasource (https://quarkus.io/guides/datasource#datasource-reference)
