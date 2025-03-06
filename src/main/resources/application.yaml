@@ -78,6 +78,13 @@ embedding:
     # Ollama models need base URL and model config
     model: text-embedding-3-large
 
+file-storage:
+  type: minio # Supported types: minio, fs
+  # MinIO needs url configuration and MINIO_ACCESS_KEY and MINIO_SECRET_KEY env variables
+  # FS needs path configuration
+  bucket-name: llamara # The MinIO bucket name
+  secure: false
+
 ingestion:
   document-splitter:
     type: paragraph # Supported types: line, paragraph, recursive
@@ -111,8 +118,3 @@ retrieval:
       
       Answer based on your own knowledge.
       You MUST state that you are answering based on your own knowledge.
-
-quarkus:
-  minio:
-    # The name of the MinIO bucket to use.
-    bucket-name: llamara

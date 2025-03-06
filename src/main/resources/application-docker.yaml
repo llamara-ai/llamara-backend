@@ -1,7 +1,7 @@
 # User needs to:
 #   - provide the quarkus:oidc configuration
 #   - provide the following environment variables:
-#       QUARKUS_DATASOURCE_PASSWORD, QUARKUS_MINIO_ACCESS_KEY, QUARKUS_MINIO_SECRET_KEY,
+#       QUARKUS_DATASOURCE_PASSWORD, MINIO_ACCESS_KEY, MINIO_SECRET_KEY,
 #       QUARKUS_REDIS_CHAT_MEMORY_PASSWORD, QUARKUS_REDIS_HISTORY_PASSWORD, QUARKUS_OIDC_CREDENTIALS_SECRET=${OIDC_CREDENTIALS_SECRET}
 #     and with default model config: OPENAI_API_KEY
 
@@ -15,6 +15,13 @@ embedding:
     collection-name: text-embedding-3-large
     vector-size: 3072
 
+file-storage:
+  type: minio
+  url: http://minio
+  port: 9000
+  # Make sure that UID 185 has write access to this path when mounting it as volume
+  path: /data/knowledge
+
 quarkus:
   # Configure JDBC datasource (https://quarkus.io/guides/datasource#datasource-reference)
   datasource:
@@ -26,13 +33,6 @@ quarkus:
   hibernate-orm:
     database:
       generation: validate
-
-  # Configure Minio client for file storage
-  # You need to provide QUARKUS_MINIO_ACCESS_KEY and QUARKUS_MINIO_SECRET_KEY environment variables
-  minio:
-    url: http://minio
-    port: 9000
-    secure: false
 
   # Configure Redis client for chat memory & history
   redis:
