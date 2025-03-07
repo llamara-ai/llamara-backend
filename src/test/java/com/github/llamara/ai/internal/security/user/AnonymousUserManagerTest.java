@@ -57,7 +57,7 @@ class AnonymousUserManagerTest {
 
     @Test
     void registerAlwaysClaimsToHaveCreatedUser() {
-        assertTrue(userManager.register());
+        assertTrue(userManager.register("Test"));
     }
 
     @Test

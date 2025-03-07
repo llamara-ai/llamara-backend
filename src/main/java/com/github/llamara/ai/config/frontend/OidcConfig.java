@@ -19,6 +19,8 @@
  */
 package com.github.llamara.ai.config.frontend;
 
+import java.util.Optional;
+
 import io.smallrye.config.ConfigMapping;
 
 /**
@@ -35,4 +37,6 @@ public interface OidcConfig {
     String logoutPath();
 
     String tokenPath();
+
+    Optional<String> audience();
 }

@@ -64,6 +64,7 @@ class RootResource {
         oidcInfo.authorizationPath = oidcConfig.authorizationPath();
         oidcInfo.logoutPath = oidcConfig.logoutPath();
         oidcInfo.tokenPath = oidcConfig.tokenPath();
+        oidcInfo.audience = oidcConfig.audience().orElse(null);
         this.legalsConfig = legalsConfig;
     }
 
@@ -104,5 +105,6 @@ class RootResource {
         public String authorizationPath; // NOSONAR: this is a DTO
         public String logoutPath; // NOSONAR: this is a DTO
         public String tokenPath; // NOSONAR: this is a DTO
+        public String audience; // NOSONAR: this is a DTO
     }
 }

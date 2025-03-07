@@ -34,6 +34,7 @@ import jakarta.ws.rs.core.MediaType;
 import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.common.annotation.Blocking;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -47,15 +48,22 @@ import org.jboss.resteasy.reactive.ResponseStatus;
  */
 @Path("/rest/user")
 class UserResource {
+    private static final String USER_NAME_CLAIM = "user_info/name";
 
     private final UserManager userManager;
     private final SecurityIdentity identity;
+    private final JsonWebToken token;
     private final UserInfo userInfo;
 
     @Inject
-    UserResource(UserManager userManager, SecurityIdentity identity, UserInfo userInfo) {
+    UserResource(
+            UserManager userManager,
+            SecurityIdentity identity,
+            JsonWebToken token,
+            UserInfo userInfo) {
         this.userManager = userManager;
         this.identity = identity;
+        this.token = token;
         this.userInfo = userInfo;
     }
 
@@ -71,8 +79,14 @@ class UserResource {
             description = "OK",
             content = @Content(schema = @Schema(implementation = UserInfoDTO.class)))
     public UserInfoDTO login() {
-        userManager.register();
-        return new UserInfoDTO(identity, userInfo);
+        String name;
+        if (token.containsClaim(USER_NAME_CLAIM)) {
+            name = token.getClaim(USER_NAME_CLAIM);
+        } else {
+            name = userInfo.getName();
+        }
+        userManager.register(name);
+        return new UserInfoDTO(identity, name);
     }
 
     @RolesAllowed({Roles.ADMIN, Roles.USER})
@@ -96,14 +110,14 @@ class UserResource {
         public final boolean anonymous; // NOSONAR: this is a DTO
         public final String name; // NOSONAR: this is a DTO
 
-        UserInfoDTO(SecurityIdentity identity, UserInfo userInfo) {
+        UserInfoDTO(SecurityIdentity identity, String name) {
             this.username = identity.getPrincipal().getName();
             if (this.username.isBlank()) {
                 this.username = null;
             }
             this.roles = identity.getRoles();
             this.anonymous = identity.isAnonymous();
-            this.name = userInfo.getName();
+            this.name = name;
         }
     }
 }
