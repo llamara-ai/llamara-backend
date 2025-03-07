@@ -48,6 +48,7 @@ import org.jboss.resteasy.reactive.ResponseStatus;
  */
 @Path("/rest/user")
 class UserResource {
+    private static final String USER_NAME_CLAIM = "user_info/name";
 
     private final UserManager userManager;
     private final SecurityIdentity identity;
@@ -79,8 +80,8 @@ class UserResource {
             content = @Content(schema = @Schema(implementation = UserInfoDTO.class)))
     public UserInfoDTO login() {
         String name;
-        if (token.containsClaim("user_info/name")) {
-            name = token.getClaim("user_info/name");
+        if (token.containsClaim(USER_NAME_CLAIM)) {
+            name = token.getClaim(USER_NAME_CLAIM);
         } else {
             name = userInfo.getName();
         }
