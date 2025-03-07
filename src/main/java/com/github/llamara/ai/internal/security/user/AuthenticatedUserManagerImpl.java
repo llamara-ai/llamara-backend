@@ -36,7 +36,6 @@ import jakarta.inject.Inject;
 
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
-import io.quarkus.oidc.UserInfo;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**
@@ -54,24 +53,21 @@ public class AuthenticatedUserManagerImpl implements UserManager {
     private final KnowledgeManager knowledgeManager;
 
     private final SecurityIdentity identity;
-    private final UserInfo userInfo;
 
     @Inject
     AuthenticatedUserManagerImpl(
             UserRepository userRepository,
             AuthenticatedUserSessionManagerImpl authenticatedUserSessionManager,
             KnowledgeManager knowledgeManager,
-            SecurityIdentity identity,
-            UserInfo userInfo) {
+            SecurityIdentity identity) {
         this.userRepository = userRepository;
         this.authenticatedUserSessionManager = authenticatedUserSessionManager;
         this.knowledgeManager = knowledgeManager;
         this.identity = identity;
-        this.userInfo = userInfo;
     }
 
     @Override
-    public boolean register() {
+    public boolean register(String displayName) {
         boolean created = false;
         QuarkusTransaction.begin();
         User user = userRepository.findByUsername(identity.getPrincipal().getName());
@@ -82,7 +78,7 @@ public class AuthenticatedUserManagerImpl implements UserManager {
         } else {
             Log.debugf("User '%s' found in database, updating user.", user.getUsername());
         }
-        user.setDisplayName(userInfo.getName());
+        user.setDisplayName(displayName);
         userRepository.persist(user);
         QuarkusTransaction.commit();
         return created;

@@ -34,9 +34,10 @@ public interface UserManager {
     /**
      * Register current the user in, i.e. create or update the user in the database.
      *
+     * @param displayName the display name of the user
      * @return {@code true} if the user was created, {@code false} if the user was updated
      */
-    boolean register();
+    boolean register(String displayName);
 
     /**
      * Enforce that the user is registered. If the user is not registered, a {@link

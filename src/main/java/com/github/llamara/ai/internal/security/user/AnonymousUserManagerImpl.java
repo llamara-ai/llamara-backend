@@ -43,7 +43,7 @@ public class AnonymousUserManagerImpl implements UserManager {
     }
 
     @Override
-    public boolean register() {
+    public boolean register(String displayName) {
         return true;
     }
 

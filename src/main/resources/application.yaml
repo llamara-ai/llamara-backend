@@ -11,6 +11,8 @@ frontend:
     authorization-path: /protocol/openid-connect/auth
     logout-path: /protocol/openid-connect/logout
     token-path: /protocol/openid-connect/token
+    # Optional audience for the OIDC token, may be used to obtain JWT access tokens instead of Auth0 opaque access tokens.
+    # audience:
   # Provide legals links for the frontend
   legals:
     # imprint: "https://example.com/imprint" # Link to imprint
@@ -118,3 +120,13 @@ retrieval:
       
       Answer based on your own knowledge.
       You MUST state that you are answering based on your own knowledge.
+
+quarkus:
+  oidc:
+    authentication:
+      # Retrieve user information from the OIDC provider
+      # When using Auth0, disable this to avoid rate limiting. Instead, provide the user's name through the "user_info/name" claim.
+      user-info-required: true
+    # When using Auth0, you need to set the roles claim path, e.g. to "user_info/roles", and create an action flow to map the roles to the token.
+    # roles:
+      # role-claim-path: '"user_info/roles"'

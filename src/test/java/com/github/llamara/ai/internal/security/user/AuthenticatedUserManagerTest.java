@@ -64,7 +64,7 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
     protected void setup() {
         userManager =
                 new AuthenticatedUserManagerImpl(
-                        userRepository, sessionManager, knowledgeManager, identity, userInfo);
+                        userRepository, sessionManager, knowledgeManager, identity);
 
         clearAllInvocations();
         super.setup();
@@ -77,7 +77,7 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
 
     @Test
     void registerCreatesUserIfNotExists() {
-        assertTrue(userManager.register());
+        assertTrue(userManager.register(OWN_DISPLAYNAME));
         verify(userRepository, times(1)).persist((User) any());
         User user = userRepository.findByUsername(OWN_USERNAME);
         assertEquals(OWN_USERNAME, user.getUsername());
@@ -130,7 +130,7 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
             String newDisplayName = "New Name";
             when(userInfo.getName()).thenReturn(newDisplayName);
 
-            assertFalse(userManager.register());
+            assertFalse(userManager.register(OWN_DISPLAYNAME));
             verify(userRepository, times(1)).persist((User) any());
             User user = userRepository.findByUsername(OWN_USERNAME);
             assertEquals(OWN_USERNAME, user.getUsername());
