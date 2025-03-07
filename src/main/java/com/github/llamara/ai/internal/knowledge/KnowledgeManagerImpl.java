@@ -106,7 +106,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     }
 
     @PostConstruct
-    private void init() {
+    void init() {
         try {
             if (Utils.isOsUnix()) {
                 FileAttribute<Set<PosixFilePermission>> attr =
