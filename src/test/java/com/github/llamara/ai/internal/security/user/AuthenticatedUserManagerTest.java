@@ -130,7 +130,7 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
             String newDisplayName = "New Name";
             when(userInfo.getName()).thenReturn(newDisplayName);
 
-            assertFalse(userManager.register(OWN_DISPLAYNAME));
+            assertFalse(userManager.register(newDisplayName));
             verify(userRepository, times(1)).persist((User) any());
             User user = userRepository.findByUsername(OWN_USERNAME);
             assertEquals(OWN_USERNAME, user.getUsername());
