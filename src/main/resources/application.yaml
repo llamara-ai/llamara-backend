@@ -124,9 +124,6 @@ retrieval:
 quarkus:
   oidc:
     authentication:
-      # Retrieve user information from the OIDC provider
-      # When using Auth0, disable this to avoid rate limiting. Instead, provide the user's name through the "user_info/name" claim.
-      user-info-required: true
-    # When using Auth0, you need to set the roles claim path, e.g. to "user_info/roles", and create an action flow to map the roles to the token.
+    # When using Auth0, you need to set the roles claim path, e.g. to "auth0/roles", and create an action flow to map the roles to the token.
     # roles:
-      # role-claim-path: '"user_info/roles"'
+      # role-claim-path: '"auth0/roles"'
