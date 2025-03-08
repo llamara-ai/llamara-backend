@@ -34,11 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /** Tests for {@link Utils}. */
+@QuarkusTest
 class UtilsTest {
     private static final Path FILE = Path.of("src/test/resources/llamara.txt");
     private static final String FILE_CHECKSUM;

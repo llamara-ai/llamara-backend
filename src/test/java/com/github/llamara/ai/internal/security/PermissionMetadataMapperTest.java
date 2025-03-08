@@ -29,12 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /** Tests for {@link PermissionMetadataMapper}. */
+@QuarkusTest
 class PermissionMetadataMapperTest {
     private static final User USER = new User("user");
 
