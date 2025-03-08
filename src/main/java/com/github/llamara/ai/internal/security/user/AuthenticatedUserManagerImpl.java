@@ -37,6 +37,7 @@ import jakarta.inject.Inject;
 import io.quarkus.logging.Log;
 import io.quarkus.narayana.jta.QuarkusTransaction;
 import io.quarkus.security.identity.SecurityIdentity;
+import org.eclipse.microprofile.jwt.Claims;
 
 /**
  * {@link UserManager} implementation for handling authenticated users.
@@ -67,7 +68,7 @@ public class AuthenticatedUserManagerImpl implements UserManager {
     }
 
     @Override
-    public boolean register(String displayName) {
+    public boolean register() {
         boolean created = false;
         QuarkusTransaction.begin();
         User user = userRepository.findByUsername(identity.getPrincipal().getName());
@@ -78,7 +79,7 @@ public class AuthenticatedUserManagerImpl implements UserManager {
         } else {
             Log.debugf("User '%s' found in database, updating user.", user.getUsername());
         }
-        user.setDisplayName(displayName);
+        user.setDisplayName(identity.getAttribute(Claims.full_name.name()));
         userRepository.persist(user);
         QuarkusTransaction.commit();
         return created;

@@ -46,6 +46,7 @@ import static org.mockito.Mockito.when;
 
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
+import org.eclipse.microprofile.jwt.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
 
     @Test
     void registerCreatesUserIfNotExists() {
-        assertTrue(userManager.register(OWN_DISPLAYNAME));
+        assertTrue(userManager.register());
         verify(userRepository, times(1)).persist((User) any());
         User user = userRepository.findByUsername(OWN_USERNAME);
         assertEquals(OWN_USERNAME, user.getUsername());
@@ -128,9 +129,9 @@ class AuthenticatedUserManagerTest extends BaseForAuthenticatedUserTests {
         @Test
         void loginUpdatesUser() {
             String newDisplayName = "New Name";
-            when(userInfo.getName()).thenReturn(newDisplayName);
+            when(identity.getAttribute(Claims.full_name.name())).thenReturn(newDisplayName);
 
-            assertFalse(userManager.register(newDisplayName));
+            assertFalse(userManager.register());
             verify(userRepository, times(1)).persist((User) any());
             User user = userRepository.findByUsername(OWN_USERNAME);
             assertEquals(OWN_USERNAME, user.getUsername());

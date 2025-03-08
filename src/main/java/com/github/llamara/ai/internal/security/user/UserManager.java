@@ -21,8 +21,8 @@ package com.github.llamara.ai.internal.security.user;
 
 /**
  * Interface specifying the API for managing users. A user is identified by its {@link
- * io.quarkus.security.identity.SecurityIdentity} and {@link io.quarkus.oidc.UserInfo}.
- * Authentication itself is handled by the OIDC provider, e.g. Keycloak.
+ * io.quarkus.security.identity.SecurityIdentity}. Authentication itself is handled by the OIDC
+ * provider, e.g. Keycloak.
  *
  * <p>Users must register before any user-specific operation can be performed. If the user has not
  * registered and tries to perform an operation, the operation can fail with {@link
@@ -34,10 +34,9 @@ public interface UserManager {
     /**
      * Register current the user in, i.e. create or update the user in the database.
      *
-     * @param displayName the display name of the user
      * @return {@code true} if the user was created, {@code false} if the user was updated
      */
-    boolean register(String displayName);
+    boolean register();
 
     /**
      * Enforce that the user is registered. If the user is not registered, a {@link

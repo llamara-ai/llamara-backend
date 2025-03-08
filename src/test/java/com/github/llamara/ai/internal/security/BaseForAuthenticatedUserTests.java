@@ -45,6 +45,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import org.eclipse.microprofile.jwt.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -76,7 +77,6 @@ public abstract class BaseForAuthenticatedUserTests {
     @InjectSpy protected UserAwareSessionRepository userAwareSessionRepository;
 
     @InjectMock protected SecurityIdentity identity;
-    @InjectMock protected UserInfo userInfo;
 
     @Transactional
     @BeforeEach
@@ -111,7 +111,7 @@ public abstract class BaseForAuthenticatedUserTests {
      */
     protected void setupIdentity(String username, String displayName) {
         when(identity.getPrincipal()).thenReturn(() -> username);
-        when(userInfo.getName()).thenReturn(displayName);
+        when(identity.getAttribute(Claims.full_name.name())).thenReturn(displayName);
     }
 
     /**
@@ -120,7 +120,7 @@ public abstract class BaseForAuthenticatedUserTests {
     @Transactional
     protected void setupUser() {
         String username = identity.getPrincipal().getName();
-        String displayName = userInfo.getName();
+        String displayName = identity.getAttribute(Claims.full_name.name());
 
         User user = new User(username);
         user.setDisplayName(displayName);
