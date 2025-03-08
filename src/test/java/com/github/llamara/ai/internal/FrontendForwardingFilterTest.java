@@ -34,11 +34,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /** Tests for {@link FrontendForwardingFilter}. */
+@QuarkusTest
 class FrontendForwardingFilterTest {
     @Test
     void doFilterDoesNothingIfNo404() throws ServletException, IOException {
