@@ -39,7 +39,7 @@ import io.smallrye.mutiny.Uni;
  * @author Florian Hotze - Initial contribution
  */
 @ApplicationScoped
-public class AnonymousUserSecurityIdentityAugmentor implements SecurityIdentityAugmentor {
+class AnonymousUserSecurityIdentityAugmentor implements SecurityIdentityAugmentor {
     private final SecurityConfig config;
 
     @Inject
