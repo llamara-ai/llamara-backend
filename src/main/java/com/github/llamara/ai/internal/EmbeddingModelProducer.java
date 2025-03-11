@@ -31,6 +31,7 @@ import jakarta.ws.rs.Produces;
 
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import io.quarkiverse.langchain4j.ai.runtime.gemini.AiGeminiEmbeddingModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.ollama.OllamaEmbeddingModel;
 import io.quarkus.logging.Log;
@@ -62,11 +63,18 @@ class EmbeddingModelProducer {
                 config.model(), config.provider());
 
         return switch (config.provider()) {
-            case OPENAI ->
-                    OpenAiEmbeddingModel.builder()
-                            .baseUrl(config.baseUrl().orElse(null))
-                            .apiKey(env.getOpenaiApiKey())
-                            .modelName(config.model())
+            case AZURE ->
+                    AzureOpenAiEmbeddingModel.builder()
+                            .endpoint(buildAzureOpenaiEndpoint(config))
+                            .apiKey(env.getAzureApiKey())
+                            .apiVersion(AZURE_OPENAI_API_VERSION)
+                            .maxRetries(3)
+                            .build();
+            case GOOGLE_GEMINI ->
+                    AiGeminiEmbeddingModel.builder()
+                            .baseUrl(config.baseUrl())
+                            .key(env.getGoogleGeminiApiKey())
+                            .modelId(config.model())
                             .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {
@@ -78,12 +86,11 @@ class EmbeddingModelProducer {
                         .model(config.model())
                         .build();
             }
-            case AZURE ->
-                    AzureOpenAiEmbeddingModel.builder()
-                            .endpoint(buildAzureOpenaiEndpoint(config))
-                            .apiKey(env.getAzureApiKey())
-                            .apiVersion(AZURE_OPENAI_API_VERSION)
-                            .maxRetries(3)
+            case OPENAI ->
+                    OpenAiEmbeddingModel.builder()
+                            .baseUrl(config.baseUrl().orElse(null))
+                            .apiKey(env.getOpenaiApiKey())
+                            .modelName(config.model())
                             .build();
         };
     }

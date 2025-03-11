@@ -1,4 +1,4 @@
-# LLAMARA Backend
+**# LLAMARA Backend
 
 [![CI Build Status](https://github.com/llamara-ai/llamara-backend/actions/workflows/build.yaml/badge.svg)](https://github.com/llamara-ai/llamara-backend/actions/workflows/build.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=llamara-ai_llamara-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=llamara-ai_llamara-backend)
@@ -125,11 +125,21 @@ Before using Qdrant, you need to create the required collection:
 
 Common embedding models and their vector size and recommended distance calculation are:
 
-| Provider | Embedding Model          | Vector Size | Distance Calculation | Refs                                                       |
-|----------|--------------------------|-------------|----------------------|------------------------------------------------------------|
-| OpenAI   | `text-embedding-3-small` | 1536        | Dot Product          | [Docs](https://platform.openai.com/docs/guides/embeddings) |
-| OpenAI   | `text-embedding-3-large` | 3072        | Dot Product          | [Docs](https://platform.openai.com/docs/guides/embeddings) |
-| Ollama   | `nomic-embed-text`       | 768         | Dot Product          | [Ollama](https://ollama.com/library/nomic-embed-text)      |
+| Provider      | Embedding Model                                           | Vector Size | Distance Calculation | Max Input Tokens | MTEB (Multilingual) Mean (Task) | Refs                                                                                                                                        |
+|---------------|-----------------------------------------------------------|-------------|----------------------|------------------|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| Google Gemini | `gemini-embedding-exp-03-07`                              | 3072        | Dot Product          | 8192             | 68.32                           | [Docs](https://ai.google.dev/gemini-api/docs/embeddings)                                                                                    |
+| Google Gemini | `text-embedding-004`                                      | 3072        | Dot Product          | 2048             | ?                               | [Docs](https://ai.google.dev/gemini-api/docs/embeddings)                                                                                    |
+| Ollama        | Jina  (`snowflake-arctic-embed2`)                         | 1024        | Dot Product          | 8192             | 57.02                           | [HuggingFace](https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0), [Ollama](https://ollama.com/library/snowflake-arctic-embed2) |
+| Ollama        | Snowflake Arctic Embed L v2.0 (`snowflake-arctic-embed2`) | 1024        | Dot Product          | 8192             | 57.02                           | [HuggingFace](https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0), [Ollama](https://ollama.com/library/snowflake-arctic-embed2) |
+| Ollama        | Nomic Embed Text v1.5 (`nomic-embed-text`)                | 768         | Dot Product          | 8192             | 44.17                           | [HuggingFace](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5), [Ollama](https://ollama.com/library/nomic-embed-text)                 |
+| OpenAI        | `text-embedding-3-large`                                  | 3072        | Dot Product          | 8191             | 58.92                           | [Docs](https://platform.openai.com/docs/guides/embeddings)                                                                                  |
+| OpenAI        | `text-embedding-3-small`                                  | 1536        | Dot Product          | 8191             | 54.28                           | [Docs](https://platform.openai.com/docs/guides/embeddings)                                                                                  |
+
+Sources:
+- Vector Size: [HuggingFace MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
+- Distance Calculation: Individual Documentation
+- Max Input Tokens: [HuggingFace MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
+- MTEB Scores: [HuggingFace MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
 
 ## Endpoints
 
@@ -164,4 +174,4 @@ LLAMARA backend redirects all 404 requests outside of its own [endpoints](#endpo
 
 ## Known Issues
 
-- Native image does not work with Qdrant embedding store, see <https://github.com/quarkiverse/quarkus-langchain4j/issues/1216>.
+- Native image does not work with Qdrant embedding store, see <https://github.com/quarkiverse/quarkus-langchain4j/issues/1216>.**

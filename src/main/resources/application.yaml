@@ -86,6 +86,8 @@ embedding:
   model:
     provider: openai # Supported providers: azure, openai, ollama
     # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
+    # Google Gemini Models need model config and GOOGLE_GEMINI_API_KEY env variable
+    # Ollama models need base URL and model config
     # OpenAI models need model config and OPENAI_API_KEY key env variable
     # Ollama models need base URL and model config
     model: text-embedding-3-large

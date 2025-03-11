@@ -144,8 +144,8 @@ class ChatModelProviderImpl implements ChatModelProvider {
             case GOOGLE_GEMINI ->
                     AiGeminiChatLanguageModel.builder()
                             .baseUrl(config.baseUrl())
-                            .modelId(config.model())
                             .key(env.getGoogleGeminiApiKey())
+                            .modelId(config.model())
                             .temperature(config.temperature())
                             .topP(config.topP().orElse(null))
                             .maxOutputTokens(config.maxTokens().orElse(null))
