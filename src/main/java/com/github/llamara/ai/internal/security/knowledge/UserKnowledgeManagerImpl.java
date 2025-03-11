@@ -79,17 +79,22 @@ public class UserKnowledgeManagerImpl implements UserKnowledgeManager {
     @Override
     public Collection<Knowledge> getAllKnowledge() {
         String username = identity.getPrincipal().getName();
-
         userManager.enforceRegistered();
+
+        // Admin user: Return all knowledge
+        if (identity.hasRole(Roles.ADMIN)) {
+            Log.debugf("Admin user '%s' requested knowledge, returning all knowledge.", username);
+            return delegate.getAllKnowledge();
+        }
+
+        // Anonymous user: Return only public knowledge
         Set<Knowledge> publicKnowledge = new HashSet<>(userManager.getUserAny().getKnowledge());
         if (identity.isAnonymous()) {
             Log.debug("Anonymous user requested knowledge, returning only public knowledge.");
             return publicKnowledge;
         }
-        if (identity.hasRole(Roles.ADMIN)) {
-            Log.debugf("Admin user '%s' requested knowledge, returning all knowledge.", username);
-            return delegate.getAllKnowledge();
-        }
+
+        // Authenticated, non-admin user: Return user knowledge and public knowledge
         Log.debugf(
                 "Authenticated, non-admin user '%s' requested knowledge, returning user knowledge"
                         + " and public knowledge.",
