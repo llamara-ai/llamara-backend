@@ -14,6 +14,9 @@ MINIO_ACCESS_KEY: minioaccess
 MINIO_SECRET_KEY: miniosecret
 
 quarkus:
+  swagger-ui:
+    enable: true
+
   keycloak:
     devservices:
       enabled: true
