@@ -105,6 +105,7 @@ public interface ChatModelConfig {
 
     enum ChatModelProvider {
         AZURE,
+        GOOGLE_GEMINI,
         OLLAMA,
         OPENAI
     }

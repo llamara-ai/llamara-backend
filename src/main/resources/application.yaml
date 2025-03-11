@@ -36,19 +36,36 @@ chat:
     # See https://platform.openai.com/docs/api-reference/chat/create for parameter description.
     # (Azure) OpenAI supports all model parameters, Ollama doesn't support frequence-penalty & max-tokens.
 
-    # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
+    # Google Gemini models need model config and GOOGLE_GEMINI_API_KEY env variable
+    #- uid: gemini-2-0-flash
+    #  provider: google-gemini
+    #  model: gemini-2.0-flash
+    #  label: Gemini 2.0 Flash
+    #  description: Google Gemini 2.0 Flash
+
+    # Microsoft Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
     #- uid: azure-gpt4o-mini
     #  provider: azure
     #  resource-name: my-azure-resource # Azure OpenAI resource name
     #  model: gpt-4o-mini-2024-07-18 # Azure OpenAI deployment name
     #  label: Azure GPT 4o Mini
     #  description: Azure OpenAI GPT 4 Omni Mini
+
+    # Ollama models need base URL and model config
+    #- uid: llama3-1
+    #  provider: ollama
+    #  base-url: http://localhost:11435
+    #  model: llama3.1
+    #  label: LLAMA 3.1
+    #  description: Meta LLAMA 3.1 8b
+
     # OpenAI models need model config and OPENAI_API_KEY key env variable
     - uid: gpt4o-mini
       provider: openai
       model: gpt-4o-mini
       label: GPT 4o Mini
       description: OpenAI GPT 4 Omni Mini
+
     # OpenAI reasoning models require disabling the system prompt and setting the temperature to 1.0
     #- uid: o1-mini
     #  provider: openai
@@ -57,13 +74,6 @@ chat:
     #  description: OpenAI o1 Mini
     #  system-prompt-enabled: false
     #  temperature: 1.0
-    # Ollama models need base URL and model config
-    #- uid: llama3-1
-    #  provider: ollama
-    #  base-url: http://localhost:11435
-    #  model: llama3.1
-    #  label: LLAMA 3.1
-    #  description: Meta LLAMA 3.1 8b
 
 embedding:
   store:
@@ -76,6 +86,8 @@ embedding:
   model:
     provider: openai # Supported providers: azure, openai, ollama
     # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
+    # Google Gemini Models need model config and GOOGLE_GEMINI_API_KEY env variable
+    # Ollama models need base URL and model config
     # OpenAI models need model config and OPENAI_API_KEY key env variable
     # Ollama models need base URL and model config
     model: text-embedding-3-large

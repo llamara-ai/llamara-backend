@@ -33,23 +33,26 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @ApplicationScoped
 public class EnvironmentVariables {
     private final Optional<String> azureApiKey;
-    private final Optional<String> openaiApiKey;
-    private final Optional<String> qdrantApiKey;
+    private final Optional<String> googleGeminiApiKey;
     private final Optional<String> minioAccessKey;
     private final Optional<String> minioSecretKey;
+    private final Optional<String> openaiApiKey;
+    private final Optional<String> qdrantApiKey;
 
     @Inject
     EnvironmentVariables(
             @ConfigProperty(name = "AZURE_API_KEY") Optional<String> azureApiKey,
-            @ConfigProperty(name = "OPENAI_API_KEY") Optional<String> openaiApiKey,
-            @ConfigProperty(name = "QDRANT_API_KEY") Optional<String> qdrantApiKey,
+            @ConfigProperty(name = "GOOGLE_GEMINI_API_KEY") Optional<String> googleGeminiApiKey,
             @ConfigProperty(name = "MINIO_ACCESS_KEY") Optional<String> minioAccessKey,
-            @ConfigProperty(name = "MINIO_SECRET_KEY") Optional<String> minioSecretKey) {
+            @ConfigProperty(name = "MINIO_SECRET_KEY") Optional<String> minioSecretKey,
+            @ConfigProperty(name = "OPENAI_API_KEY") Optional<String> openaiApiKey,
+            @ConfigProperty(name = "QDRANT_API_KEY") Optional<String> qdrantApiKey) {
         this.azureApiKey = azureApiKey;
-        this.openaiApiKey = openaiApiKey;
-        this.qdrantApiKey = qdrantApiKey;
+        this.googleGeminiApiKey = googleGeminiApiKey;
         this.minioAccessKey = minioAccessKey;
         this.minioSecretKey = minioSecretKey;
+        this.openaiApiKey = openaiApiKey;
+        this.qdrantApiKey = qdrantApiKey;
     }
 
     /**
@@ -65,24 +68,16 @@ public class EnvironmentVariables {
     }
 
     /**
-     * Returns the OpenAI API key, that is required for the OpenAI models.
+     * Returns the Google Gemini API key, that is required for the Google Gemini models.
      *
-     * @return OpenAI API key
+     * @return Google Gemini API key
      */
-    public String getOpenaiApiKey() {
-        if (openaiApiKey.isPresent()) {
-            return openaiApiKey.get();
+    public String getGoogleGeminiApiKey() {
+        if (googleGeminiApiKey.isPresent()) {
+            return googleGeminiApiKey.get();
         }
-        throw new MissingEnvironmentVariableException("OpenAI API key is required but missing.");
-    }
-
-    /**
-     * Returns the optional Qdrant API key..
-     *
-     * @return Qdrant API key
-     */
-    public Optional<String> getQdrantApiKey() {
-        return qdrantApiKey;
+        throw new MissingEnvironmentVariableException(
+                "Google Gemini API key is required but missing.");
     }
 
     /**
@@ -107,5 +102,26 @@ public class EnvironmentVariables {
             return minioSecretKey.get();
         }
         throw new MissingEnvironmentVariableException("MinIO secret key is required but missing.");
+    }
+
+    /**
+     * Returns the OpenAI API key, that is required for the OpenAI models.
+     *
+     * @return OpenAI API key
+     */
+    public String getOpenaiApiKey() {
+        if (openaiApiKey.isPresent()) {
+            return openaiApiKey.get();
+        }
+        throw new MissingEnvironmentVariableException("OpenAI API key is required but missing.");
+    }
+
+    /**
+     * Returns the optional Qdrant API key..
+     *
+     * @return Qdrant API key
+     */
+    public Optional<String> getQdrantApiKey() {
+        return qdrantApiKey;
     }
 }
