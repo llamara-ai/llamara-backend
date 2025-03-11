@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.llamara.ai</groupId>
   <artifactId>llamara-backend</artifactId>
@@ -59,10 +60,16 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Quarkus -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-arc</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-config-yaml</artifactId>
+    </dependency>
+    <!-- JBoss LogManager Adapters for Log4j 1.x and 2.x -->
     <dependency>
       <groupId>org.jboss.logmanager</groupId>
       <artifactId>log4j-jboss-logmanager</artifactId>
@@ -71,70 +78,23 @@
       <groupId>org.jboss.logmanager</groupId>
       <artifactId>log4j2-jboss-logmanager</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-jdbc-postgresql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-core</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-ai-gemini</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-azure-openai</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-mistral-ai</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-openai</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-ollama</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-qdrant</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-memory-store-redis</artifactId>
-      <version>${quarkus-langchain4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.minio</groupId>
-      <artifactId>quarkus-minio</artifactId>
-      <version>${quarkus-minio.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-oidc</artifactId>
-    </dependency>
+    <!-- Quarkus Security & OIDC -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-security</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-openapi</artifactId>
+      <artifactId>quarkus-oidc</artifactId>
+    </dependency>
+    <!-- Quarkus HTTP & REST -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-undertow</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -146,21 +106,9 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-config-yaml</artifactId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-redis-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-hibernate-orm-panache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-document-parser-apache-tika</artifactId>
-      <version>${langchain4j.version}</version>
-    </dependency>
+    <!-- Quarkus Info & Health Endpoints -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-info</artifactId>
@@ -169,10 +117,25 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-health</artifactId>
     </dependency>
+    <!-- Quarkus Database & Object Storage -->
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-undertow</artifactId>
+      <artifactId>quarkus-hibernate-orm-panache</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.minio</groupId>
+      <artifactId>quarkus-minio</artifactId>
+      <version>${quarkus-minio.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-redis-client</artifactId>
+    </dependency>
+    <!-- Quarkus Testing -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
@@ -192,6 +155,56 @@
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
+    </dependency>
+    <!-- (Quarkus) LangChain4j -->
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-core</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <!-- (Quarkus) LangChain4j Model Integrations -->
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-ai-gemini</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-azure-openai</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-mistral-ai</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-ollama</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-openai</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <!-- (Quarkus) LangChain4j Memory Store Integrations -->
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-memory-store-redis</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <!-- (Quarkus) LangChain4j Embedding Store Integrations -->
+    <dependency>
+      <groupId>io.quarkiverse.langchain4j</groupId>
+      <artifactId>quarkus-langchain4j-qdrant</artifactId>
+      <version>${quarkus-langchain4j.version}</version>
+    </dependency>
+    <!-- (Quarkus) LangChain4j Document Parser Integrations -->
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-document-parser-apache-tika</artifactId>
+      <version>${langchain4j.version}</version>
     </dependency>
   </dependencies>
 
@@ -347,6 +360,10 @@
           <pom>
             <sortPom>
               <expandEmptyElements>false</expandEmptyElements>
+              <indentAttribute>schemaLocation</indentAttribute>
+              <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+              <sortDependencyExclusions/>
+              <sortDependencyManagement/>
             </sortPom>
           </pom>
         </configuration>
