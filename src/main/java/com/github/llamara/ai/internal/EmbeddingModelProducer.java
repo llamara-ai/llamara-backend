@@ -30,6 +30,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
 
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.mistralai.MistralAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import io.quarkiverse.langchain4j.ai.runtime.gemini.AiGeminiEmbeddingModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiEmbeddingModel;
@@ -75,6 +76,12 @@ class EmbeddingModelProducer {
                             .baseUrl(config.baseUrl())
                             .key(env.getGoogleGeminiApiKey())
                             .modelId(config.model())
+                            .build();
+            case MISTRAL ->
+                    MistralAiEmbeddingModel.builder()
+                            .baseUrl(config.baseUrl().orElse(null))
+                            .apiKey(env.getMistralApiKey())
+                            .modelName(config.model())
                             .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {

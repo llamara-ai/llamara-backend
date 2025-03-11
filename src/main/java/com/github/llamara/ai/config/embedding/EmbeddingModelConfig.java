@@ -41,6 +41,7 @@ public interface EmbeddingModelConfig {
     enum EmbeddingModelProvider {
         AZURE,
         GOOGLE_GEMINI,
+        MISTRAL,
         OLLAMA,
         OPENAI
     }

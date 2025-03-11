@@ -32,9 +32,12 @@ chat:
     max-messages: 50 # Maximum number of messages to keep in history, i.e. to present them to the user.
   models:
     # Supported model providers: azure, openai, ollama
-    # Supported model parameters: temperature, top-p, frequence-penalty, presence-penalty, max-tokens
+    # Supported model parameters: temperature, top-p, frequency-penalty, presence-penalty, max-tokens
     # See https://platform.openai.com/docs/api-reference/chat/create for parameter description.
-    # (Azure) OpenAI supports all model parameters, Ollama doesn't support frequence-penalty & max-tokens.
+    # - Gemini models support temperature, top-p and max-tokens.
+    # - Mistral models support temperature, top-p and max-tokens.
+    # - Ollama models support temperature, top-p and frequency-penalty.
+    # - (Microsoft Azure) OpenAI supports all model parameters.
 
     # Google Gemini models need model config and GOOGLE_GEMINI_API_KEY env variable
     #- uid: gemini-2-0-flash
@@ -42,6 +45,12 @@ chat:
     #  model: gemini-2.0-flash
     #  label: Gemini 2.0 Flash
     #  description: Google Gemini 2.0 Flash
+
+    # Mistral models need model config and MISTRAL_API_KEY env variable
+    #- uid: mistral-small
+    #  provider: mistral
+    #  model: mistral-small-latest
+    #  label: Mistral Small
 
     # Microsoft Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
     #- uid: azure-gpt4o-mini
@@ -84,9 +93,10 @@ embedding:
     collection-name: text-embedding-3-large
     vector-size: 3072
   model:
-    provider: openai # Supported providers: azure, openai, ollama
+    provider: openai # Supported providers: azure, google-gemini, mistral, ollama, openai
     # Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
     # Google Gemini Models need model config and GOOGLE_GEMINI_API_KEY env variable
+    # Mistral models need model config and MISTRAL_API_KEY env variable
     # Ollama models need base URL and model config
     # OpenAI models need model config and OPENAI_API_KEY key env variable
     # Ollama models need base URL and model config

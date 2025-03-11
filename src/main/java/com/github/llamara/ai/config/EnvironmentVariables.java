@@ -36,6 +36,7 @@ public class EnvironmentVariables {
     private final Optional<String> googleGeminiApiKey;
     private final Optional<String> minioAccessKey;
     private final Optional<String> minioSecretKey;
+    private final Optional<String> mistralApiKey;
     private final Optional<String> openaiApiKey;
     private final Optional<String> qdrantApiKey;
 
@@ -45,12 +46,14 @@ public class EnvironmentVariables {
             @ConfigProperty(name = "GOOGLE_GEMINI_API_KEY") Optional<String> googleGeminiApiKey,
             @ConfigProperty(name = "MINIO_ACCESS_KEY") Optional<String> minioAccessKey,
             @ConfigProperty(name = "MINIO_SECRET_KEY") Optional<String> minioSecretKey,
+            @ConfigProperty(name = "MISTRAL_API_KEY") Optional<String> mistralApiKey,
             @ConfigProperty(name = "OPENAI_API_KEY") Optional<String> openaiApiKey,
             @ConfigProperty(name = "QDRANT_API_KEY") Optional<String> qdrantApiKey) {
         this.azureApiKey = azureApiKey;
         this.googleGeminiApiKey = googleGeminiApiKey;
         this.minioAccessKey = minioAccessKey;
         this.minioSecretKey = minioSecretKey;
+        this.mistralApiKey = mistralApiKey;
         this.openaiApiKey = openaiApiKey;
         this.qdrantApiKey = qdrantApiKey;
     }
@@ -102,6 +105,18 @@ public class EnvironmentVariables {
             return minioSecretKey.get();
         }
         throw new MissingEnvironmentVariableException("MinIO secret key is required but missing.");
+    }
+
+    /**
+     * Returns the Mistral API key, that is required for the Mistral models.
+     *
+     * @return Mistral API key
+     */
+    public String getMistralApiKey() {
+        if (mistralApiKey.isPresent()) {
+            return mistralApiKey.get();
+        }
+        throw new MissingEnvironmentVariableException("Mistral API key is required but missing.");
     }
 
     /**
