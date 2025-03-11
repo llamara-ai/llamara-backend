@@ -37,15 +37,12 @@ import jakarta.inject.Inject;
 
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
+import io.quarkiverse.langchain4j.ai.runtime.gemini.AiGeminiChatLanguageModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiChatModel;
-import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiStreamingChatModel;
 import io.quarkiverse.langchain4j.ollama.OllamaChatLanguageModel;
-import io.quarkiverse.langchain4j.ollama.OllamaStreamingChatLanguageModel;
 import io.quarkiverse.langchain4j.ollama.Options;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Startup;
@@ -102,14 +99,12 @@ class ChatModelProviderImpl implements ChatModelProvider {
                     config.uid(), config.provider());
 
             ChatLanguageModel clm = produceChatLanguageModel(config);
-            StreamingChatLanguageModel sclm = produceStreamingChatLanguageModel(config);
 
             ChatModel model =
                     new ChatModel(
                             config,
                             AiServices.builder(AiService.class)
                                     .chatLanguageModel(clm)
-                                    .streamingChatLanguageModel(sclm)
                                     .chatMemoryProvider(chatMemoryProvider)
                                     .retrievalAugmentor(retrievalAugmentor)
                                     .build(),
@@ -128,16 +123,32 @@ class ChatModelProviderImpl implements ChatModelProvider {
 
     private ChatLanguageModel produceChatLanguageModel(ChatModelConfig.ModelConfig config) {
         return switch (config.provider()) {
-            case OPENAI ->
-                    OpenAiChatModel.builder()
-                            .baseUrl(config.baseUrl().orElse(null))
-                            .apiKey(env.getOpenaiApiKey())
-                            .modelName(config.model())
+            case AZURE -> {
+                String endpoint;
+                try {
+                    endpoint = buildAzureOpenaiEndpoint(config);
+                } catch (IllegalArgumentException e) {
+                    throw new StartupException(INITIALIZATION_FAILURE_MESSAGE, e);
+                }
+                yield AzureOpenAiChatModel.builder()
+                        .endpoint(endpoint)
+                        .apiKey(env.getAzureApiKey())
+                        .apiVersion(AZURE_OPENAI_API_VERSION)
+                        .temperature(config.temperature())
+                        .topP(config.topP().orElse(null))
+                        .frequencyPenalty(config.frequencyPenalty().orElse(null))
+                        .presencePenalty(config.presencePenalty().orElse(null))
+                        .maxTokens(config.maxTokens().orElse(null))
+                        .build();
+            }
+            case GOOGLE_GEMINI ->
+                    AiGeminiChatLanguageModel.builder()
+                            .baseUrl(config.baseUrl())
+                            .modelId(config.model())
+                            .key(env.getGoogleGeminiApiKey())
                             .temperature(config.temperature())
                             .topP(config.topP().orElse(null))
-                            .frequencyPenalty(config.frequencyPenalty().orElse(null))
-                            .presencePenalty(config.presencePenalty().orElse(null))
-                            .maxCompletionTokens(config.maxTokens().orElse(null))
+                            .maxOutputTokens(config.maxTokens().orElse(null))
                             .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {
@@ -157,32 +168,8 @@ class ChatModelProviderImpl implements ChatModelProvider {
                                         .build())
                         .build();
             }
-            case AZURE -> {
-                String endpoint;
-                try {
-                    endpoint = buildAzureOpenaiEndpoint(config);
-                } catch (IllegalArgumentException e) {
-                    throw new StartupException(INITIALIZATION_FAILURE_MESSAGE, e);
-                }
-                yield AzureOpenAiChatModel.builder()
-                        .endpoint(endpoint)
-                        .apiKey(env.getAzureApiKey())
-                        .apiVersion(AZURE_OPENAI_API_VERSION)
-                        .temperature(config.temperature())
-                        .topP(config.topP().orElse(null))
-                        .frequencyPenalty(config.frequencyPenalty().orElse(null))
-                        .presencePenalty(config.presencePenalty().orElse(null))
-                        .maxTokens(config.maxTokens().orElse(null))
-                        .build();
-            }
-        };
-    }
-
-    private StreamingChatLanguageModel produceStreamingChatLanguageModel(
-            ChatModelConfig.ModelConfig config) {
-        return switch (config.provider()) {
             case OPENAI ->
-                    OpenAiStreamingChatModel.builder()
+                    OpenAiChatModel.builder()
                             .baseUrl(config.baseUrl().orElse(null))
                             .apiKey(env.getOpenaiApiKey())
                             .modelName(config.model())
@@ -192,42 +179,6 @@ class ChatModelProviderImpl implements ChatModelProvider {
                             .presencePenalty(config.presencePenalty().orElse(null))
                             .maxCompletionTokens(config.maxTokens().orElse(null))
                             .build();
-            case OLLAMA -> {
-                if (config.baseUrl().isEmpty()) {
-                    throw new StartupException(
-                            INITIALIZATION_FAILURE_MESSAGE,
-                            new IllegalArgumentException(
-                                    "Base URL is required for Ollama chat model."));
-                }
-                yield OllamaStreamingChatLanguageModel.builder()
-                        .baseUrl(config.baseUrl().get()) // NOSONAR: we have checked for empty
-                        .model(config.model())
-                        .options(
-                                Options.builder()
-                                        .temperature(config.temperature())
-                                        .topP(config.topP().orElse(null))
-                                        .repeatPenalty(config.frequencyPenalty().orElse(null))
-                                        .build())
-                        .build();
-            }
-            case AZURE -> {
-                String endpoint;
-                try {
-                    endpoint = buildAzureOpenaiEndpoint(config);
-                } catch (IllegalArgumentException e) {
-                    throw new StartupException(INITIALIZATION_FAILURE_MESSAGE, e);
-                }
-                yield AzureOpenAiStreamingChatModel.builder()
-                        .endpoint(endpoint)
-                        .apiKey(env.getAzureApiKey())
-                        .apiVersion(AZURE_OPENAI_API_VERSION)
-                        .temperature(config.temperature())
-                        .topP(config.topP().orElse(null))
-                        .frequencyPenalty(config.frequencyPenalty().orElse(null))
-                        .presencePenalty(config.presencePenalty().orElse(null))
-                        .maxTokens(config.maxTokens().orElse(null))
-                        .build();
-            }
         };
     }
 
