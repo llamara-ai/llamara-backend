@@ -107,6 +107,10 @@ COPY --chown=185 target/quarkus-app/app/ /deployments/app/
 COPY --chown=185 target/quarkus-app/quarkus/ /deployments/quarkus/
 
 USER root
+# Install utilities like nano, ping, nslookup
+RUN microdnf install -y --nodocs nano iputils bind-utils \
+    && microdnf clean all
+# Create the /data dir and set ownership
 RUN mkdir /data && chown 185 /data
 
 EXPOSE 8080
