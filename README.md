@@ -29,12 +29,13 @@ as well as possibly serving research findings in an accessible way to the public
 - **Multiple sessions** per user with server-side chat history
 - Serve a **JavaScript Single-Page-Application** (SPA) as frontend
 - Integration with the following LLM (chat model) providers:
-  - [Google Gemini](https://gemini.google.com/)
+  - [Google Gemini API](https://ai.google.dev/gemini-api)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
   - [Ollama](https://ollama.com/)
   - [OpenAI](https://platform.openai.com/docs/models#models-overview)
 - Configure common model parameters such as temperature, top-p, frequency penalty & presence penalty for each model
 - Integration with the following embedding model providers:
+  - [Google Gemini API](https://ai.google.dev/gemini-api)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
   - [Ollama](https://ollama.com/)
   - [OpenAI](https://platform.openai.com/docs/models#embeddings)
