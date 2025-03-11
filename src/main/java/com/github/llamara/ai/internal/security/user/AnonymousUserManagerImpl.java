@@ -59,7 +59,7 @@ public class AnonymousUserManagerImpl implements UserManager {
 
     @Override
     public User getCurrentUser() {
-        return Users.ANY;
+        return getUserAny();
     }
 
     @Override
