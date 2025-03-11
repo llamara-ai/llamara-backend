@@ -152,6 +152,9 @@ LLAMARA backend provides a REST API on the `/rest` path to be consumed by a user
 You can explore it through Swagger UI on the `/q/swagger-ui` endpoint,
 or use the OpenAPI YAML or JSON API scheme definitions available from [CI](https://github.com/llamara-ai/llamara-backend/actions/workflows/ci-build.yaml) artifacts.
 
+Swagger UI is always available during development.
+If you need it in production, you can enable it by setting `quarkus.swagger-ui.enable` to `true` in the `application.yaml` file in the [config](config) directory.
+
 ### Info Endpoint
 
 The `/q/info` endpoint provides information about LLAMARA backend, including Git, Java, OS and build details.
