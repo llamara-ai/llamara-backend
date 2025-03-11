@@ -21,12 +21,12 @@ package com.github.llamara.ai.internal.security.user;
 
 import com.github.llamara.ai.internal.security.Users;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.logging.Log;
+import io.quarkus.runtime.Startup;
 
 /**
  * Hibernate ORM {@link PanacheRepository} for {@link User}.
@@ -35,7 +35,7 @@ import io.quarkus.logging.Log;
  */
 @ApplicationScoped
 public class UserRepository implements PanacheRepository<User> {
-    @PostConstruct
+    @Startup // initialize user ANY at startup
     @Transactional
     void init() {
         if (findByUsername(Users.ANY_USERNAME) == null) {
