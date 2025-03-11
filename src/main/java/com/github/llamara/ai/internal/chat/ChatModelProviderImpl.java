@@ -37,6 +37,7 @@ import jakarta.inject.Inject;
 
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
@@ -149,6 +150,15 @@ class ChatModelProviderImpl implements ChatModelProvider {
                             .temperature(config.temperature())
                             .topP(config.topP().orElse(null))
                             .maxOutputTokens(config.maxTokens().orElse(null))
+                            .build();
+            case MISTRAL ->
+                    MistralAiChatModel.builder()
+                            .baseUrl(config.baseUrl().orElse(null))
+                            .apiKey(env.getMistralApiKey())
+                            .modelName(config.model())
+                            .temperature(config.temperature())
+                            .topP(config.topP().orElse(null))
+                            .maxTokens(config.maxTokens().orElse(null))
                             .build();
             case OLLAMA -> {
                 if (config.baseUrl().isEmpty()) {

@@ -31,12 +31,14 @@ as well as possibly serving research findings in an accessible way to the public
 - Integration with the following LLM (chat model) providers:
   - [Google Gemini API](https://ai.google.dev/gemini-api)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
+  - [Mistral Cloud](https://mistral.ai/products/la-plateforme)
   - [Ollama](https://ollama.com/)
   - [OpenAI](https://platform.openai.com/docs/models#models-overview)
 - Configure common model parameters such as temperature, top-p, frequency penalty & presence penalty for each model
 - Integration with the following embedding model providers:
   - [Google Gemini API](https://ai.google.dev/gemini-api)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
+  - [Mistral Cloud](https://mistral.ai/products/la-plateforme)
   - [Ollama](https://ollama.com/)
   - [OpenAI](https://platform.openai.com/docs/models#embeddings)
 - Integration with the following embedding stores:
@@ -130,6 +132,7 @@ Common embedding models and their vector size and recommended distance calculati
 |---------------|-----------------------------------------------------------|-------------|----------------------|------------------|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | Google Gemini | `gemini-embedding-exp-03-07`                              | 3072        | Dot Product          | 8192             | 68.32                           | [Docs](https://ai.google.dev/gemini-api/docs/embeddings)                                                                                    |
 | Google Gemini | `text-embedding-004`                                      | 3072        | Dot Product          | 2048             | ?                               | [Docs](https://ai.google.dev/gemini-api/docs/embeddings)                                                                                    |
+| Mistral       | `mistral-embed`                                           | 1024        | Dot Product          | 8000             | 55.26                           | [Docs](https://docs.mistral.ai/capabilities/embeddings/)                                                                                    |
 | Ollama        | Jina  (`snowflake-arctic-embed2`)                         | 1024        | Dot Product          | 8192             | 57.02                           | [HuggingFace](https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0), [Ollama](https://ollama.com/library/snowflake-arctic-embed2) |
 | Ollama        | Snowflake Arctic Embed L v2.0 (`snowflake-arctic-embed2`) | 1024        | Dot Product          | 8192             | 57.02                           | [HuggingFace](https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0), [Ollama](https://ollama.com/library/snowflake-arctic-embed2) |
 | Ollama        | Nomic Embed Text v1.5 (`nomic-embed-text`)                | 768         | Dot Product          | 8192             | 44.17                           | [HuggingFace](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5), [Ollama](https://ollama.com/library/nomic-embed-text)                 |
