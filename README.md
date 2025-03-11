@@ -29,19 +29,20 @@ as well as possibly serving research findings in an accessible way to the public
 - **Multiple sessions** per user with server-side chat history
 - Serve a **JavaScript Single-Page-Application** (SPA) as frontend
 - Integration with the following LLM (chat model) providers:
-  - [OpenAI](https://platform.openai.com/docs/models#models-overview)
+  - [Google Gemini](https://gemini.google.com/)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
   - [Ollama](https://ollama.com/)
+  - [OpenAI](https://platform.openai.com/docs/models#models-overview)
 - Configure common model parameters such as temperature, top-p, frequency penalty & presence penalty for each model
 - Integration with the following embedding model providers:
-  - [OpenAI](https://platform.openai.com/docs/models#embeddings)
   - [Microsoft Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service/)
   - [Ollama](https://ollama.com/)
+  - [OpenAI](https://platform.openai.com/docs/models#embeddings)
 - Integration with the following embedding stores:
   - [Qdrant](https://qdrant.tech/)
 - Store the uploaded files in the following file storages:
-  - [MinIO](https://min.io/)
   - Local File System
+  - [MinIO](https://min.io/)
 - Build with [Quarkus](https://quarkus.io/), the Supersonic Subatomic Java Framework
 - Uses [LangChain4j](https://docs.langchain4j.dev/), the versatile LLM integration library
 - Relies on battle-tested open-source software such as [PostgreSQL](https://www.postgresql.org/), [MinIO](https://min.io/) & [Redis](https://redis.io/)
