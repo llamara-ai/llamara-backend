@@ -21,10 +21,6 @@ permissions:
 jobs:
   maven:
     name: Maven Build
-    strategy:
-      matrix:
-        java: [ '21' ]
-        maven: [ '3.9.9' ]
 
     runs-on: 'ubuntu-24.04'
 
@@ -35,8 +31,6 @@ jobs:
       - name: Maven Build
         uses: ./.github/actions/maven-build
         with:
-          java: ${{ matrix.java }}
-          maven: ${{ matrix.maven }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       # Upload the full dependency graph to improve quality of Dependabot alerts except on PR

@@ -39,8 +39,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '21' ]
-        maven: [ '3.9.9' ]
         include:
         - language: java-kotlin
           build-mode: manual
@@ -73,8 +71,6 @@ jobs:
       if: matrix.language == 'java-kotlin' && matrix.build-mode == 'manual'
       uses: ./.github/actions/maven-build
       with:
-        java: ${{ matrix.java }}
-        maven: ${{ matrix.maven }}
         command: "compile"
         skip_spotless: 'true'
         skip_changed_files: 'true'
