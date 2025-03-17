@@ -4,16 +4,16 @@ on:
   # Build main container:
   workflow_dispatch:
   push:
-    branches: ['main']
-    paths-ignore: ['**/*.md']
+    branches: ["main"]
+    paths-ignore: ["**/*.md"]
     # Build release container:
     tags:
-      - 'v*.*'
-      - 'v*.*.*'
+      - "v*.*"
+      - "v*.*.*"
   # Dry run for PRs:
   pull_request:
-    branches: ['main']
-    paths-ignore: ['**/*.md']
+    branches: ["main"]
+    paths-ignore: ["**/*.md"]
 
 permissions:
   contents: write
@@ -22,7 +22,7 @@ jobs:
   maven:
     name: Maven Build
 
-    runs-on: 'ubuntu-24.04'
+    runs-on: "ubuntu-24.04"
 
     steps:
       - name: Checkout repository
@@ -71,7 +71,7 @@ jobs:
     name: Docker Build & Publish
     needs: maven
 
-    runs-on: 'ubuntu-24.04'
+    runs-on: "ubuntu-24.04"
 
     env:
       # Use docker.io for Docker Hub if empty
@@ -104,7 +104,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@v3
         with:
-          cosign-release: 'v2.2.4'
+          cosign-release: "v2.2.4"
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache

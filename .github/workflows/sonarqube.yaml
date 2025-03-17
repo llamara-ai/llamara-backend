@@ -2,22 +2,23 @@ name: SonarQube
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+    paths-ignore: ["**/*.md"]
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore: ["**/*.md"]
 
 jobs:
   build:
     name: Build & Analyze
 
-    runs-on: 'ubuntu-24.04'
+    runs-on: "ubuntu-24.04"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Cache SonarQube packages
         uses: actions/cache@v4
@@ -29,9 +30,9 @@ jobs:
       - name: Maven Build
         uses: ./.github/actions/maven-build
         with:
-          command: 'verify'
-          skip_spotless: 'true'
-          skip_changed_files: 'true'
+          command: "verify"
+          skip_spotless: "true"
+          skip_changed_files: "true"
 
       - name: SonarQube Analyze
         env:

@@ -42,7 +42,7 @@ runs:
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
-        distribution: 'temurin'
+        distribution: "temurin"
         java-version: ${{ inputs.java }}
 
     - name: Run Spotless Check
