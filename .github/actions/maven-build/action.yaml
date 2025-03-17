@@ -1,13 +1,13 @@
 name: "Maven Build"
 inputs:
   java:
-    description: "Java version"
+    description: "Java version (optional)"
     required: false
     default: "21"
-  maven:
-    description: "Maven version"
+  mvnw:
+    description: "Path to maven wrapper (optional)"
     required: false
-    default: "3.9.9"
+    default: "./mvnw"
   pom:
     description: "Path to the Maven POM file (optional)"
     required: false
@@ -45,19 +45,14 @@ runs:
         distribution: 'temurin'
         java-version: ${{ inputs.java }}
 
-    - name: Set up Maven
-      uses: stCarolas/setup-maven@d6af6abeda15e98926a57b5aa970a96bb37f97d1
-      with:
-        maven-version: ${{ inputs.maven }}
-
     - name: Run Spotless Check
       if: ${{ inputs.skip_spotless != 'true' }}
       shell: bash
-      run: "mvn -B --show-version --file ${{ inputs.pom }} spotless:check"
+      run: "${{ inputs.mvnw }} -B --show-version --file ${{ inputs.pom }} spotless:check"
 
     - name: Maven Build
       shell: bash
-      run: "mvn -B --show-version --file ${{ inputs.pom }} ${{ inputs.command }}"
+      run: "${{ inputs.mvnw }} -B --show-version --file ${{ inputs.pom }} ${{ inputs.command }}"
       env:
         OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY || 'sk-prod-key' }}
 
