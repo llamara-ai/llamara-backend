@@ -177,7 +177,3 @@ The bundled JavaScript SPA will then be part of the build JAR and automatically 
 LLAMARA backend redirects all 404 requests outside of its own [endpoints](#endpoints) to the index page to allow the SPA's router to take over.
 
 [LLAMARA Distribution](https://github.com/llamara-ai/llamara-distro) provides a build of LLAMARA backend that includes LLAMARA frontend, making it the easiest way to deploy LLAMARA.
-
-## Known Issues
-
-- Native image does not work with Qdrant embedding store, see <https://github.com/quarkiverse/quarkus-langchain4j/issues/1216>.**
