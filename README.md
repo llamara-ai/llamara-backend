@@ -72,6 +72,9 @@ This application requires an OIDC authentication provider to be set up.
 The OIDC provider requires the `auth-server-url` and `client-id` to be set in the `application.yaml` file and the `QUARKUS_OIDC_CREDENTIALS_SECRET` environment variables.
 For Keycloak, you need to add the `microprofile-jwt` and `profile` scopes for the Quarkus client, see [Keycloak Server Documentation](https://www.keycloak.org/docs/latest/server_admin/#protocol).
 
+You need to add the `full_name` JWT claim to the access token in order to display the full name in the frontend.
+You can optionally add the `preferred_username` JWT claim to the access token in order to specify a username different from the technical user ID of some systems.
+
 ### AI Model Provider
 
 With the default configuration, LLAMARA relies on GPT-4o mini and `text-embeddding-3-large` from OpenAI.
@@ -150,7 +153,7 @@ Sources:
 
 LLAMARA backend provides a REST API on the `/rest` path to be consumed by a user interface.
 You can explore it through Swagger UI on the `/q/swagger-ui` endpoint,
-or use the OpenAPI YAML or JSON API scheme definitions available from [CI](https://github.com/llamara-ai/llamara-backend/actions/workflows/ci-build.yaml) artifacts.
+or use the OpenAPI YAML or JSON API scheme definitions available from [CI](https://github.com/llamara-ai/llamara-backend/actions/workflows/build.yaml) artifacts.
 
 Swagger UI is always available during development.
 If you need it in production, you can enable it by setting `quarkus.swagger-ui.enable` to `true` in the `application.yaml` file in the [config](config) directory.
@@ -176,4 +179,4 @@ To do so, you need to place the build output of your bundler, e.g. Webpack or Vi
 The bundled JavaScript SPA will then be part of the build JAR and automatically served by Quarkus on the applications root path.
 LLAMARA backend redirects all 404 requests outside of its own [endpoints](#endpoints) to the index page to allow the SPA's router to take over.
 
-[LLAMARA Distribution](https://github.com/llamara-ai/llamara-distro) provides a build of LLAMARA backend that includes LLAMARA frontend, making it the easiest way to deploy LLAMARA.
+[LLAMARA Distribution](https://github.com/llamara-ai/llamara-distro) provides a build of LLAMARA backend that includes [LLAMARA Frontend](https://github.com/llamara-ai/llamara-frontend), making it the easiest way to deploy LLAMARA.

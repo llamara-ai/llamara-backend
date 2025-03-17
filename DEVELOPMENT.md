@@ -1,4 +1,4 @@
-# LLAMARA - Development
+# LLAMARA Backend - Development
 
 ## Running the application in dev mode
 
@@ -46,6 +46,13 @@ This project is using [SonarQube Cloud](https://sonarcloud.io/) for code quality
 SonarQube will automatically run for all commits to main as well as pull requests, and report the results in the GitHub checks and as a comment in the pull request.
 
 The SonarQube dashboard is available at [SonarQube Cloud: LLAMARA AI: llamara-backend](https://sonarcloud.io/project/overview?id=llamara-ai_llamara-backend).
+
+## Testing
+
+This project is using [JUnit 5](https://junit.org/junit5/) and [Mockito](https://site.mockito.org/) for testing.
+Please refer to [Quarkus: Testing Your Application](https://quarkus.io/guides/getting-started-testing) to get started with testing in Quarkus.
+
+[JaCoCo](https://www.jacoco.org/jacoco/) is used for code coverage analysis, the report can be downloaded from [CI](https://github.com/llamara-ai/llamara-backend/actions/workflows/build.yaml) artifacts.
 
 ## Upgrading the application
 

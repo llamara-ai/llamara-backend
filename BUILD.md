@@ -1,4 +1,4 @@
-# LLAMARA - Build & Publish
+# LLAMARA Backend - Build & Publish
 
 ## Packaging and running the application
 
