@@ -115,14 +115,6 @@ jobs:
         with:
           repository: llamara-ai/llamara-backend
 
-      - name: Get Build Date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-
-      - name: Get Project Version
-        id: version
-        run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-
       # Install the cosign tool
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -154,6 +146,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          labels: |
+            org.opencontainers.image.title=LLAMARA ${{ inputs.container-image-type || 'Backend' }}
+            org.opencontainers.image.vendor=LLAMARA AI project
+            org.opencontainers.image.authors=Contributors to the LLAMARA AI project
 
       - name: Download packaged application
         uses: actions/download-artifact@v4
@@ -175,12 +171,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            BUILD_DATE=${{ steps.date.outputs.date }}
-            VCS_REF=${{ github.sha }}
-            VCS_REPO=${{ github.repository }}
-            VERSION=${{ steps.version.outputs.version }}
-            NAME=${{ inputs.container-image-type }}
 
       # Sign the resulting Docker image digest.
       # This will only write to the public Rekor transparency log when the Docker
