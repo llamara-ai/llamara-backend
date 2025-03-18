@@ -45,7 +45,7 @@ jobs:
 
       # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
       - name: Update dependency graph
-        if: github.event_name != 'pull_request'
+        if: github.repository == 'llamara-ai/llamara-backend' && github.event_name != 'pull_request'
         uses: advanced-security/maven-dependency-submission-action@v4
 
       - name: Upload packaged application
