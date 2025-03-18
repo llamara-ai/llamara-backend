@@ -81,26 +81,7 @@
 # Use Red Hat Universal Base Image 9 with runtime-only OpenJDK 21 as base. For Builder images, use ubi9/openjdk-21 instead.
 FROM registry.access.redhat.com/ubi9/openjdk-21-runtime:1.21
 
-ARG BUILD_DATE
-ARG VCS_REF
-ARG VCS_REPO
-ARG VERSION
-ARG NAME="Backend"
-
 ENV LANGUAGE='en_US:en'
-
-# Basic build-time metadata as defined at https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
-LABEL org.opencontainers.image.created=$BUILD_DATE \
-    org.opencontainers.image.licenses="Apache-2.0" \
-    org.opencontainers.image.title="LLAMARA $NAME" \
-    org.opencontainers.image.vendor="LLAMARA AI project" \
-    org.opencontainers.image.version=$VERSION \
-    org.opencontainers.image.description="$NAME of LLAMARA - The Large Language Assistant for Model-Augmented Retrieval and Analysis" \
-    org.opencontainers.image.url="https://github.com/llamara-ai" \
-    org.opencontainers.image.documentation="https://github.com/llamara-ai/llamara-docker-deployment" \
-    org.opencontainers.image.revision=$VCS_REF \
-    org.opencontainers.image.source="https://github.com/$VCS_REPO.git" \
-    org.opencontainers.image.authors="Contributors to the LLAMARA project"
 
 # We make four distinct layers so if there are application changes the library layers can be re-used
 COPY --chown=185 target/quarkus-app/lib/ /deployments/lib/
