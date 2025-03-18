@@ -39,7 +39,7 @@ jobs:
       - name: Maven Build
         uses: ./.github/actions/maven-build
         with:
-          command: "compile"
+          command: "package -DskipTests"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
