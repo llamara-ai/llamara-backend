@@ -8,6 +8,10 @@ on:
         description: "Name for the container image to build"
         required: false
         type: string
+      container-image-type:
+        description: "Type of the container image to build, e.g. Backend or Distribution"
+        required: false
+        type: string
     secrets:
       github-token:
         description: "GitHub token with packages:write, id-token:write permissions"
@@ -174,7 +178,9 @@ jobs:
           build-args: |
             BUILD_DATE=${{ steps.date.outputs.date }}
             VCS_REF=${{ github.sha }}
-            LLAMARA_VERSION=${{ steps.version.outputs.version }}
+            VCS_REPO=${{ github.repository }}
+            VERSION=${{ steps.version.outputs.version }}
+            NAME=${{ inputs.container-image-type }}
 
       # Sign the resulting Docker image digest.
       # This will only write to the public Rekor transparency log when the Docker
