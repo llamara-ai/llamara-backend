@@ -2,6 +2,7 @@ name: CI Build
 
 on:
   # Build main container:
+  workflow_call:
   workflow_dispatch:
   push:
     branches: ["main"]
@@ -27,6 +28,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          repository: llamara-ai/llamara-backend
+
+      - name: Download frontend build
+        if: github.repository == 'llamara-ai/llamara-distro'
+        uses: actions/download-artifact@v4
+        with:
+          name: vite-dist
+          path: src/main/resources/META-INF/resources
 
       - name: Maven Build
         uses: ./.github/actions/maven-build
@@ -60,7 +70,7 @@ jobs:
             target/jacoco-report
 
       - name: Trigger distro build
-        if: github.event_name != 'pull_request'
+        if: github.repository == 'llamara-ai/llamara-backend' && github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.DISTRO_DISPATCH_BUILD_TOKEN }}
@@ -89,6 +99,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          repository: llamara-ai/llamara-backend
 
       - name: Get Build Date
         id: date
