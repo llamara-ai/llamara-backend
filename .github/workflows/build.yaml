@@ -3,6 +3,11 @@ name: CI Build
 on:
   # Build main container:
   workflow_call:
+    inputs:
+      image-name:
+        description: 'The name of the Docker image to build'
+        required: false
+        type: string
   workflow_dispatch:
   push:
     branches: ["main"]
@@ -87,7 +92,7 @@ jobs:
       # Use docker.io for Docker Hub if empty
       REGISTRY: ghcr.io
       # github.repository as <account>/<repo>
-      IMAGE_NAME: ${{ github.repository }}
+      IMAGE_NAME: ${{ inputs.image-name || github.repository }}
 
     permissions:
       contents: read
