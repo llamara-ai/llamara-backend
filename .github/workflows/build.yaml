@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       image-name:
-        description: 'The name of the Docker image to build'
+        description: "The name of the Docker image to build"
         required: false
         type: string
   workflow_dispatch:
@@ -46,6 +46,7 @@ jobs:
       - name: Maven Build
         uses: ./.github/actions/maven-build
         with:
+          command: "compile"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
