@@ -22,6 +22,7 @@ package com.github.llamara.ai.internal.retrieval;
 import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
+import java.util.Collection;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -77,12 +78,16 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
                         // for each request and inject the identity
                         .dynamicFilter(
                                 query -> {
-                                    String metadataQuery =
-                                            PermissionMetadataMapper.identityToMetadataQuery(
+                                    Collection<String> metadataQueries =
+                                            PermissionMetadataMapper.identityToMetadataQueries(
                                                     identity);
-                                    Filter filter =
-                                            metadataKey(MetadataKeys.PERMISSION)
-                                                    .containsString(metadataQuery);
+                                    Filter filter = null;
+                                    for (String mq : metadataQueries) {
+                                        Filter f =
+                                                metadataKey(MetadataKeys.PERMISSION)
+                                                        .containsString(mq);
+                                        filter = (filter == null) ? f : filter.or(f);
+                                    }
                                     Log.tracef("Dynamic filter for query: %s", filter);
                                     return filter;
                                 })

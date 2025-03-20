@@ -21,6 +21,7 @@ package com.github.llamara.ai.internal.security;
 
 import com.github.llamara.ai.internal.security.user.User;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -88,7 +89,7 @@ class PermissionMetadataMapperTest {
     }
 
     @Test
-    void identityToMetadataQueryReturnsCorrectQueryStringForAuthenticatedIdentity() {
+    void identityToMetadataQueriesReturnsUserQueryForAuthenticatedIdentity() {
         // given
         SecurityIdentity identity =
                 QuarkusSecurityIdentity.builder()
@@ -102,12 +103,33 @@ class PermissionMetadataMapperTest {
                         + PermissionMetadataMapper.DELIMITER;
 
         // test
-        String query = PermissionMetadataMapper.identityToMetadataQuery(identity);
-        assertEquals(expected, query);
+        Collection<String> queries = PermissionMetadataMapper.identityToMetadataQueries(identity);
+        assertEquals(2, queries.size());
+        assertTrue(queries.contains(expected));
     }
 
     @Test
-    void identityToMetadataQueryReturnsCorrectQueryStringForAnonymousIdentity() {
+    void identityToMetadataQueriesReturnsAnyQueryForAuthenticatedIdentity() {
+        // given
+        SecurityIdentity identity =
+                QuarkusSecurityIdentity.builder()
+                        .setAnonymous(false)
+                        .setPrincipal(USER::getUsername)
+                        .addRole(Roles.USER)
+                        .build();
+        String expected =
+                PermissionMetadataMapper.DELIMITER
+                        + Users.ANY_USERNAME
+                        + PermissionMetadataMapper.DELIMITER;
+
+        // test
+        Collection<String> queries = PermissionMetadataMapper.identityToMetadataQueries(identity);
+        assertEquals(2, queries.size());
+        assertTrue(queries.contains(expected));
+    }
+
+    @Test
+    void identityToMetadataQueriesReturnsOnlyAnyQueryForAnonymousIdentity() {
         // given
         SecurityIdentity identity =
                 QuarkusSecurityIdentity.builder()
@@ -120,7 +142,8 @@ class PermissionMetadataMapperTest {
                         + PermissionMetadataMapper.DELIMITER;
 
         // test
-        String query = PermissionMetadataMapper.identityToMetadataQuery(identity);
-        assertEquals(expected, query);
+        Collection<String> queries = PermissionMetadataMapper.identityToMetadataQueries(identity);
+        assertEquals(1, queries.size());
+        assertTrue(queries.contains(expected));
     }
 }
