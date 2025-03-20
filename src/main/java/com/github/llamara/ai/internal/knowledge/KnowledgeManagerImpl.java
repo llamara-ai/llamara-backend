@@ -297,9 +297,6 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         }
 
         Permission existingPermission = knowledge.getPermission(user);
-        if (existingPermission == permission) {
-            return;
-        }
         if (existingPermission == Permission.OWNER) {
             throw new IllegalPermissionModificationException(
                     "Modifying owner's permission is not allowed");
