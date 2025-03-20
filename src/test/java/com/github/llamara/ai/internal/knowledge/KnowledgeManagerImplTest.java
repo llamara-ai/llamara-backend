@@ -27,6 +27,7 @@ import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissi
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.security.Permission;
+import com.github.llamara.ai.internal.security.Users;
 import com.github.llamara.ai.internal.security.user.TestUserRepository;
 import com.github.llamara.ai.internal.security.user.User;
 
@@ -505,6 +506,27 @@ class KnowledgeManagerImplTest {
                                     knowledgeId, OTHER_USER, Permission.READONLY));
             Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
             assertEquals(Permission.READONLY, knowledge.getPermission(OTHER_USER));
+        }
+
+        // regression test for https://github.com/llamara-ai/llamara-backend/issues/116
+        @Test
+        void setPermissionSetsExplicitPermissionIfImplicitPermissionAlreadySet()
+                throws IllegalPermissionModificationException, KnowledgeNotFoundException {
+            // setup
+            knowledgeRepository.setIngestionMetadata(
+                    knowledgeId, IngestionStatus.SUCCEEDED, TOKEN_COUNT);
+            knowledgeManager.setPermission(knowledgeId, Users.ANY, Permission.READONLY);
+
+            // test
+            assertDoesNotThrow(
+                    () ->
+                            knowledgeManager.setPermission(
+                                    knowledgeId, OTHER_USER, Permission.READONLY));
+            Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
+            // check if permission is properly evaluated
+            assertEquals(Permission.READONLY, knowledge.getPermission(OTHER_USER));
+            // check if explicit permission has been set
+            assertEquals(Permission.READONLY, knowledge.getPermissions().get(OTHER_USER));
         }
 
         @Test
