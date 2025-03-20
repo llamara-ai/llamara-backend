@@ -23,6 +23,8 @@ import com.github.llamara.ai.internal.MetadataKeys;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.security.user.User;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -59,16 +61,18 @@ public final class PermissionMetadataMapper {
     }
 
     /**
-     * Convert a {@link SecurityIdentity} to the query string to check the {@link
+     * Convert a {@link SecurityIdentity} to the query strings to check the {@link
      * MetadataKeys#PERMISSION} metadata entry for.
      *
      * @param identity the identity to convert
-     * @return the query string
+     * @return the query strings
      */
-    public static String identityToMetadataQuery(SecurityIdentity identity) {
+    public static Collection<String> identityToMetadataQueries(SecurityIdentity identity) {
+        String anyQuery = DELIMITER + Users.ANY_USERNAME + DELIMITER;
         if (identity.isAnonymous()) {
-            return DELIMITER + Users.ANY_USERNAME + DELIMITER;
+            return List.of(anyQuery);
         }
-        return DELIMITER + identity.getPrincipal().getName() + DELIMITER;
+        String userQuery = DELIMITER + identity.getPrincipal().getName() + DELIMITER;
+        return List.of(userQuery, anyQuery);
     }
 }
