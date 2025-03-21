@@ -38,13 +38,12 @@ import jakarta.inject.Inject;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.mistralai.MistralAiChatModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
 import io.quarkiverse.langchain4j.ai.runtime.gemini.AiGeminiChatLanguageModel;
 import io.quarkiverse.langchain4j.azure.openai.AzureOpenAiChatModel;
-import io.quarkiverse.langchain4j.ollama.OllamaChatLanguageModel;
-import io.quarkiverse.langchain4j.ollama.Options;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.Startup;
 
@@ -167,15 +166,12 @@ class ChatModelProviderImpl implements ChatModelProvider {
                             new IllegalArgumentException(
                                     "Base URL is required for Ollama chat model."));
                 }
-                yield OllamaChatLanguageModel.builder()
+                yield OllamaChatModel.builder()
                         .baseUrl(config.baseUrl().get()) // NOSONAR: we have checked for empty
-                        .model(config.model())
-                        .options(
-                                Options.builder()
-                                        .temperature(config.temperature())
-                                        .topP(config.topP().orElse(null))
-                                        .repeatPenalty(config.frequencyPenalty().orElse(null))
-                                        .build())
+                        .modelName(config.model())
+                        .temperature(config.temperature())
+                        .topP(config.topP().orElse(null))
+                        .repeatPenalty(config.frequencyPenalty().orElse(null))
                         .build();
             }
             case OPENAI ->
