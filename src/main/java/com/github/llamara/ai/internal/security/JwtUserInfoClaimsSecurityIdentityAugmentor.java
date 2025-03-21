@@ -60,6 +60,8 @@ class JwtUserInfoClaimsSecurityIdentityAugmentor implements SecurityIdentityAugm
         if (principal.containsClaim(Claims.full_name.name())) {
             builder.addAttribute(
                     Claims.full_name.name(), principal.getClaim(Claims.full_name.name()));
+        } else if (principal.containsClaim("name")) {
+            builder.addAttribute(Claims.full_name.name(), principal.getClaim("name"));
         }
 
         return Uni.createFrom().item(builder.build());
