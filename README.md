@@ -72,7 +72,7 @@ This application requires an OIDC authentication provider to be set up.
 The OIDC provider requires the `auth-server-url` and `client-id` to be set in the `application.yaml` file and the `QUARKUS_OIDC_CREDENTIALS_SECRET` environment variables.
 For Keycloak, you need to add the `microprofile-jwt` and `profile` scopes for the Quarkus client, see [Keycloak Server Documentation](https://www.keycloak.org/docs/latest/server_admin/#protocol).
 
-You need to add the `full_name` JWT claim to the access token in order to display the full name in the frontend.
+You need to add the `full_name` or `name` JWT claim to the access token in order to display the full name in the frontend.
 You can optionally add the `preferred_username` JWT claim to the access token in order to specify a username different from the technical user ID of some systems.
 
 ### AI Model Provider

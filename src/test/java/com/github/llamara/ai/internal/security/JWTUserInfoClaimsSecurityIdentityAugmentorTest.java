@@ -93,7 +93,7 @@ class JWTUserInfoClaimsSecurityIdentityAugmentorTest {
     }
 
     @Test
-    void addsFullNameAsAttribute() throws InvalidJwtException {
+    void addsFullNameClaimAsAttribute() throws InvalidJwtException {
         // given
         String fullName = "full_name";
         SecurityIdentity identity =
@@ -104,6 +104,30 @@ class JWTUserInfoClaimsSecurityIdentityAugmentorTest {
                                         null,
                                         JwtClaims.parse(
                                                 String.format("{\"full_name\":\"%s\"}", fullName))))
+                        .build();
+
+        // when
+        Uni<SecurityIdentity> uni = augmentor.augment(identity, null);
+
+        // then
+        UniAssertSubscriber<SecurityIdentity> subscriber =
+                uni.subscribe().withSubscriber(UniAssertSubscriber.create());
+        SecurityIdentity result = subscriber.assertCompleted().getItem();
+        assertEquals(fullName, result.getAttribute(Claims.full_name.name()));
+    }
+
+    @Test
+    void fallsBackToNameClaimForFullNameAttribute() throws InvalidJwtException {
+        // given
+        String fullName = "given_name";
+        SecurityIdentity identity =
+                IDENTITY_BUILDER
+                        .get()
+                        .setPrincipal(
+                                new DefaultJWTCallerPrincipal(
+                                        null,
+                                        JwtClaims.parse(
+                                                String.format("{\"name\":\"%s\"}", fullName))))
                         .build();
 
         // when
