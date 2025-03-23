@@ -114,6 +114,9 @@ public class ChatModel {
                                                 c.metadata()
                                                         .get(ContentMetadata.EMBEDDING_ID)
                                                         .toString()),
+                                        c.textSegment()
+                                                .metadata()
+                                                .getInteger(EmbeddingMetadataKeys.PAGE),
                                         c.textSegment().text()))
                 .toList();
     }
