@@ -19,7 +19,8 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.CommonMetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
@@ -106,7 +107,7 @@ public interface KnowledgeManager {
      * specify the owner of the added knowledge.
      *
      * <p>Implementations should set {@link Permission#OWNER} for the given {@link User} and add the
-     * given user to the embedding's {@link MetadataKeys#PERMISSION} metadata.
+     * given user to the embedding's {@link EmbeddingMetadataKeys#PERMISSION} metadata.
      *
      * @param file the file to add
      * @param fileName the name of the file to add
@@ -145,7 +146,7 @@ public interface KnowledgeManager {
     /**
      * Set the {@link Permission} for a {@link User} for a knowledge specified by its id.
      *
-     * <p>Implementation should also update the embeddings' {@link MetadataKeys#PERMISSION}
+     * <p>Implementation should also update the embeddings' {@link EmbeddingMetadataKeys#PERMISSION}
      * metadata.
      *
      * <p>Implementations must not allow the following permission changes:
@@ -168,7 +169,7 @@ public interface KnowledgeManager {
     /**
      * Remove the permission for a {@link User} for a knowledge specified by its id.
      *
-     * <p>Implementation should also update the embeddings' {@link MetadataKeys#PERMISSION}
+     * <p>Implementation should also update the embeddings' {@link EmbeddingMetadataKeys#PERMISSION}
      * metadata.
      *
      * @param id persistent unique id of knowledge
@@ -237,7 +238,7 @@ public interface KnowledgeManager {
      *
      * @param fileName the file name
      * @param content the file content as {@link InputStream}
-     * @param metadata the metadata of the file, see {@link MetadataKeys} for possible keys
+     * @param metadata the metadata of the file, see {@link CommonMetadataKeys} for possible keys
      */
     record NamedFileContainer(String fileName, InputStream content, Map<String, String> metadata) {}
 }

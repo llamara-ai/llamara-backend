@@ -21,7 +21,8 @@ package com.github.llamara.ai.internal.knowledge;
 
 import static com.github.llamara.ai.internal.Utils.generateChecksum;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.CommonMetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.StartupException;
 import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
@@ -397,18 +398,22 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     }
 
     private Map<String, String> createFileMetadata(String checksum, String contentType) {
-        return Map.of(MetadataKeys.CHECKSUM, checksum, MetadataKeys.CONTENT_TYPE, contentType);
+        return Map.of(
+                CommonMetadataKeys.CHECKSUM,
+                checksum,
+                CommonMetadataKeys.CONTENT_TYPE,
+                contentType);
     }
 
     private Map<String, String> createEmbeddingMetadata(Knowledge knowledge) {
         return Map.of(
-                MetadataKeys.KNOWLEDGE_ID,
+                EmbeddingMetadataKeys.KNOWLEDGE_ID,
                 knowledge.getId().toString(),
-                MetadataKeys.CHECKSUM,
+                CommonMetadataKeys.CHECKSUM,
                 knowledge.getChecksum(),
-                MetadataKeys.CONTENT_TYPE,
+                CommonMetadataKeys.CONTENT_TYPE,
                 knowledge.getContentType(),
-                MetadataKeys.PERMISSION,
+                EmbeddingMetadataKeys.PERMISSION,
                 PermissionMetadataMapper.permissionsToMetadataEntry(knowledge.getPermissions()));
     }
 
@@ -418,7 +423,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
      * @param id the id of the knowledge to remove embeddings for
      */
     private void deleteEmbeddings(UUID id) {
-        Filter filter = new IsEqualTo(MetadataKeys.KNOWLEDGE_ID, id);
+        Filter filter = new IsEqualTo(EmbeddingMetadataKeys.KNOWLEDGE_ID, id);
         embeddingStore.removeAll(filter);
         Log.infof("Deleted embeddings for knowledge '%s'.", id);
     }

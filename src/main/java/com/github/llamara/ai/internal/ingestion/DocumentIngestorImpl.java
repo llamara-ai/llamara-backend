@@ -19,7 +19,7 @@
  */
 package com.github.llamara.ai.internal.ingestion;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.ingestion.transformer.document.DocumentTransformerPipeline;
 import com.github.llamara.ai.internal.ingestion.transformer.textsegment.TextSegmentTransformerPipeline;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
@@ -71,9 +71,9 @@ class DocumentIngestorImpl implements DocumentIngestor {
     @Override
     public void ingestDocument(Document document) {
         // Set metadata that is independent of the document's source
-        document.metadata().put(MetadataKeys.INGESTED_AT, Instant.now().toString());
+        document.metadata().put(EmbeddingMetadataKeys.INGESTED_AT, Instant.now().toString());
 
-        String knowledgeId = document.metadata().getString(MetadataKeys.KNOWLEDGE_ID);
+        String knowledgeId = document.metadata().getString(EmbeddingMetadataKeys.KNOWLEDGE_ID);
         Uni.createFrom()
                 // Specify blocking operation
                 .item(
@@ -99,14 +99,16 @@ class DocumentIngestorImpl implements DocumentIngestor {
                                 Log.infof("Successfully ingested document '%s'.", knowledgeId);
                             }
                             knowledgeManager.setKnowledgeIngestionMetadata(
-                                    document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
+                                    document.metadata().getUUID(EmbeddingMetadataKeys.KNOWLEDGE_ID),
                                     IngestionStatus.SUCCEEDED,
                                     tokenCount);
                         },
                         throwable -> {
-                            Log.errorf("Failed to ingest document '%s'.", knowledgeId, throwable);
+                            Log.error(
+                                    String.format("Failed to ingest document '%s'.", knowledgeId),
+                                    throwable);
                             knowledgeManager.setKnowledgeIngestionMetadata(
-                                    document.metadata().getUUID(MetadataKeys.KNOWLEDGE_ID),
+                                    document.metadata().getUUID(EmbeddingMetadataKeys.KNOWLEDGE_ID),
                                     IngestionStatus.FAILED,
                                     null);
                         });

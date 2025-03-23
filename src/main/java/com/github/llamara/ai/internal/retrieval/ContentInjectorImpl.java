@@ -20,7 +20,7 @@
 package com.github.llamara.ai.internal.retrieval;
 
 import com.github.llamara.ai.config.RetrievalConfig;
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +66,7 @@ class ContentInjectorImpl implements ContentInjector {
         this.promptTemplate = PromptTemplate.from(config.promptTemplate());
         this.noContentsPromptTemplate =
                 PromptTemplate.from(config.missingKnowledgePromptTemplate());
-        this.textSegmentMetadataToInclude = List.of(MetadataKeys.KNOWLEDGE_ID);
+        this.textSegmentMetadataToInclude = List.of(EmbeddingMetadataKeys.KNOWLEDGE_ID);
         this.contentMetadataToInclude = List.of(ContentMetadata.EMBEDDING_ID);
     }
 

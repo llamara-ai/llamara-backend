@@ -19,7 +19,7 @@
  */
 package com.github.llamara.ai.internal.retrieval;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
 import java.util.Collection;
@@ -84,7 +84,7 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
                                     Filter filter = null;
                                     for (String mq : metadataQueries) {
                                         Filter f =
-                                                metadataKey(MetadataKeys.PERMISSION)
+                                                metadataKey(EmbeddingMetadataKeys.PERMISSION)
                                                         .containsString(mq);
                                         filter = (filter == null) ? f : filter.or(f);
                                     }

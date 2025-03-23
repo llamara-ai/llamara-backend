@@ -17,18 +17,22 @@
  * limitations under the License.
  * #L%
  */
-package com.github.llamara.ai.internal.knowledge.storage;
-
-import com.github.llamara.ai.internal.CommonMetadataKeys;
-
-import java.io.InputStream;
-import java.util.Map;
+package com.github.llamara.ai.internal;
 
 /**
- * Container for a file, containing the file content and metadata.
+ * Constant class for common metadata keys.
  *
- * @param content the file content as {@link InputStream}
- * @param metadata the metadata of the file, see {@link CommonMetadataKeys} for possible keys
  * @author Florian Hotze - Initial contribution
  */
-public record FileContainer(InputStream content, Map<String, String> metadata) {}
+public final class CommonMetadataKeys {
+    private CommonMetadataKeys() {}
+
+    /** The checksum of the knowledge source. */
+    public static final String CHECKSUM = "checksum";
+
+    /** The content type of the document. */
+    public static final String CONTENT_TYPE = "content_type";
+
+    /** The number of segments the document is split into. */
+    public static final String SEGMENTS = "segments";
+}

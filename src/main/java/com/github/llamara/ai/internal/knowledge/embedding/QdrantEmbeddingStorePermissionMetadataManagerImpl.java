@@ -21,7 +21,7 @@ package com.github.llamara.ai.internal.knowledge.embedding;
 
 import com.github.llamara.ai.config.EnvironmentVariables;
 import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.StartupException;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
@@ -94,10 +94,10 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
                         .get();
                 Log.infof(
                         "Enabling %s payload index for Qdrant collection '%s' ...",
-                        MetadataKeys.KNOWLEDGE_ID, collectionName);
+                        EmbeddingMetadataKeys.KNOWLEDGE_ID, collectionName);
                 client.createPayloadIndexAsync(
                                 collectionName,
-                                MetadataKeys.KNOWLEDGE_ID,
+                                EmbeddingMetadataKeys.KNOWLEDGE_ID,
                                 Collections.PayloadSchemaType.Uuid,
                                 null,
                                 null,
@@ -121,12 +121,13 @@ class QdrantEmbeddingStorePermissionMetadataManagerImpl
                 Points.Filter.newBuilder()
                         .addMust(
                                 matchKeyword(
-                                        MetadataKeys.KNOWLEDGE_ID, knowledge.getId().toString()))
+                                        EmbeddingMetadataKeys.KNOWLEDGE_ID,
+                                        knowledge.getId().toString()))
                         .build();
         client.setPayloadAsync(
                 collectionName,
                 Map.of(
-                        MetadataKeys.PERMISSION,
+                        EmbeddingMetadataKeys.PERMISSION,
                         value(
                                 PermissionMetadataMapper.permissionsToMetadataEntry(
                                         knowledge.getPermissions()))),

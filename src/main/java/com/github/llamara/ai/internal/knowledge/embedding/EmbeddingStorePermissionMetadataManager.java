@@ -19,13 +19,14 @@
  */
 package com.github.llamara.ai.internal.knowledge.embedding;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.StartupException;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
 /**
- * Interface defining the API for managing {@link MetadataKeys#PERMISSION} metadata of embeddings.
+ * Interface defining the API for managing {@link EmbeddingMetadataKeys#PERMISSION} metadata of
+ * embeddings.
  *
  * @author Florian Hotze - Initial contribution
  */
@@ -43,7 +44,8 @@ public interface EmbeddingStorePermissionMetadataManager {
     void checkConnectionAndInit() throws StartupException;
 
     /**
-     * Update the {@link MetadataKeys#PERMISSION} metadata of the embeddings of the given knowledge.
+     * Update the {@link EmbeddingMetadataKeys#PERMISSION} metadata of the embeddings of the given
+     * knowledge.
      *
      * <p>Implementations have to use {@link PermissionMetadataMapper#permissionsToMetadataEntry} to
      * convert the permissions to a metadata entry.

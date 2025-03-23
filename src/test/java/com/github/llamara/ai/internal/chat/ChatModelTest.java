@@ -20,7 +20,7 @@
 package com.github.llamara.ai.internal.chat;
 
 import com.github.llamara.ai.config.chat.ChatModelConfig;
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
 import com.github.llamara.ai.internal.chat.response.ChatResponseRecord;
@@ -199,7 +199,9 @@ public class ChatModelTest {
                         TextSegment.from(
                                 "Text of unused knowledge.",
                                 Metadata.from(
-                                        Map.of(MetadataKeys.KNOWLEDGE_ID, UNUSED_KNOWLEDGE_ID))),
+                                        Map.of(
+                                                EmbeddingMetadataKeys.KNOWLEDGE_ID,
+                                                UNUSED_KNOWLEDGE_ID))),
                         Map.of(ContentMetadata.EMBEDDING_ID, UUID.randomUUID()));
 
         private static final String PROMPT = "Hello retrieval augmented generation!";
