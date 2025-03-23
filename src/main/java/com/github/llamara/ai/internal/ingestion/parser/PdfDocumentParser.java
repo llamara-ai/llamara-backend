@@ -62,9 +62,9 @@ public class PdfDocumentParser implements DocumentParser {
             }
             return Document.from(text);
         } catch (IOException e) {
-            throw new RuntimeException(
-                    e); // NOSONAR: we don't expect an IOException here, so rethrow it as
-            // RuntimeException
+            throw new RuntimeException( // NOSONAR: we don't expect an IOException here, so rethrow
+                    // it as RuntimeException
+                    e);
         }
     }
 }

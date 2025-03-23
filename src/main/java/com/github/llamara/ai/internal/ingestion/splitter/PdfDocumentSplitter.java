@@ -86,7 +86,7 @@ class PdfDocumentSplitter implements DocumentSplitter {
      * @param page page of the segment within the document
      * @param index index of the segment within the document
      */
-    static TextSegment createSegment(String text, Document document, int page, int index) {
+    private static TextSegment createSegment(String text, Document document, int page, int index) {
         Metadata metadata =
                 document.metadata().copy().put(PAGE, page).put(INDEX, String.valueOf(index));
         return TextSegment.from(text, metadata);

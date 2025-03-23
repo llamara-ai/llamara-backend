@@ -46,11 +46,11 @@ import dev.langchain4j.data.segment.TextSegment;
 @ApplicationScoped
 class DocumentSplitterImpl implements DocumentSplitter {
     private final PdfDocumentSplitter pdfSplitter;
-    private final DocumentSplitter delegate;
+    private final DocumentSplitter configuredSplitter;
 
     @Inject
     DocumentSplitterImpl(DocumentSplitterConfig config) {
-        this.delegate =
+        this.configuredSplitter =
                 switch (config.type()) {
                     case LINE ->
                             new DocumentByLineSplitter(
@@ -62,7 +62,7 @@ class DocumentSplitterImpl implements DocumentSplitter {
                             DocumentSplitters.recursive(
                                     config.maxSegmentSize(), config.maxOverlapSize());
                 };
-        this.pdfSplitter = new PdfDocumentSplitter(delegate);
+        this.pdfSplitter = new PdfDocumentSplitter(configuredSplitter);
     }
 
     @Override
@@ -72,6 +72,6 @@ class DocumentSplitterImpl implements DocumentSplitter {
             return pdfSplitter.split(document);
         }
 
-        return delegate.split(document);
+        return configuredSplitter.split(document);
     }
 }
