@@ -21,12 +21,19 @@ package com.github.llamara.ai.internal.chat.response;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Record for the source of a RAG response.
  *
  * @param knowledgeId the knowledge ID the source belongs to
  * @param embeddingId the embedding ID of the source
+ * @param page the page within the source
  * @param content the content of the source
  * @author Florian Hotze - Initial contribution
  */
-public record RagSourceRecord(UUID knowledgeId, UUID embeddingId, String content) {}
+public record RagSourceRecord(
+        UUID knowledgeId,
+        UUID embeddingId,
+        @JsonInclude(JsonInclude.Include.NON_NULL) Integer page,
+        String content) {}

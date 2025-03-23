@@ -19,7 +19,7 @@
  */
 package com.github.llamara.ai.internal.ingestion.transformer.document;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 
 import java.util.regex.Pattern;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -66,7 +66,9 @@ class CleaningByRegexDocumentTransformer implements DocumentTransformer {
         // finally, reduce the number of empty lines
         Log.debugf(
                 "Reduced text size of '%s' from %d to %d characters.",
-                document.metadata().getString(MetadataKeys.KNOWLEDGE_ID), size, text.length());
+                document.metadata().getString(EmbeddingMetadataKeys.KNOWLEDGE_ID),
+                size,
+                text.length());
         return Document.from(text, document.metadata());
     }
 }

@@ -19,7 +19,7 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
@@ -340,7 +340,7 @@ class KnowledgeManagerImplTest {
         void deleteKnowledgeDeletesEmbeddings()
                 throws UnexpectedFileStorageFailureException, KnowledgeNotFoundException {
             knowledgeManager.deleteKnowledge(knowledgeId);
-            Filter filter = new IsEqualTo(MetadataKeys.KNOWLEDGE_ID, knowledgeId);
+            Filter filter = new IsEqualTo(EmbeddingMetadataKeys.KNOWLEDGE_ID, knowledgeId);
             verify(embeddingStore, times(1)).removeAll(filter);
         }
 
@@ -403,7 +403,7 @@ class KnowledgeManagerImplTest {
                         IOException {
             knowledgeManager.updateSource(
                     knowledgeId, UPDATED_FILE, UPDATED_FILE_NAME, UPDATED_FILE_MIME_TYPE);
-            Filter filter = new IsEqualTo(MetadataKeys.KNOWLEDGE_ID, knowledgeId);
+            Filter filter = new IsEqualTo(EmbeddingMetadataKeys.KNOWLEDGE_ID, knowledgeId);
             verify(embeddingStore, times(1)).removeAll(filter);
         }
 

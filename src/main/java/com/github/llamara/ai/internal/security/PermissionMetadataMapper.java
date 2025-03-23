@@ -19,7 +19,7 @@
  */
 package com.github.llamara.ai.internal.security;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.security.user.User;
 
@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 import io.quarkus.security.identity.SecurityIdentity;
 
 /**
- * Mapper for converting between {@link Knowledge} permissions, {@link MetadataKeys#PERMISSION}
- * metadata and usernames of users with read permission.
+ * Mapper for converting between {@link Knowledge} permissions, {@link
+ * EmbeddingMetadataKeys#PERMISSION} metadata and usernames of users with read permission.
  *
  * @author Florian Hotze - Initial contribution
  */
@@ -42,7 +42,8 @@ public final class PermissionMetadataMapper {
     private PermissionMetadataMapper() {}
 
     /**
-     * Convert {@link Knowledge} permissions to the {@link MetadataKeys#PERMISSION} metadata entry.
+     * Convert {@link Knowledge} permissions to the {@link EmbeddingMetadataKeys#PERMISSION}
+     * metadata entry.
      *
      * @param permissions the permissions to convert
      * @return the metadata entry
@@ -62,7 +63,7 @@ public final class PermissionMetadataMapper {
 
     /**
      * Convert a {@link SecurityIdentity} to the query strings to check the {@link
-     * MetadataKeys#PERMISSION} metadata entry for.
+     * EmbeddingMetadataKeys#PERMISSION} metadata entry for.
      *
      * @param identity the identity to convert
      * @return the query strings

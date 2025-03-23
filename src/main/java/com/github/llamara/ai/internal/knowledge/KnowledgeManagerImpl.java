@@ -21,11 +21,13 @@ package com.github.llamara.ai.internal.knowledge;
 
 import static com.github.llamara.ai.internal.Utils.generateChecksum;
 
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.CommonMetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.StartupException;
 import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
+import com.github.llamara.ai.internal.ingestion.parser.PdfDocumentParser;
 import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
 import com.github.llamara.ai.internal.knowledge.storage.FileContainer;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
@@ -397,18 +399,22 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     }
 
     private Map<String, String> createFileMetadata(String checksum, String contentType) {
-        return Map.of(MetadataKeys.CHECKSUM, checksum, MetadataKeys.CONTENT_TYPE, contentType);
+        return Map.of(
+                CommonMetadataKeys.CHECKSUM,
+                checksum,
+                CommonMetadataKeys.CONTENT_TYPE,
+                contentType);
     }
 
     private Map<String, String> createEmbeddingMetadata(Knowledge knowledge) {
         return Map.of(
-                MetadataKeys.KNOWLEDGE_ID,
+                EmbeddingMetadataKeys.KNOWLEDGE_ID,
                 knowledge.getId().toString(),
-                MetadataKeys.CHECKSUM,
+                CommonMetadataKeys.CHECKSUM,
                 knowledge.getChecksum(),
-                MetadataKeys.CONTENT_TYPE,
+                CommonMetadataKeys.CONTENT_TYPE,
                 knowledge.getContentType(),
-                MetadataKeys.PERMISSION,
+                EmbeddingMetadataKeys.PERMISSION,
                 PermissionMetadataMapper.permissionsToMetadataEntry(knowledge.getPermissions()));
     }
 
@@ -418,7 +424,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
      * @param id the id of the knowledge to remove embeddings for
      */
     private void deleteEmbeddings(UUID id) {
-        Filter filter = new IsEqualTo(MetadataKeys.KNOWLEDGE_ID, id);
+        Filter filter = new IsEqualTo(EmbeddingMetadataKeys.KNOWLEDGE_ID, id);
         embeddingStore.removeAll(filter);
         Log.infof("Deleted embeddings for knowledge '%s'.", id);
     }
@@ -431,11 +437,14 @@ class KnowledgeManagerImpl implements KnowledgeManager {
      */
     private void ingestToStore(Path file, Map<String, String> metadata) {
         DocumentSource ds = FileSystemSource.from(file);
-        // Use Apache Tika as document parser, as it can automatically detect and parse a large
-        // number of file formats.
-        // BTW: Tika is using Apache PDFBox and Apache POI under the hood.
+        // Use our own Apache PDFBox document parser implementation for PDF files to embed page
+        // markers.
+        // Fallback to Apache Tika as document parser, as it can automatically detect and parse a
+        // large
+        // number of file formats. Tika is using Apache PDFBox and Apache POI under the hood.
         // https://docs.langchain4j.dev/tutorials/rag/#document-parser
-        DocumentParser parser = new ApacheTikaDocumentParser();
+        boolean isPdf = "application/pdf".equals(metadata.get(CommonMetadataKeys.CONTENT_TYPE));
+        DocumentParser parser = isPdf ? new PdfDocumentParser() : new ApacheTikaDocumentParser();
         Document document = DocumentLoader.load(ds, parser);
         document.metadata().remove(FILE_NAME);
         document.metadata().remove(ABSOLUTE_DIRECTORY_PATH);

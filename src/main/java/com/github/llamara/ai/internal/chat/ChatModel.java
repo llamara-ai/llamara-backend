@@ -20,7 +20,7 @@
 package com.github.llamara.ai.internal.chat;
 
 import com.github.llamara.ai.config.chat.ChatModelConfig;
-import com.github.llamara.ai.internal.MetadataKeys;
+import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
 import com.github.llamara.ai.internal.chat.history.ChatMessageRecord;
 import com.github.llamara.ai.internal.chat.response.ChatResponseRecord;
@@ -109,11 +109,14 @@ public class ChatModel {
                                 new RagSourceRecord(
                                         c.textSegment()
                                                 .metadata()
-                                                .getUUID(MetadataKeys.KNOWLEDGE_ID),
+                                                .getUUID(EmbeddingMetadataKeys.KNOWLEDGE_ID),
                                         UUID.fromString(
                                                 c.metadata()
                                                         .get(ContentMetadata.EMBEDDING_ID)
                                                         .toString()),
+                                        c.textSegment()
+                                                .metadata()
+                                                .getInteger(EmbeddingMetadataKeys.PAGE),
                                         c.textSegment().text()))
                 .toList();
     }

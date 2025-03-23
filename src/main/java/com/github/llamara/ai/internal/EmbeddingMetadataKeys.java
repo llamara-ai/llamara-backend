@@ -22,37 +22,30 @@ package com.github.llamara.ai.internal;
 import com.github.llamara.ai.internal.knowledge.Knowledge;
 
 /**
- * Constant class for metadata keys.
+ * Constant class for {@link dev.langchain4j.data.embedding.Embedding} metadata keys.
  *
  * @author Florian Hotze - Initial contribution
  */
-public final class MetadataKeys {
-    private MetadataKeys() {}
+public final class EmbeddingMetadataKeys {
+    private EmbeddingMetadataKeys() {}
 
-    /**
-     * The {@link java.util.UUID} as string of the {@link Knowledge}.
-     *
-     * <p>Only for embeddings.
-     */
+    /** The {@link java.util.UUID} as string of the {@link Knowledge}. */
     public static final String KNOWLEDGE_ID = "knowledge_id";
 
-    /** The checksum of the knowledge source. */
-    public static final String CHECKSUM = "checksum";
-
-    /**
-     * The ingestion timestamp of the document as {@link java.time.Instant} as string.
-     *
-     * <p>Only for embeddings.
-     */
+    /** The ingestion timestamp of the document as {@link java.time.Instant} as string. */
     public static final String INGESTED_AT = "ingested_at";
 
-    /** The content type of the document. */
-    public static final String CONTENT_TYPE = "content_type";
+    /** The comma-separated list of usernames that have permission to access the knowledge. */
+    public static final String PERMISSION = "permission";
 
     /**
-     * The comma-separated list of usernames that have permission to access the knowledge.
-     *
-     * <p>Only for embeddings.
+     * The page number of the {@link dev.langchain4j.data.segment.TextSegment} within the document.
      */
-    public static final String PERMISSION = "permission";
+    public static final String PAGE = "page";
+
+    /**
+     * The index representing the {@link dev.langchain4j.data.segment.TextSegment} position within
+     * the document.
+     */
+    public static final String INDEX = "index";
 }
