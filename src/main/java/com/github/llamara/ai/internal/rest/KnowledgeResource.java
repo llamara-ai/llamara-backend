@@ -42,6 +42,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -61,6 +62,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.jboss.resteasy.reactive.Cache;
 import org.jboss.resteasy.reactive.ResponseStatus;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
@@ -72,7 +74,6 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
  */
 @Path("/rest/knowledge")
 class KnowledgeResource {
-
     private final UserKnowledgeManager knowledgeManager;
 
     @Inject
@@ -133,6 +134,7 @@ class KnowledgeResource {
     @GET
     @Path("/{id}/file")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Cache(noTransform = true, mustRevalidate = true, noCache = true)
     @Operation(
             operationId = "getKnowledgeFile",
             summary = "Get the source file of a single knowledge.")
@@ -147,14 +149,21 @@ class KnowledgeResource {
                             name = "id",
                             description = "UID of the knowledge to get the source file of",
                             required = true)
-                    UUID id)
+                    UUID id,
+            @HeaderParam(HttpHeaders.IF_NONE_MATCH) String ifNoneMatch)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
+        Knowledge knowledge = knowledgeManager.getKnowledge(id);
+        if (knowledge.getChecksum().equals(ifNoneMatch)) {
+            return Response.notModified().build();
+        }
+
         KnowledgeManager.NamedFileContainer fileContainer = knowledgeManager.getFile(id);
 
         return Response.ok(fileContainer.content())
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + fileContainer.fileName() + "\"")
+                .header(HttpHeaders.ETAG, knowledge.getChecksum())
                 .build();
     }
 
