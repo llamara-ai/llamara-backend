@@ -26,6 +26,10 @@ import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
@@ -41,15 +45,17 @@ class PdfDocumentSplitterTest {
             DocumentSplitters.recursive(Integer.MAX_VALUE, 0);
 
     @Test
-    void splitsTestContent() {
+    void splitsTestContentByPageAndUsesSubSplitter() {
         // given
-        DocumentSplitter splitter = new PdfDocumentSplitter(SUB_SPLITTER);
+        DocumentSplitter subSplitterSpy = spy(SUB_SPLITTER);
+        DocumentSplitter splitter = new PdfDocumentSplitter(subSplitterSpy);
 
         // when
         List<TextSegment> segments = splitter.split(Document.from(TEST_PDF_CONTENT));
 
         // then
         assertEquals(3, segments.size());
+        verify(subSplitterSpy, times(3)).split(any());
     }
 
     @Test
