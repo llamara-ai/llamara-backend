@@ -27,6 +27,7 @@ import com.github.llamara.ai.internal.StartupException;
 import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
+import com.github.llamara.ai.internal.ingestion.parser.PdfDocumentParser;
 import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
 import com.github.llamara.ai.internal.knowledge.storage.FileContainer;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
@@ -436,11 +437,14 @@ class KnowledgeManagerImpl implements KnowledgeManager {
      */
     private void ingestToStore(Path file, Map<String, String> metadata) {
         DocumentSource ds = FileSystemSource.from(file);
-        // Use Apache Tika as document parser, as it can automatically detect and parse a large
-        // number of file formats.
-        // BTW: Tika is using Apache PDFBox and Apache POI under the hood.
+        // Use our own Apache PDFBox document parser implementation for PDF files to embed page
+        // markers.
+        // Fallback to Apache Tika as document parser, as it can automatically detect and parse a
+        // large
+        // number of file formats. Tika is using Apache PDFBox and Apache POI under the hood.
         // https://docs.langchain4j.dev/tutorials/rag/#document-parser
-        DocumentParser parser = new ApacheTikaDocumentParser();
+        boolean isPdf = "application/pdf".equals(metadata.get(CommonMetadataKeys.CONTENT_TYPE));
+        DocumentParser parser = isPdf ? new PdfDocumentParser() : new ApacheTikaDocumentParser();
         Document document = DocumentLoader.load(ds, parser);
         document.metadata().remove(FILE_NAME);
         document.metadata().remove(ABSOLUTE_DIRECTORY_PATH);
