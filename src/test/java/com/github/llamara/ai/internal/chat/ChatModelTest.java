@@ -87,13 +87,6 @@ public class ChatModelTest {
         model = null;
     }
 
-    void setupAiServiceChat(String prompt, String response) {
-        Result<String> result =
-                Result.<String>builder().content(response).sources(Collections.emptyList()).build();
-        when(aiService.chat(sessionId, prompt)).thenReturn(result);
-        when(aiService.chatWithoutSystemMessage(sessionId, prompt)).thenReturn(result);
-    }
-
     @Nested
     class WithoutSources {
         private static final String PROMPT = "Hello world!";
