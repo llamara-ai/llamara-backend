@@ -4,6 +4,10 @@ on:
   # Build main container:
   workflow_call:
     inputs:
+      ref:
+        description: "The branch, tag or SHA to checkout"
+        required: true
+        type: string
       container-image-name:
         description: "Name for the container image to build"
         required: false
@@ -43,6 +47,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: llamara-ai/llamara-backend
+          ref: ${{ inputs.ref }}
 
       - name: Download frontend build
         if: github.repository == 'llamara-ai/llamara-distro'
@@ -114,6 +119,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: llamara-ai/llamara-backend
+          ref: ${{ inputs.ref }}
 
       # Install the cosign tool
       # https://github.com/sigstore/cosign-installer
