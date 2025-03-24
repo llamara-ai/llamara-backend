@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import dev.langchain4j.http.client.jdk.JdkHttpClient;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.mistralai.MistralAiChatModel;
@@ -167,6 +168,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                                     "Base URL is required for Ollama chat model."));
                 }
                 yield OllamaChatModel.builder()
+                        .httpClientBuilder(JdkHttpClient.builder())
                         .baseUrl(config.baseUrl().get()) // NOSONAR: we have checked for empty
                         .modelName(config.model())
                         .temperature(config.temperature())
