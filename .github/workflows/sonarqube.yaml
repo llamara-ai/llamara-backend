@@ -11,8 +11,9 @@ on:
 jobs:
   build:
     name: Build & Analyze
-
     runs-on: "ubuntu-24.04"
+    # typical duration is ~2min, set a reasonable amount as limit (default is 6h)
+    timeout-minutes: 8
 
     steps:
       - name: Checkout repository
@@ -25,7 +26,9 @@ jobs:
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-sonar-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-sonar-${{ hashFiles('**/pom.xml') }}
+            ${{ runner.os }}-sonar-
 
       - name: Maven Build
         uses: ./.github/actions/maven-build
