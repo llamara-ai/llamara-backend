@@ -20,7 +20,7 @@
 package com.github.llamara.ai.internal.security;
 
 import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.security.user.User;
 
 import java.util.Collection;

@@ -19,6 +19,8 @@
  */
 package com.github.llamara.ai.internal.knowledge;
 
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
+
 import java.util.UUID;
 
 /**

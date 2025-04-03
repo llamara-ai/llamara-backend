@@ -19,8 +19,8 @@
  */
 package com.github.llamara.ai.internal.security.knowledge;
 
-import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.knowledge.KnowledgeRepository;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.Roles;
 import com.github.llamara.ai.internal.security.Users;

@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package com.github.llamara.ai.internal.knowledge;
+package com.github.llamara.ai.internal.knowledge.persistence;
 
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
@@ -25,7 +25,6 @@ import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.Users;
 import com.github.llamara.ai.internal.security.user.User;
 
-import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,12 +36,15 @@ import java.util.Set;
 import java.util.UUID;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyJoinColumn;
 import jakarta.persistence.Table;
@@ -51,7 +53,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
- * JPA {@link Entity} storing knowledge metadata.
+ * Abstract JPA {@link Entity} storing knowledge metadata. Each knowledge type should inherit from
+ * this base entity and have its own {@link Entity} with additional fields.
  *
  * <p>Knowledge is identified by its unique ID.
  *
@@ -62,17 +65,18 @@ import org.hibernate.annotations.UpdateTimestamp;
  * @author Florian Hotze - Initial contribution
  */
 @Entity
+@Inheritance(
+        strategy =
+                InheritanceType.SINGLE_TABLE) // single table inheritance allow high performance for
+// polymorph queries, but does not allow to put constraints on columns of subclasses
+@DiscriminatorColumn(name = "type")
 @Table(name = "knowledge")
-public class Knowledge {
+public abstract class Knowledge {
 
     @GeneratedValue
     @Id
     @Column(name = "id", unique = true, updatable = false, nullable = false)
     private UUID id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(updatable = false, nullable = false)
-    private KnowledgeType type;
 
     @Column(nullable = false)
     private String checksum;
@@ -91,9 +95,6 @@ public class Knowledge {
     @UpdateTimestamp
     @Column(name = "last_updated_at", nullable = false)
     private Instant lastUpdatedAt;
-
-    @Column(nullable = false)
-    private URI source;
 
     @Column(name = "content_type", nullable = false)
     private String contentType;
@@ -125,17 +126,13 @@ public class Knowledge {
     /**
      * Create new knowledge. Constructor for application.
      *
-     * @param type
      * @param checksum
      * @param contentType
-     * @param source
      */
-    Knowledge(KnowledgeType type, String checksum, String contentType, URI source) {
-        this.type = type;
+    protected Knowledge(String checksum, String contentType) {
         this.checksum = checksum;
         this.ingestionStatus = IngestionStatus.PENDING;
         this.contentType = contentType;
-        this.source = source;
     }
 
     /**
@@ -145,15 +142,6 @@ public class Knowledge {
      */
     public UUID getId() {
         return id;
-    }
-
-    /**
-     * Get the type of the knowledge source.
-     *
-     * @return
-     */
-    public KnowledgeType getType() {
-        return type;
     }
 
     /**
@@ -243,15 +231,6 @@ public class Knowledge {
     }
 
     /**
-     * Get the source URI.
-     *
-     * @return
-     */
-    public URI getSource() {
-        return source;
-    }
-
-    /**
      * Get the optional, user-provided label.
      *
      * @return
@@ -274,7 +253,7 @@ public class Knowledge {
      *
      * @param checksum
      */
-    void setChecksum(String checksum) {
+    public void setChecksum(String checksum) {
         this.checksum = checksum;
     }
 
@@ -283,7 +262,7 @@ public class Knowledge {
      *
      * @param status
      */
-    void setIngestionStatus(IngestionStatus status) {
+    public void setIngestionStatus(IngestionStatus status) {
         this.ingestionStatus = status;
     }
 
@@ -292,17 +271,8 @@ public class Knowledge {
      *
      * @param tokenCount
      */
-    void setTokenCount(Integer tokenCount) {
+    public void setTokenCount(Integer tokenCount) {
         this.tokenCount = tokenCount;
-    }
-
-    /**
-     * Update the source URI.
-     *
-     * @param source
-     */
-    void setSource(URI source) {
-        this.source = source;
     }
 
     /**
@@ -310,7 +280,7 @@ public class Knowledge {
      *
      * @param contentType
      */
-    void setContentType(String contentType) {
+    public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
@@ -329,7 +299,7 @@ public class Knowledge {
      *
      * @param user
      */
-    void removePermission(User user) {
+    public void removePermission(User user) {
         this.permissions.remove(user);
     }
 
@@ -338,7 +308,7 @@ public class Knowledge {
      *
      * @param label
      */
-    void setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
@@ -347,7 +317,7 @@ public class Knowledge {
      *
      * @param tag
      */
-    void addTag(String tag) {
+    public void addTag(String tag) {
         tags.add(tag);
     }
 
@@ -356,7 +326,7 @@ public class Knowledge {
      *
      * @param tag
      */
-    void removeTag(String tag) {
+    public void removeTag(String tag) {
         tags.remove(tag);
     }
 }
