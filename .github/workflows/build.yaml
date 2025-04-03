@@ -39,8 +39,9 @@ permissions:
 jobs:
   maven:
     name: Maven Build
-
     runs-on: "ubuntu-24.04"
+    # typical duration is ~2min, set a reasonable amount as limit (default is 6h)
+    timeout-minutes: 8
 
     steps:
       - name: Checkout repository
@@ -87,9 +88,10 @@ jobs:
           path: |
             target/jacoco-report
 
+      # pinning to SHA to mitigate possible supply chain attack
       - name: Trigger distro build
         if: github.repository == 'llamara-ai/llamara-backend' && github.event_name != 'pull_request' && github.ref_name == 'main'
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
         with:
           token: ${{ secrets.DISTRO_DISPATCH_BUILD_TOKEN }}
           repository: llamara-ai/llamara-distro
@@ -98,8 +100,9 @@ jobs:
   docker:
     name: Docker Build & Publish
     needs: maven
-
     runs-on: "ubuntu-24.04"
+    # typical duration is ~1min, set a reasonable amount as limit (default is 6h)
+    timeout-minutes: 4
 
     env:
       # Use docker.io for Docker Hub if empty
@@ -123,11 +126,12 @@ jobs:
 
       # Install the cosign tool
       # https://github.com/sigstore/cosign-installer
+      # pinning to SHA to mitigate possible supply chain attack
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
         with:
-          cosign-release: "v2.2.4"
+          cosign-release: "v2.4.3"
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache

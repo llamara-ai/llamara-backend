@@ -30,13 +30,14 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Cache
+    - name: Set up Maven Cache
       uses: actions/cache@v4
       with:
         path: |
           ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
+          ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           ${{ runner.os }}-maven-
 
     - name: Set up Java
@@ -56,6 +57,8 @@ runs:
       env:
         OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY || 'sk-prod-key' }}
 
+    # this will identify modifications to files under source control during the workflow run;
+    # untracked files will be included as well!
     - name: Verify Changed Files
       if: ${{ inputs.skip_changed_files != 'true' }}
       id: verify-changed-files

@@ -25,6 +25,8 @@ jobs:
     #   - https://gh.io/using-larger-runners (GitHub.com only)
     # Consider using larger runners or machines with greater resources for possible analysis time improvements.
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    # typical duration is ~2.5min, set a reasonable amount as limit (default is 6h)
+    timeout-minutes: 10
     permissions:
       # required for all workflows
       security-events: write
