@@ -233,6 +233,9 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         }
 
         Knowledge knowledge = getKnowledge(id);
+        if (!(knowledge instanceof FileKnowledge fileKnowledge)) {
+            throw new KnowledgeNotFoundException(id);
+        }
         String checksum = generateChecksum(file);
 
         if (knowledge.getChecksum().equals(checksum)) {
@@ -252,10 +255,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         QuarkusTransaction.begin();
         // Reload knowledge to prevent jakarta.persistence.EntityExistsException: detached entity
         // passed to persist
-        knowledge = getKnowledge(id);
-        if (!(knowledge instanceof FileKnowledge fileKnowledge)) {
-            throw new KnowledgeNotFoundException(id);
-        }
+        fileKnowledge = (FileKnowledge) getKnowledge(id);
         // Update knowledge index
         fileKnowledge.setChecksum(checksum);
         fileKnowledge.setSource(URI.create(fileName));

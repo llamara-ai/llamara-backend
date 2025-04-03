@@ -26,6 +26,11 @@ import com.github.llamara.ai.internal.rest.dto.KnowledgeType;
 
 import java.util.Collection;
 
+/**
+ * DTO mapper class for mapping {@link Knowledge} to {@link KnowledgeRecord}.
+ *
+ * @author Florian Hotze - Initial contribution
+ */
 public final class KnowledgeDTOMapper {
     private KnowledgeDTOMapper() {}
 
