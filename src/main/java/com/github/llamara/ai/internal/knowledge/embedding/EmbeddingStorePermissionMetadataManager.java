@@ -21,7 +21,7 @@ package com.github.llamara.ai.internal.knowledge.embedding;
 
 import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.StartupException;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
 /**

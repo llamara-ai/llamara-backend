@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package com.github.llamara.ai.internal.knowledge;
+package com.github.llamara.ai.internal.rest.dto;
 
 /**
  * Type of knowledge.
@@ -25,6 +25,5 @@ package com.github.llamara.ai.internal.knowledge;
  * @author Florian Hotze - Initial contribution
  */
 public enum KnowledgeType {
-    FILE,
-    WEBLINK
+    FILE
 }

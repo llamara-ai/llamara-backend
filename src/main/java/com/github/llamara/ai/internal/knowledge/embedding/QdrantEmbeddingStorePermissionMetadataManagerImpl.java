@@ -23,7 +23,7 @@ import com.github.llamara.ai.config.EnvironmentVariables;
 import com.github.llamara.ai.config.embedding.EmbeddingStoreConfig;
 import com.github.llamara.ai.internal.EmbeddingMetadataKeys;
 import com.github.llamara.ai.internal.StartupException;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.security.PermissionMetadataMapper;
 
 import java.util.Map;

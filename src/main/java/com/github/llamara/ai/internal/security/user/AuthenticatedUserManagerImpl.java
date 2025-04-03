@@ -20,9 +20,9 @@
 package com.github.llamara.ai.internal.security.user;
 
 import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
 import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.Users;

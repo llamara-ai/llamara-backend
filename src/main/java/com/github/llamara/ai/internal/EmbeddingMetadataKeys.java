@@ -19,7 +19,7 @@
  */
 package com.github.llamara.ai.internal;
 
-import com.github.llamara.ai.internal.knowledge.Knowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 
 /**
  * Constant class for {@link dev.langchain4j.data.embedding.Embedding} metadata keys.

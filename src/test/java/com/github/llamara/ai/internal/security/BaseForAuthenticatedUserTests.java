@@ -20,10 +20,9 @@
 package com.github.llamara.ai.internal.security;
 
 import com.github.llamara.ai.internal.Utils;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.knowledge.KnowledgeRepository;
-import com.github.llamara.ai.internal.knowledge.KnowledgeType;
-import com.github.llamara.ai.internal.knowledge.TestKnowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.FileKnowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.security.session.Session;
 import com.github.llamara.ai.internal.security.session.UserAwareSessionRepository;
 import com.github.llamara.ai.internal.security.user.TestUserRepository;
@@ -166,9 +165,7 @@ public abstract class BaseForAuthenticatedUserTests {
      */
     @Transactional
     protected UUID setupKnowledgeWithPermission(Permission permission) {
-        Knowledge knowledge =
-                new TestKnowledge(
-                        KnowledgeType.FILE, FILE_CHECKSUM, FILE_NAME, URI.create(FILE_NAME));
+        Knowledge knowledge = new FileKnowledge(FILE_CHECKSUM, FILE_NAME, URI.create(FILE_NAME));
         knowledge.setPermission(
                 userRepository.findByUsername(identity.getPrincipal().getName()), permission);
         knowledgeRepository.persist(knowledge);

@@ -29,6 +29,8 @@ import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.ingestion.parser.PdfDocumentParser;
 import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
+import com.github.llamara.ai.internal.knowledge.persistence.FileKnowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.knowledge.storage.FileContainer;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
@@ -149,7 +151,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         QuarkusTransaction.begin();
         deleteEmbeddings(knowledge.getId());
         if (repository.countChecksum(knowledge.getChecksum()) == 1
-                && knowledge.getType() == KnowledgeType.FILE) {
+                && knowledge instanceof FileKnowledge) {
             // Only source file if no other knowledge has the same source
             fileStorage.deleteFile(knowledge.getChecksum());
         }
@@ -180,8 +182,7 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         // Start transaction
         QuarkusTransaction.begin();
         // Add file to knowledge index
-        Knowledge knowledge =
-                new Knowledge(KnowledgeType.FILE, checksum, contentType, URI.create(fileName));
+        Knowledge knowledge = new FileKnowledge(checksum, contentType, URI.create(fileName));
         knowledge.setLabel(fileName);
         repository.persist(knowledge);
         // Store file in file storage if the file hasn't been added before
@@ -232,6 +233,9 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         }
 
         Knowledge knowledge = getKnowledge(id);
+        if (!(knowledge instanceof FileKnowledge fileKnowledge)) {
+            throw new KnowledgeNotFoundException(id);
+        }
         String checksum = generateChecksum(file);
 
         if (knowledge.getChecksum().equals(checksum)) {
@@ -251,20 +255,20 @@ class KnowledgeManagerImpl implements KnowledgeManager {
         QuarkusTransaction.begin();
         // Reload knowledge to prevent jakarta.persistence.EntityExistsException: detached entity
         // passed to persist
-        knowledge = getKnowledge(id);
+        fileKnowledge = (FileKnowledge) getKnowledge(id);
         // Update knowledge index
-        knowledge.setChecksum(checksum);
-        knowledge.setSource(URI.create(fileName));
-        knowledge.setContentType(contentType);
-        knowledge.setIngestionStatus(IngestionStatus.PENDING);
-        knowledge.setLabel(fileName);
-        repository.persistAndFlush(knowledge);
+        fileKnowledge.setChecksum(checksum);
+        fileKnowledge.setSource(URI.create(fileName));
+        fileKnowledge.setContentType(contentType);
+        fileKnowledge.setIngestionStatus(IngestionStatus.PENDING);
+        fileKnowledge.setLabel(fileName);
+        repository.persistAndFlush(fileKnowledge);
         // Store new file
         fileStorage.storeFile(checksum, file, createFileMetadata(checksum, fileName));
         // Create metadata while having the transaction open to avoid
         // org.hibernate.LazyInitializationException
-        Map<String, String> metadata = createEmbeddingMetadata(knowledge);
-        Optional<String> ownerUsername = getOwnerUsername(knowledge);
+        Map<String, String> metadata = createEmbeddingMetadata(fileKnowledge);
+        Optional<String> ownerUsername = getOwnerUsername(fileKnowledge);
         // Commit transaction
         QuarkusTransaction.commit();
         // Dispatch ingestion
@@ -356,13 +360,16 @@ class KnowledgeManagerImpl implements KnowledgeManager {
     public NamedFileContainer getFile(UUID id)
             throws KnowledgeNotFoundException, UnexpectedFileStorageFailureException {
         Knowledge knowledge = getKnowledge(id);
+        if (!(knowledge instanceof FileKnowledge fileKnowledge)) {
+            throw new KnowledgeNotFoundException(id);
+        }
         try {
-            FileContainer fc = fileStorage.getFile(knowledge.getChecksum());
+            FileContainer fc = fileStorage.getFile(fileKnowledge.getChecksum());
             return new NamedFileContainer(
-                    knowledge.getSource().toString(), fc.content(), fc.metadata());
+                    fileKnowledge.getSource().toString(), fc.content(), fc.metadata());
         } catch (FileNotFoundException e) {
             throw new RuntimeException( // NOSONAR: this should never happen
-                    String.format(FILE_STORAGE_FILE_NOT_FOUND_PATTERN, knowledge.getId()), e);
+                    String.format(FILE_STORAGE_FILE_NOT_FOUND_PATTERN, fileKnowledge.getId()), e);
         }
     }
 

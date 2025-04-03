@@ -20,10 +20,12 @@
 package com.github.llamara.ai.internal.rest;
 
 import com.github.llamara.ai.internal.knowledge.IllegalPermissionModificationException;
-import com.github.llamara.ai.internal.knowledge.Knowledge;
 import com.github.llamara.ai.internal.knowledge.KnowledgeManager;
 import com.github.llamara.ai.internal.knowledge.KnowledgeNotFoundException;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
+import com.github.llamara.ai.internal.rest.dto.KnowledgeRecord;
+import com.github.llamara.ai.internal.rest.mapper.KnowledgeDTOMapper;
 import com.github.llamara.ai.internal.security.Permission;
 import com.github.llamara.ai.internal.security.Roles;
 import com.github.llamara.ai.internal.security.knowledge.UserKnowledgeManager;
@@ -102,9 +104,9 @@ class KnowledgeResource {
                             schema =
                                     @Schema(
                                             type = SchemaType.ARRAY,
-                                            implementation = Knowledge.class)))
-    public Collection<Knowledge> getAllKnowledge() {
-        return knowledgeManager.getAllKnowledge();
+                                            implementation = KnowledgeRecord.class)))
+    public Collection<KnowledgeRecord> getAllKnowledge() {
+        return KnowledgeDTOMapper.map(knowledgeManager.getAllKnowledge());
     }
 
     @RolesAllowed({Roles.ADMIN, Roles.USER, Roles.ANONYMOUS_USER})
@@ -116,9 +118,9 @@ class KnowledgeResource {
     @APIResponse(
             responseCode = "200",
             description = "OK",
-            content = @Content(schema = @Schema(implementation = Knowledge.class)))
+            content = @Content(schema = @Schema(implementation = KnowledgeRecord.class)))
     @APIResponse(responseCode = "404", description = "No knowledge with the given id found.")
-    public Knowledge getKnowledge(
+    public KnowledgeRecord getKnowledge(
             @PathParam("id")
                     @Parameter(
                             name = "id",
@@ -126,7 +128,7 @@ class KnowledgeResource {
                             required = true)
                     UUID id)
             throws KnowledgeNotFoundException {
-        return knowledgeManager.getKnowledge(id);
+        return KnowledgeDTOMapper.map(knowledgeManager.getKnowledge(id));
     }
 
     @RolesAllowed({Roles.ADMIN, Roles.USER, Roles.ANONYMOUS_USER})

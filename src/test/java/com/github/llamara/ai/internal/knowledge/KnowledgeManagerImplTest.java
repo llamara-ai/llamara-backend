@@ -24,6 +24,8 @@ import com.github.llamara.ai.internal.Utils;
 import com.github.llamara.ai.internal.ingestion.DocumentIngestor;
 import com.github.llamara.ai.internal.ingestion.IngestionStatus;
 import com.github.llamara.ai.internal.knowledge.embedding.EmbeddingStorePermissionMetadataManager;
+import com.github.llamara.ai.internal.knowledge.persistence.FileKnowledge;
+import com.github.llamara.ai.internal.knowledge.persistence.Knowledge;
 import com.github.llamara.ai.internal.knowledge.storage.FileStorage;
 import com.github.llamara.ai.internal.knowledge.storage.UnexpectedFileStorageFailureException;
 import com.github.llamara.ai.internal.security.Permission;
@@ -40,6 +42,7 @@ import jakarta.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -188,13 +191,16 @@ class KnowledgeManagerImplTest {
     }
 
     @Test
-    void addSourceFileCreatesKnowledge() throws UnexpectedFileStorageFailureException, IOException {
+    void addSourceFileCreatesFileKnowledge()
+            throws UnexpectedFileStorageFailureException, IOException {
         UUID knowledgeId = knowledgeManager.addSource(FILE, FILE_NAME, FILE_MIME_TYPE);
         assertEquals(1, knowledgeRepository.count());
         Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
-        assertEquals(FILE_CHECKSUM, knowledge.getChecksum());
-        assertEquals(FILE_NAME, knowledge.getSource().toString());
-        assertEquals(FILE_MIME_TYPE, knowledge.getContentType());
+        assertInstanceOf(FileKnowledge.class, knowledge);
+        FileKnowledge fileKnowledge = (FileKnowledge) knowledge;
+        assertEquals(FILE_CHECKSUM, fileKnowledge.getChecksum());
+        assertEquals(FILE_NAME, fileKnowledge.getSource().toString());
+        assertEquals(FILE_MIME_TYPE, fileKnowledge.getContentType());
     }
 
     @Test
@@ -417,9 +423,11 @@ class KnowledgeManagerImplTest {
                     knowledgeId, UPDATED_FILE, UPDATED_FILE_NAME, UPDATED_FILE_MIME_TYPE);
 
             Knowledge knowledge = knowledgeRepository.findById(knowledgeId);
-            assertEquals(UPDATED_FILE_CHECKSUM, knowledge.getChecksum());
-            assertEquals(UPDATED_FILE_NAME, knowledge.getSource().toString());
-            assertEquals(UPDATED_FILE_MIME_TYPE, knowledge.getContentType());
+            assertInstanceOf(FileKnowledge.class, knowledge);
+            FileKnowledge fileKnowledge = (FileKnowledge) knowledge;
+            assertEquals(UPDATED_FILE_CHECKSUM, fileKnowledge.getChecksum());
+            assertEquals(UPDATED_FILE_NAME, fileKnowledge.getSource().toString());
+            assertEquals(UPDATED_FILE_MIME_TYPE, fileKnowledge.getContentType());
         }
 
         @Test
