@@ -68,7 +68,6 @@ class UserResource {
             description = "OK",
             content = @Content(schema = @Schema(implementation = UserInfoDTO.class)))
     public UserInfoDTO login() {
-        String name;
         userManager.register();
         return new UserInfoDTO(identity);
     }

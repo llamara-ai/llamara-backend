@@ -43,7 +43,6 @@ quarkus:
       enabled: true
       port: 9000
       shared: false
-    url:
 
   redis:
     devservices:
