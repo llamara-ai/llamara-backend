@@ -1,0 +1,25 @@
+name: Clean-Up
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 4 * * 6" # Runs on 04:30 on Saturday
+
+permissions:
+  packages: write
+
+jobs:
+  docker:
+    name: Docker Rotate Images
+    runs-on: "ubuntu-24.04"
+    # typical duration is ~1min, set a reasonable amount as limit (default is 6h)
+    timeout-minutes: 4
+
+    steps:
+      - name: Remove old main images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: "llamara-backend"
+          package-type: "container"
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: 'true'
