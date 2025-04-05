@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 4
 
     steps:
+      # Note: Due to https://github.com/actions/delete-package-versions/issues/88,
+      # we cannot delete everything except release tags, main and latest tag.
       - name: Remove old main images
         uses: actions/delete-package-versions@v5
         with:

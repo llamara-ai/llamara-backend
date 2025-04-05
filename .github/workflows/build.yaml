@@ -64,7 +64,7 @@ jobs:
 
       # Upload the full dependency graph to improve quality of Dependabot alerts except on PR
       - name: Update dependency graph
-        if: github.repository == 'llamara-ai/llamara-backend' && github.event_name != 'pull_request'
+        if: github.repository == 'llamara-ai/llamara-backend' && github.event_name == 'push' && github.ref_name == 'main'
         uses: advanced-security/maven-dependency-submission-action@v4
 
       - name: Upload packaged application
@@ -90,7 +90,7 @@ jobs:
 
       # pinning to SHA to mitigate possible supply chain attack
       - name: Trigger distro build
-        if: github.repository == 'llamara-ai/llamara-backend' && github.event_name != 'pull_request' && github.ref_name == 'main'
+        if: github.repository == 'llamara-ai/llamara-backend' && github.event_name == 'push' && github.ref_name == 'main'
         uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
         with:
           token: ${{ secrets.DISTRO_DISPATCH_BUILD_TOKEN }}
