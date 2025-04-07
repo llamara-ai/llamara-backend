@@ -1,7 +1,7 @@
 name: CI Build
 
 on:
-  # Build main container:
+  # Build container according to ref input:
   workflow_call:
     inputs:
       ref:
@@ -20,7 +20,9 @@ on:
       github-token:
         description: "GitHub token with packages:write, id-token:write permissions"
         required: true
+  # Dry run on dispatch:  
   workflow_dispatch:
+  # Dry run for main:
   push:
     branches: ["main"]
     paths-ignore: ["**/*.md"]
@@ -168,6 +170,7 @@ jobs:
           path: target/quarkus-app
 
       # Build and push Docker image with Buildx
+      # Push only on workflow_call or pushing a version tag
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
@@ -176,7 +179,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: src/main/docker/Dockerfile.jvm
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name == 'workflow_call' || (github.event_name == 'push' && github.ref_name != 'main') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
