@@ -4,8 +4,11 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=llamara-ai_llamara-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=llamara-ai_llamara-backend)
 
 LLAMARA - **L**arge **L**anguage **A**ssistant for **M**odel-**A**ugmented **R**etrieval and **A**nalysis - is an LLM-based assistant for information retrieval from a provided knowledge base.
-It aims at supporting researchers working with scientific papers, whitepapers and documentation,
-as well as possibly serving research findings in an accessible way to the public.
+
+Initially designed to support researchers working with scientific papers, whitepapers, and documentation,
+LLAMARA has also proven useful for students working with lecture slides.
+It efficiently handles large datasets, accurately identifying and retrieving relevant information.
+Additionally, LAMARA ensures full transparency by providing sources with references to the knowledge base, making research findings accessible to both researchers and the public.
 
 > **NOTE:** This repository contains the LLAMARA backend only.
 
