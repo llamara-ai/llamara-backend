@@ -7,13 +7,16 @@ version: 2
 updates:
   - package-ecosystem: "maven"
     directory: "/"
+    open-pull-requests-limit: 20
     schedule:
       interval: "weekly"
   - package-ecosystem: "docker"
     directory: "src/main/docker"
+    open-pull-requests-limit: 20
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
     directory: "/"
+    open-pull-requests-limit: 20
     schedule:
       interval: "weekly"
