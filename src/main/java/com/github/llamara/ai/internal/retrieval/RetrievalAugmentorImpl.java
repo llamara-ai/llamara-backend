@@ -28,7 +28,6 @@ import jakarta.inject.Inject;
 
 import static dev.langchain4j.store.embedding.filter.MetadataFilterBuilder.metadataKey;
 
-import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.AugmentationRequest;
@@ -37,7 +36,6 @@ import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.rag.content.injector.ContentInjector;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
-import dev.langchain4j.rag.query.Metadata;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.Filter;
 import io.quarkus.logging.Log;
@@ -102,12 +100,5 @@ class RetrievalAugmentorImpl implements RetrievalAugmentor {
     @Override
     public AugmentationResult augment(AugmentationRequest augmentationRequest) {
         return delegate.augment(augmentationRequest);
-    }
-
-    @Override
-    public UserMessage augment(UserMessage userMessage, Metadata metadata) {
-        return delegate
-                .augment( // NOSONAR: we need to use this method for implementation of interface
-                        userMessage, metadata);
     }
 }
