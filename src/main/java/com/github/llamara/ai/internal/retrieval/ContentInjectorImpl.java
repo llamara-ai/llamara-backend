@@ -85,15 +85,6 @@ class ContentInjectorImpl implements ContentInjector {
     }
 
     /**
-     * @deprecated use {@link #inject(List, ChatMessage)} instead.
-     */
-    @Override
-    @Deprecated
-    public UserMessage inject(List<Content> contents, UserMessage userMessage) {
-        return (UserMessage) inject(contents, (ChatMessage) userMessage);
-    }
-
-    /**
      * Combines the original {@link UserMessage} and the retrieved {@link Content}s into the
      * resulting {@link UserMessage} based on the {@link PromptTemplate}s. <br>
      * <br>
