@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.llamara.ai</groupId>
   <artifactId>llamara-backend</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1-SNAPSHOT</version>
 
   <licenses>
     <license>
