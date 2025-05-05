@@ -38,7 +38,7 @@
     <quarkus-minio.version>3.8.1</quarkus-minio.version>
     <!-- remember to sync LangChain4j version when upgrading -->
     <quarkus-langchain4j.version>0.27.0.CR1</quarkus-langchain4j.version>
-    <langchain4j.version>1.0.0-beta3</langchain4j.version>
+    <langchain4j.version>1.0.0-beta4</langchain4j.version>
     <skipITs>true</skipITs>
     <!-- Configure SonarQube Cloud -->
     <sonar-scanner.version>5.1.0.4751</sonar-scanner.version>
