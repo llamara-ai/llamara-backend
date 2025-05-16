@@ -33,8 +33,8 @@ import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.memory.chat.TokenWindowChatMemory;
-import dev.langchain4j.model.Tokenizer;
-import dev.langchain4j.model.openai.OpenAiTokenizer;
+import dev.langchain4j.model.TokenCountEstimator;
+import dev.langchain4j.model.openai.OpenAiTokenCountEstimator;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import io.quarkus.runtime.Startup;
 
@@ -102,9 +102,9 @@ class ChatMemoryProviderImpl implements ChatMemoryProvider {
                 };
     }
 
-    private Tokenizer produceTokenizer(ChatMemoryConfig.TokenizerConfig config) {
+    private TokenCountEstimator produceTokenizer(ChatMemoryConfig.TokenizerConfig config) {
         return switch (config.provider()) {
-            case OPENAI -> new OpenAiTokenizer(config.model());
+            case OPENAI -> new OpenAiTokenCountEstimator(config.model());
         };
     }
 

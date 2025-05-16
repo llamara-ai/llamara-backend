@@ -37,7 +37,6 @@ import jakarta.inject.Inject;
 
 import dev.langchain4j.http.client.jdk.JdkHttpClient;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
-import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -99,13 +98,13 @@ class ChatModelProviderImpl implements ChatModelProvider {
                     "Creating chat model '%s' of provider '%s' ...",
                     config.uid(), config.provider());
 
-            ChatLanguageModel clm = produceChatLanguageModel(config);
+            dev.langchain4j.model.chat.ChatModel clm = produceChatLanguageModel(config);
 
             ChatModel model =
                     new ChatModel(
                             config,
                             AiServices.builder(AiService.class)
-                                    .chatLanguageModel(clm)
+                                    .chatModel(clm)
                                     .chatMemoryProvider(chatMemoryProvider)
                                     .retrievalAugmentor(retrievalAugmentor)
                                     .build(),
@@ -122,7 +121,8 @@ class ChatModelProviderImpl implements ChatModelProvider {
         }
     }
 
-    private ChatLanguageModel produceChatLanguageModel(ChatModelConfig.ModelConfig config) {
+    private dev.langchain4j.model.chat.ChatModel produceChatLanguageModel(
+            ChatModelConfig.ModelConfig config) {
         return switch (config.provider()) {
             case AZURE -> {
                 String endpoint;
