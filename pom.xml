@@ -26,7 +26,7 @@
     <dependency-plugin.version>3.8.1</dependency-plugin.version>
     <release-plugin.version>3.1.1</release-plugin.version>
     <surefire-plugin.version>3.5.3</surefire-plugin.version>
-    <spotless.version>2.44.4</spotless.version>
+    <spotless.version>2.44.5</spotless.version>
     <license-plugin.version>2.5.0</license-plugin.version>
     <java.version>21</java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
