@@ -41,7 +41,7 @@
     <langchain4j.version>1.1.0-beta7</langchain4j.version>
     <skipITs>true</skipITs>
     <!-- Configure SonarQube Cloud -->
-    <sonar-scanner.version>5.1.0.4751</sonar-scanner.version>
+    <sonar-scanner.version>5.2.0.4988</sonar-scanner.version>
     <sonar.organization>llamara-ai</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.coverage.jacoco.xmlReportPaths>target/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
