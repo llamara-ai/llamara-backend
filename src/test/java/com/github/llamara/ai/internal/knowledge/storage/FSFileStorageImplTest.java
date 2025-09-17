@@ -68,7 +68,7 @@ class FSFileStorageImplTest {
     void destroy() {
         fileStorage = null;
         if (vertx.fileSystem().existsBlocking(storagePath)) {
-            vertx.fileSystem().deleteRecursiveBlocking(storagePath, true);
+            vertx.fileSystem().deleteRecursiveBlocking(storagePath);
         }
     }
 
@@ -97,7 +97,7 @@ class FSFileStorageImplTest {
     @Test
     void storeFileThrowsExceptionIfStorageDirHasBeenRemoved() {
         // when
-        vertx.fileSystem().deleteRecursiveBlocking(storagePath, true);
+        vertx.fileSystem().deleteRecursiveBlocking(storagePath);
 
         // then
         assertThrows(
