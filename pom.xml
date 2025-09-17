@@ -38,7 +38,7 @@
     <!-- remember to sync LangChain4j version when upgrading -->
     <quarkus-langchain4j.version>1.1.4</quarkus-langchain4j.version>
     <langchain4j.version>1.1.0</langchain4j.version>
-    <langchain4j-beta.version>1.1.0-beta7</langchain4j-beta.version>
+    <langchain4j-beta.version>1.4.0-beta10</langchain4j-beta.version>
     <skipITs>true</skipITs>
     <!-- Configure SonarQube Cloud -->
     <sonar-scanner.version>5.2.0.4988</sonar-scanner.version>
