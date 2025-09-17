@@ -103,7 +103,7 @@ class FSFileStorageImpl implements FileStorage {
     @Override
     public void deleteAllFiles() {
         reactiveFileSystem
-                .deleteRecursive(Paths.get(storagePath).toString(), true)
+                .deleteRecursive(Paths.get(storagePath).toString())
                 .onItem()
                 .transformToUni(uni -> reactiveFileSystem.mkdir(Paths.get(storagePath).toString()))
                 .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())

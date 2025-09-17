@@ -145,7 +145,7 @@ retrieval:
 
 quarkus:
   swagger-ui:
-    enable: false
+    enabled: false
   oidc:
     authentication:
     # When using Auth0, you need to set the roles claim path, e.g. to "auth0/roles", and create an action flow to map the roles to the token.

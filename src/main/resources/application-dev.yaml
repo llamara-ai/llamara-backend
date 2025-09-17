@@ -15,7 +15,7 @@ MINIO_SECRET_KEY: miniosecret
 
 quarkus:
   swagger-ui:
-    enable: true
+    enabled: true
 
   keycloak:
     devservices:
@@ -35,8 +35,8 @@ quarkus:
     jdbc:
       driver: org.postgresql.Driver
   hibernate-orm:
-    database:
-      generation: drop-and-create
+    schema-management:
+      strategy: drop-and-create
 
   minio:
     devservices:

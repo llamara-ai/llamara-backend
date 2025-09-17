@@ -31,8 +31,8 @@ quarkus:
       url: jdbc:postgresql://postgres:5432/llamara
       driver: org.postgresql.Driver
   hibernate-orm:
-    database:
-      generation: validate
+    schema-management:
+      strategy: validate
 
   # Configure Redis client for chat memory & history
   redis:

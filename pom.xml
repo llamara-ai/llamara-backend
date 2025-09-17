@@ -32,13 +32,13 @@
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.24.1</quarkus.platform.version>
-    <quarkus-minio.version>3.8.4</quarkus-minio.version>
+    <quarkus.platform.version>3.26.3</quarkus.platform.version>
+    <quarkus-minio.version>3.8.5</quarkus-minio.version>
     <!-- remember to sync LangChain4j version when upgrading -->
-    <quarkus-langchain4j.version>1.0.2</quarkus-langchain4j.version>
-    <langchain4j.version>1.1.0-beta7</langchain4j.version>
+    <quarkus-langchain4j.version>1.1.4</quarkus-langchain4j.version>
+    <langchain4j.version>1.1.0</langchain4j.version>
+    <langchain4j-beta.version>1.1.0-beta7</langchain4j-beta.version>
     <skipITs>true</skipITs>
     <!-- Configure SonarQube Cloud -->
     <sonar-scanner.version>5.2.0.4988</sonar-scanner.version>
@@ -51,7 +51,7 @@
     <dependencies>
       <dependency>
         <groupId>${quarkus.platform.group-id}</groupId>
-        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <artifactId>quarkus-bom</artifactId>
         <version>${quarkus.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -184,6 +184,11 @@
       <version>${quarkus-langchain4j.version}</version>
     </dependency>
     <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-http-client-jdk</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.quarkiverse.langchain4j</groupId>
       <artifactId>quarkus-langchain4j-openai</artifactId>
       <version>${quarkus-langchain4j.version}</version>
@@ -204,7 +209,7 @@
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-document-parser-apache-tika</artifactId>
-      <version>${langchain4j.version}</version>
+      <version>${langchain4j-beta.version}</version>
     </dependency>
   </dependencies>
 
