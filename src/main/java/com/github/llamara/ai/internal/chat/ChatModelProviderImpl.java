@@ -40,6 +40,7 @@ import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.model.openai.OpenAiChatRequestParameters;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.service.AiServices;
 import io.quarkiverse.langchain4j.ai.runtime.gemini.AiGeminiChatLanguageModel;
@@ -180,6 +181,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                     OpenAiChatModel.builder()
                             .baseUrl(config.baseUrl().orElse(null))
                             .apiKey(env.getOpenaiApiKey())
+                            .defaultRequestParameters(OpenAiChatRequestParameters.EMPTY)
                             .modelName(config.model())
                             .temperature(config.temperature())
                             .topP(config.topP().orElse(null))
