@@ -27,6 +27,7 @@ import com.github.llamara.ai.config.chat.ChatModelConfig;
 import com.github.llamara.ai.internal.StartupException;
 import com.github.llamara.ai.internal.chat.history.ChatHistoryStore;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -156,6 +157,7 @@ class ChatModelProviderImpl implements ChatModelProvider {
                     MistralAiChatModel.builder()
                             .baseUrl(config.baseUrl().orElse(null))
                             .apiKey(env.getMistralApiKey())
+                            .timeout(Duration.ofSeconds(3))
                             .modelName(config.model())
                             .temperature(config.temperature())
                             .topP(config.topP().orElse(null))

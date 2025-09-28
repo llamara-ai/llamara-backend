@@ -55,6 +55,10 @@ runs:
       shell: bash
       run: "${{ inputs.mvnw }} -B --show-version --file ${{ inputs.pom }} ${{ inputs.command }}"
       env:
+        # We don't need working API keys, just make the "API key defined" check happy
+        AZURE_API_KEY: 'azure-api-key'
+        GOOGLE_GEMINI_API_KEY: 'google-gemini-api-key'
+        MISTRAL_API_KEY: 'mistral-api-key'
         OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY || 'sk-prod-key' }}
 
     # this will identify modifications to files under source control during the workflow run;
