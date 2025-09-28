@@ -25,6 +25,7 @@ import static com.github.llamara.ai.internal.Utils.buildAzureOpenaiEndpoint;
 import com.github.llamara.ai.config.EnvironmentVariables;
 import com.github.llamara.ai.config.embedding.EmbeddingModelConfig;
 
+import java.time.Duration;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Produces;
@@ -81,6 +82,7 @@ class EmbeddingModelProducer {
                     MistralAiEmbeddingModel.builder()
                             .baseUrl(config.baseUrl().orElse(null))
                             .apiKey(env.getMistralApiKey())
+                            .timeout(Duration.ofSeconds(3))
                             .modelName(config.model())
                             .build();
             case OLLAMA -> {

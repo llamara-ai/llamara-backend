@@ -1,3 +1,41 @@
+chat:
+  models:
+    # Google Gemini models need model config and GOOGLE_GEMINI_API_KEY env variable
+    - uid: gemini-2-0-flash
+      provider: google-gemini
+      model: gemini-2.0-flash
+      label: Gemini 2.0 Flash
+      description: Google Gemini 2.0 Flash
+
+    # Mistral models need model config and MISTRAL_API_KEY env variable
+    - uid: mistral-small
+      provider: mistral
+      model: mistral-small-latest
+      label: Mistral Small
+
+    # Microsoft Azure OpenAI models need resource-name, model config and AZURE_API_KEY env variable
+    - uid: azure-gpt4o-mini
+      provider: azure
+      resource-name: my-azure-resource # Azure OpenAI resource name
+      model: gpt-4o-mini-2024-07-18 # Azure OpenAI deployment name
+      label: Azure GPT 4o Mini
+      description: Azure OpenAI GPT 4 Omni Mini
+
+    # Ollama models need base URL and model config
+    - uid: llama3-1
+      provider: ollama
+      base-url: http://localhost:11435
+      model: llama3.1
+      label: LLAMA 3.1
+      description: Meta LLAMA 3.1 8b
+
+    # OpenAI models need model config and OPENAI_API_KEY key env variable
+    - uid: gpt4o-mini
+      provider: openai
+      model: gpt-4o-mini
+      label: GPT 4o Mini
+      description: OpenAI GPT 4 Omni Mini
+
 embedding:
   store:
     type: qdrant # Supported types: qdrant
