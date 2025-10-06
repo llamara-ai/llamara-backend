@@ -21,7 +21,7 @@
   </scm>
 
   <properties>
-    <enforcer-plugin.version>3.6.1</enforcer-plugin.version>
+    <enforcer-plugin.version>3.6.2</enforcer-plugin.version>
     <compiler-plugin.version>3.14.0</compiler-plugin.version>
     <dependency-plugin.version>3.8.1</dependency-plugin.version>
     <release-plugin.version>3.1.1</release-plugin.version>
