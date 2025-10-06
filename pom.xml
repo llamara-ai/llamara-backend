@@ -22,7 +22,7 @@
 
   <properties>
     <enforcer-plugin.version>3.6.2</enforcer-plugin.version>
-    <compiler-plugin.version>3.14.0</compiler-plugin.version>
+    <compiler-plugin.version>3.14.1</compiler-plugin.version>
     <dependency-plugin.version>3.9.0</dependency-plugin.version>
     <release-plugin.version>3.1.1</release-plugin.version>
     <surefire-plugin.version>3.5.4</surefire-plugin.version>
