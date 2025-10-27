@@ -59,7 +59,7 @@ jobs:
 
       - name: Download frontend build
         if: github.repository == 'llamara-ai/llamara-distro'
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: vite-dist
           path: src/main/resources/META-INF/resources
@@ -169,7 +169,7 @@ jobs:
             org.opencontainers.image.authors=Contributors to the LLAMARA AI project
 
       - name: Download packaged application
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: quarkus-app
           path: target/quarkus-app
