@@ -75,21 +75,21 @@ jobs:
         uses: advanced-security/maven-dependency-submission-action@v5
 
       - name: Upload packaged application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: quarkus-app
           path: |
             target/quarkus-app
 
       - name: Upload OpenAPI schema
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: openapi-schema
           path: |
             target/openapi
 
       - name: Upload test coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: jacoco-report
           path: |
