@@ -4,12 +4,17 @@
 
 LLAMARA - **L**arge **L**anguage **A**ssistant for **M**odel-**A**ugmented **R**etrieval and **A**nalysis - is an LLM-based assistant for information retrieval from a provided knowledge base.
 
-Initially designed to support researchers working with scientific papers, whitepapers, and documentation,
+Initially designed to support researchers working with scientific papers, white papers, and documentation,
 LLAMARA has also proven useful for students working with lecture slides.
 It efficiently handles large datasets, accurately identifying and retrieving relevant information.
 Additionally, LAMARA ensures full transparency by providing sources with references to the knowledge base, making research findings accessible to both researchers and the public.
 
 > **NOTE:** This repository contains the LLAMARA backend only.
+
+> [!WARNING]
+> This project is not maintained anymore.
+> We do **not** recommend deploying this publicly in its current state, as several dependencies are outdated, posing a potential security risk.
+> In case you are interested in continuting development, please contact us at <dev@florianhotze.com>.
 
 ## Features
 
@@ -162,7 +167,7 @@ If you need it in production, you can enable it by setting `quarkus.swagger-ui.e
 
 ### Info Endpoint
 
-The `/q/info` endpoint provides information about LLAMARA backend, including Git, Java, OS and build details.
+The `/q/info` endpoint provides information about LLAMARA backend, including Git, Java, OS, and build details.
 
 ### Health Endpoint
 
@@ -175,7 +180,7 @@ LLAMARA backend exposes four REST endpoints according to the [Eclipse Microprofi
 
 ## Serving a Frontend
 
-LLAMARA backend is able to serve a JavaScript Single-Page-Application, such as a React, Vue or Angular application, as its frontend.
+LLAMARA backend is able to serve a JavaScript Single-Page-Application, such as a React, Vue, or Angular application, as its frontend.
 
 To do so, you need to place the build output of your bundler, e.g. Webpack or Vite, into the [`META-INF/resources`](src/main/resources/META-INF/resources) folder during build-time of LLAMARA backend.
 The bundled JavaScript SPA will then be part of the build JAR and automatically served by Quarkus on the applications root path.
