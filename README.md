@@ -1,7 +1,6 @@
 # LLAMARA Backend
 
 [![CI Build Status](https://github.com/llamara-ai/llamara-backend/actions/workflows/build.yaml/badge.svg)](https://github.com/llamara-ai/llamara-backend/actions/workflows/build.yaml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=llamara-ai_llamara-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=llamara-ai_llamara-backend)
 
 LLAMARA - **L**arge **L**anguage **A**ssistant for **M**odel-**A**ugmented **R**etrieval and **A**nalysis - is an LLM-based assistant for information retrieval from a provided knowledge base.
 
