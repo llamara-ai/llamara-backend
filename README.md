@@ -14,7 +14,7 @@ Additionally, LAMARA ensures full transparency by providing sources with referen
 > [!WARNING]
 > This project is not maintained anymore.
 > We do **not** recommend deploying this publicly in its current state, as several dependencies are outdated, posing a potential security risk.
-> In case you are interested in continuting development, please contact us at <dev@florianhotze.com>.
+> In case you are interested in continuing development, please contact us at <dev@florianhotze.com>.
 
 ## Features
 
